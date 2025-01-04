@@ -19,27 +19,23 @@ const consultationSchema = new mongoose.Schema({
   },
   detectedDisease: {
     type: String, // Disease detected during this consultation
-    required: false,
+    required: true,
   },
   diagnosis: {
     type: String, // Doctor's diagnosis, if applicable
-    required: false,
+    required: true,
   },
   prescription: {
     type: String, // Prescription provided by the doctor
     required: false,
+    default:"No prescription given.",
   },
   consultationNotes: {
     type: String, // Additional notes by the doctor
     required: false,
+    default:"No additional notes given by the doctor."
   },
 
-  // Date and status of the consultation
-  consultationDate: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
   status: {
     type: String,
     enum: ["Completed", "Ongoing", "Cancelled"], // Consultation status
@@ -53,6 +49,6 @@ const consultationSchema = new mongoose.Schema({
   },
 },{timestamps:true});
 
-const Consultaions= mongoose.model("Consultation", consultationSchema);
+const Consultation= mongoose.model("consultation", consultationSchema);
 
-module.exports = Consultaions;
+module.exports = Consultation;

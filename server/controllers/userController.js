@@ -118,12 +118,6 @@ const createUser = async (req, res) => {
     // Return success response
     if(newUser){
       return res.status(201).send("User created successfully ");
-    }else{
-      res.status(500).json({
-        success: false,
-        message: "Failed to create user",
-        error: error.message,
-      });
     }
   } catch (error) {
     res.status(500).json({
