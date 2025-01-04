@@ -51,7 +51,7 @@ const consultationSchema = new mongoose.Schema({
     type: Date, // Suggested follow-up date, if any
     required: false,
   },
-});
+},{timestamps:true});
 
 const Consultaions= mongoose.model("Consultation", consultationSchema);
 

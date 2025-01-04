@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt"); // For password hashing
-const User = require("../models/user"); // Import the User model
+const User = require("../models/userModel"); // Import the User model
 const mongoose = require("mongoose");
 // Controller to get all users
 const getAllUsers = async (req, res) => {
@@ -113,13 +113,19 @@ const createUser = async (req, res) => {
       searchHistory: [],
       role: req.body.role,
       isActive: true, // Default value
-      createdAt: Date.now(), // Default value
     });
 
     // Return success response
-    return res.status(201).send("User created successfully " + hashedPassword);
+    if(newUser){
+      return res.status(201).send("User created successfully ");
+    }else{
+      res.status(500).json({
+        success: false,
+        message: "Failed to create user",
+        error: error.message,
+      });
+    }
   } catch (error) {
-    console.error("Error creating user:", error);
     res.status(500).json({
       success: false,
       message: "Failed to create user",

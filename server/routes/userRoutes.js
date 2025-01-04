@@ -6,9 +6,8 @@ const {
   deleteUserById,
   getUserById,
   updateUser,
-} = require("../controllers/user"); // Import the controller
+} = require("../controllers/userController"); // Import the controller
 
-// Route: GET /api/user/
 router.get("/", getAllUsers);
 router.post("/", createUser);
 router.delete("/:id", deleteUserById);

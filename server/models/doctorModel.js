@@ -12,6 +12,11 @@ const doctorSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other"],
+    required: true,
+  },
   email: {
     type: String,
     required: true,
@@ -39,7 +44,7 @@ const doctorSchema = new mongoose.Schema({
   },
   hospital: {
     type: String, // Hospital/clinic where the doctor works
-    required: false,
+    required: true,
   },
 
   // Availability
@@ -72,12 +77,8 @@ const doctorSchema = new mongoose.Schema({
   isActive: {
     type: Boolean, // Indicates whether the doctor is currently active
     default: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  }
+},{timestamps:true});
 
 const Doctor= mongoose.model("Doctor", doctorSchema);
 
