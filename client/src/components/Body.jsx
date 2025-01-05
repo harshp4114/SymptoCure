@@ -54,7 +54,7 @@ const Body = () => {
       context.imageSmoothingQuality = "high";
       context.drawImage(img, offsetX, offsetY, newWidth, newHeight);
 
-      context.fillStyle = "rgba(0, 0, 0, 0.88)";
+      context.fillStyle = "rgba(0, 0, 0, 0.84)";
       context.fillRect(0, 0, canvas.width, canvas.height);
 
       startAnimation();
@@ -100,7 +100,7 @@ const Body = () => {
       context.imageSmoothingQuality = "high";
       context.drawImage(img, offsetX, offsetY, newWidth, newHeight);
 
-      context.fillStyle = "rgba(0, 0, 0, 0.88)";
+      context.fillStyle = "rgba(0, 0, 0, 0.84)";
       context.fillRect(0, 0, canvas.width, canvas.height);
     }
   }
