@@ -10,6 +10,7 @@ module.exports = {
     extend: {
       fontFamily: {
         'NumFont': ['NumFont', 'sans-serif'],
+        'FiraCode': ['FiraCode', 'sans-serif'],
       },
     },
   },

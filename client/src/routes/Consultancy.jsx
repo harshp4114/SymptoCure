@@ -1,5 +1,5 @@
 const Consultancy=()=>{
-    return(<div>
+    return(<div className="absolute mt-24">
         CONSULTANYC
     </div>);
 };

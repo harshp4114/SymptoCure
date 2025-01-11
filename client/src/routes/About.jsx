@@ -1,5 +1,5 @@
 const About=()=>{
-    return(<div className="bg-red-600 w-full h-full">
+    return(<div className="bg-red-600 w-full h-full absolute mt-24">
         ABOUT
     </div>);
 };

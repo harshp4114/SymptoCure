@@ -50,9 +50,9 @@ const Login = () => {
         "http://localhost:5000/api/user/login/",
         values
       );
-
+      console.log(result)
       const token = result.data.token;
-      // console.log("token",token);
+      console.log("token",token);
       Cookies.set("jwt-token", token, {
         expires: 1,
         secure: true,
@@ -93,7 +93,7 @@ const Login = () => {
 
   if (isLogin) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="flex justify-center w-full h-full items-center mx-auto min-h-screen absolute mt-24 bg-gray-100">
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
           <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
             Sign Up
@@ -145,13 +145,15 @@ const Login = () => {
               )}
             </Form>
           </Formik>
+
+        <div><p className="mt-4 text-gray-700 cursor-pointer" onClick={()=>{setIsLogin(!isLogin)}}>Don't have an account? Sign Up</p></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-full w-full mx-auto absolute mt-24 min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Sign Up
@@ -245,6 +247,7 @@ const Login = () => {
             )}
           </Form>
         </Formik>
+        <div><p className="mt-4 text-gray-700 cursor-pointer" onClick={()=>{setIsLogin(!isLogin)}}>Already have an account? Sign In</p></div>
       </div>
     </div>
   );

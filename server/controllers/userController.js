@@ -63,22 +63,22 @@ const getUserById = async (req, res) => {
 
 const getUserByEmail= async(req,res)=>{
   const {email,password}=req.body;
-
+  console.log(req.body)
   try{
-    const user=await User.findOne(email);
-    
+    const user=await User.findOne({email});
+    console.log(user)
     if(user){
-
       const isPasswordValid= await bcrypt.compare(password,user.password);
       if(!isPasswordValid){
+        console.log("pass is wrong")
         res.status(404).json({
           success:false,
           message:"Invalid Email or Password",
         });
       }
-
+      console.log("user",user);
       const token =jwt.sign({id:user._id,email:user.email},"harshp4114",{expiresIn:"1h"});
-
+      console.log("backend token",token);
 
       res.status(200).json({
         success:true,
