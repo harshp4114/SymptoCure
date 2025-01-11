@@ -13,9 +13,7 @@ const App = () => {
   return (
     <div className="h-[100vh] w-full">
       <Header />
-      <div className="w-full h-full">
       <Outlet />
-      </div>
     </div>
   );
 };
@@ -27,7 +25,7 @@ const appRouter = createBrowserRouter([
     children:[
       {
         path: "/",
-        element: <Login />,
+        element: <Body />,
       },
       {
         path: "/disease",
@@ -38,12 +36,16 @@ const appRouter = createBrowserRouter([
         element: <Consultancy />,
       },
       {
-        path: "/profile",
-        element: <Profile />,
+        path: "/login",
+        element: <Login />,
       },
       {
         path: "/about",
         element: <About />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
     ]},
   

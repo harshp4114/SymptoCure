@@ -4,13 +4,15 @@ require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const ConsultationRoutes=require("./routes/consultationRoutes")
-
+const cors = require('cors');
 connectMongo();
 
 const app = express();
 const PORT = 5000;
 
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/user", userRoutes);
 app.use("/api/doctor",doctorRoutes);

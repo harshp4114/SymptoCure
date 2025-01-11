@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt"); // For password hashing
 const User = require("../models/userModel"); // Import the User model
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 // Controller to get all users
 const getAllUsers = async (req, res) => {
   try {
@@ -60,6 +61,45 @@ const getUserById = async (req, res) => {
   }
 };
 
+const getUserByEmail= async(req,res)=>{
+  const {email,password}=req.body;
+
+  try{
+    const user=await User.findOne(email);
+    
+    if(user){
+
+      const isPasswordValid= await bcrypt.compare(password,user.password);
+      if(!isPasswordValid){
+        res.status(404).json({
+          success:false,
+          message:"Invalid Email or Password",
+        });
+      }
+
+      const token =jwt.sign({id:user._id,email:user.email},"harshp4114",{expiresIn:"1h"});
+
+
+      res.status(200).json({
+        success:true,
+        message:"User Logged in Successfully",
+        user:user,
+        token
+      });
+    }else{
+      res.status(404).json({
+        success:false,
+        message:"Invalid Email or Password",
+      });
+    }
+  }catch(error){
+    res.status(500).json({
+      success:false,
+      message:"Something Went Wrong",
+    });
+  }
+};
+
 // Controller to create a user
 const createUser = async (req, res) => {
   try {
@@ -74,7 +114,7 @@ const createUser = async (req, res) => {
       "address",
       "role",
     ];
-
+    console.log(req.body);
     // Check if all required fields are present
     for (const field of requiredFields) {
       if (!req.body[field]) {
@@ -99,8 +139,10 @@ const createUser = async (req, res) => {
 
     // Create a new user
     const newUser = await User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      fullName: {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+      },
       email: req.body.email,
       password: hashedPassword, // Save the hashed password
       age: req.body.age,
@@ -116,8 +158,16 @@ const createUser = async (req, res) => {
     });
 
     // Return success response
-    if(newUser){
-      return res.status(201).send("User created successfully ");
+    if (newUser) {
+      const token = jwt.sign(
+        { id: newUser._id, email: newUser.email },
+        "harshp4114",
+        { expiresIn: "1h" }
+      );
+
+      return res
+        .status(201)
+        .json({ message: "User created successfully", token });
     }
   } catch (error) {
     res.status(500).json({
@@ -128,7 +178,7 @@ const createUser = async (req, res) => {
   }
 };
 
-const updateUser = async (req,res) => {
+const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const Info = req.body;
@@ -211,4 +261,5 @@ module.exports = {
   deleteUserById,
   getUserById,
   updateUser,
+  getUserByEmail,
 };
