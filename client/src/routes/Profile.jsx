@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 const Profile = () => {
+  const [userProfile, setUserProfile] = useState(null);
+  const token = Cookies.get("jwt-token");
+  const getUser = async () => {
+    const result = await axios.get("http://localhost:5000/api/user/profile/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(result);
+    setUserProfile(result.data.userData);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
   return (
     <div className="bg-gray-100 absolute mt-24 w-full h-[86.7vh] flex justify-center items-center">
       {/* Outer Container */}
       <div className="bg-white w-3/4 h-full rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
-        
         {/* Sidebar/Profile Picture Section */}
         <div className="w-full md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-600 text-white flex flex-col items-center py-10 px-5">
           {/* Profile Picture */}
@@ -15,22 +31,15 @@ const Profile = () => {
             className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
           />
           {/* Name */}
-          <h1 className="mt-4 text-xl font-bold">John Doe</h1>
+          <h1 className="mt-4 text-xl font-bold">
+            {userProfile?.fullName?.firstName +
+              " " +
+              userProfile?.fullName?.lastName}
+          </h1>
           {/* Role */}
-          <p className="text-sm text-gray-200">Software Developer</p>
-
-          {/* Social Media Links */}
-          <div className="mt-6 flex space-x-4">
-            <a href="#" className="text-white hover:text-gray-200">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" className="text-white hover:text-gray-200">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#" className="text-white hover:text-gray-200">
-              <i className="fab fa-linkedin-in"></i>
-            </a>
-          </div>
+          <p className="text-sm text-gray-200">
+            {userProfile?.role == "user" ? "PATIENT" : "DOCTOR"}
+          </p>
         </div>
 
         {/* Profile Details Section */}
@@ -43,20 +52,26 @@ const Profile = () => {
           {/* Profile Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
-              <label className="text-gray-700 font-medium w-40">Full Name:</label>
-              <p className="text-gray-600">John Doe</p>
+              <label className="text-gray-700 font-medium w-40">
+                Full Name:
+              </label>
+              <p className="text-gray-600">
+                {userProfile?.fullName?.firstName +
+                  " " +
+                  userProfile?.fullName?.lastName}
+              </p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Email:</label>
-              <p className="text-gray-600">johndoe@example.com</p>
+              <p className="text-gray-600">{userProfile?.email}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Phone:</label>
-              <p className="text-gray-600">+123 456 7890</p>
+              <p className="text-gray-600">{userProfile?.phone}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Address:</label>
-              <p className="text-gray-600">123 Main Street, New York, NY</p>
+              <p className="text-gray-600">{userProfile?.address}</p>
             </div>
           </div>
 
@@ -75,9 +90,27 @@ const Profile = () => {
             <button className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600">
               Edit Profile
             </button>
-            <button className="bg-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-400">
-              Logout
-            </button>
+          </div>
+        </div>
+        <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-8 flex flex-col">
+          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-6">
+            Medical Information
+          </h2>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <label className="text-gray-700 font-medium w-40">
+                Current Disease :
+              </label>
+              <p className="text-gray-600">
+                {userProfile?.detectedDisease || "Eiffel Tower"}
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="text-gray-700 font-medium w-40">Symptoms :</label>
+              <p className="text-gray-600">{(userProfile?.symptoms?.length)?userProfile?.symptoms?.map((symp)=>(symp+", ")) : "Flu, Fever, Cold, Sore Throat"}</p>
+            </div>
+            
+            
           </div>
         </div>
       </div>

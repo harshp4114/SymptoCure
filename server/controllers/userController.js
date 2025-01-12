@@ -104,6 +104,70 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
+const getUserProfile = async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  console.log(token);
+  try {
+    const decoded = jwt.verify(token, "harshp4114");
+
+    const { email, id } = decoded;
+
+    const user = await User.findOne({ email });
+    console.log(user);
+    return res.status(201).json({
+      success: true,
+      message: "profile found successfully",
+      userData:user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+
+  // const { email, password } = req.body;
+  // console.log("request body", req.body);
+  // try {
+  //   const user = await User.findOne({ email });
+  //   console.log("user with the same email", user);
+  //   if (user) {
+  //     const isPasswordValid = await bcrypt.compare(password, user.password);
+  //     if (!isPasswordValid) {
+  //       console.log("pass is wrong");
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: "Invalid Email or Password",
+  //       });
+  //     }
+  //     const token = jwt.sign(
+  //       { id: user._id, email: user.email },
+  //       "harshp4114",
+  //       { expiresIn: "1h" }
+  //     );
+  //     console.log("backend token", token);
+
+  //     res.status(200).json({
+  //       success: true,
+  //       message: "User Logged in Successfully",
+  //       user: user,
+  //       token,
+  //     });
+  //   } else {
+  //     return res.status(404).json({
+  //       success: false,
+  //       message: "Invalid Email or Password",
+  //     });
+  //   }
+  // } catch (error) {
+  //   return res.status(500).json({
+  //     success: false,
+  //     message: "Something Went Wrong",
+  //   });
+  // }
+};
+
 // Controller to create a user
 const createUser = async (req, res) => {
   try {
@@ -282,4 +346,5 @@ module.exports = {
   getUserById,
   updateUser,
   getUserByEmail,
+  getUserProfile,
 };

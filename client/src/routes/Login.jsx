@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toggle } from "../redux/slices/signInSlice";
 import signUpValidateSchema from "../yupValidators/signUpValidate";
 import loginValidateSchema from "../yupValidators/loginValidate";
@@ -17,7 +16,7 @@ const Login = () => {
 
   const signUpValidationSchema=signUpValidateSchema;
   
-
+  
   const loginValidationSchema = loginValidateSchema;
 
   // Initial Values

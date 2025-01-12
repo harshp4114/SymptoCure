@@ -7,9 +7,11 @@ const {
   getUserById,
   updateUser,
   getUserByEmail,
+  getUserProfile,
 } = require("../controllers/userController"); // Import the controller
 
 router.get("/", getAllUsers);
+router.get("/profile", getUserProfile);
 router.post("/login",getUserByEmail);
 router.post("/", createUser);
 router.delete("/:id", deleteUserById);
