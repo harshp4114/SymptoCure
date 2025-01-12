@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt"); // For password hashing
 const User = require("../models/userModel"); // Import the User model
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const Address = require("../models/addressModel");
 // Controller to get all users
 const getAllUsers = async (req, res) => {
   try {
@@ -61,41 +62,44 @@ const getUserById = async (req, res) => {
   }
 };
 
-const getUserByEmail= async(req,res)=>{
-  const {email,password}=req.body;
-  console.log(req.body)
-  try{
-    const user=await User.findOne({email});
-    console.log(user)
-    if(user){
-      const isPasswordValid= await bcrypt.compare(password,user.password);
-      if(!isPasswordValid){
-        console.log("pass is wrong")
-        res.status(404).json({
-          success:false,
-          message:"Invalid Email or Password",
+const getUserByEmail = async (req, res) => {
+  const { email, password } = req.body;
+  console.log("request body", req.body);
+  try {
+    const user = await User.findOne({ email });
+    console.log("user with the same email", user);
+    if (user) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        console.log("pass is wrong");
+        return res.status(404).json({
+          success: false,
+          message: "Invalid Email or Password",
         });
       }
-      console.log("user",user);
-      const token =jwt.sign({id:user._id,email:user.email},"harshp4114",{expiresIn:"1h"});
-      console.log("backend token",token);
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        "harshp4114",
+        { expiresIn: "1h" }
+      );
+      console.log("backend token", token);
 
       res.status(200).json({
-        success:true,
-        message:"User Logged in Successfully",
-        user:user,
-        token
+        success: true,
+        message: "User Logged in Successfully",
+        user: user,
+        token,
       });
-    }else{
-      res.status(404).json({
-        success:false,
-        message:"Invalid Email or Password",
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid Email or Password",
       });
     }
-  }catch(error){
-    res.status(500).json({
-      success:false,
-      message:"Something Went Wrong",
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something Went Wrong",
     });
   }
 };
@@ -112,9 +116,12 @@ const createUser = async (req, res) => {
       "gender",
       "phone",
       "address",
-      "role",
+      "city",
+      "state",
+      "country",
+      "zipCode",
     ];
-    console.log(req.body);
+    // console.log(req.body);
     // Check if all required fields are present
     for (const field of requiredFields) {
       if (!req.body[field]) {
@@ -136,8 +143,20 @@ const createUser = async (req, res) => {
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
+    const { zipCode, country, state, city, address } = req.body;
+    console.log(Address);
+    const newAddress = new Address({
+      zipCode: zipCode,
+      country: country,
+      state: state,
+      city: city,
+      address: address,
+    });
+    console.log(newAddress);
+    // Save the address to get its ObjectId
+    const savedAddress = await newAddress.save();
     // Create a new user
+    console.log("hhhhhhhhhhhhhhhhhhhhhh");
     const newUser = await User.create({
       fullName: {
         firstName: req.body.firstName,
@@ -148,7 +167,7 @@ const createUser = async (req, res) => {
       age: req.body.age,
       gender: req.body.gender,
       phone: req.body.phone,
-      address: req.body.address,
+      address: savedAddress._id,
       symptoms: [],
       detectedDisease: null,
       history: [],
@@ -157,6 +176,7 @@ const createUser = async (req, res) => {
       isActive: true, // Default value
     });
 
+    console.log("user data", newUser);
     // Return success response
     if (newUser) {
       const token = jwt.sign(

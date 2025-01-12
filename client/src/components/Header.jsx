@@ -1,23 +1,20 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
-const Header = () => {
-  useEffect(()=>{
-    if(!Cookies.get('jwt-token')){
-      setUserStatus("logged-out");
-    }
-  },[Cookies.get('jwt-token')])
+import { useDispatch, useSelector } from "react-redux";
+import { toggle } from "../redux/slices/signInSlice";
 
-  const [userStatus, setUserStatus] = useState("logged-out");
+const Header = () => {
+  const dispatch = useDispatch();
+  const isSignedIn = useSelector((state) => state.signin.isSignedIn);
+
   const handleLogout = () => {
     console.log(Cookies.get("jwt-token"));
     if (Cookies.get("jwt-token")) {
       Cookies.remove("jwt-token");
-      setUserStatus("logged-out");
-    }else{
-      setUserStatus("logged-in");
+      dispatch(toggle());
     }
   };
+
   return (
     <>
       <div
@@ -53,7 +50,7 @@ const Header = () => {
             <Link to="/about">About</Link>
           </div>
         </div>
-        {userStatus === "loggedin" ? (
+        {isSignedIn ? (
           <>
             <div
               id="div1"
