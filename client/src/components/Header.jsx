@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { toggle } from "../redux/slices/signInSlice";
+import { userLoggedout } from "../redux/slices/signInSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ const Header = () => {
     console.log(Cookies.get("jwt-token"));
     if (Cookies.get("jwt-token")) {
       Cookies.remove("jwt-token");
-      dispatch(toggle());
+      dispatch(userLoggedout());
     }
   };
 

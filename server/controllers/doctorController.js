@@ -1,8 +1,8 @@
 const Doctor = require("../models/doctorModel"); // Import the Doctor model
 const mongoose = require("mongoose");
-
 const getAllDoctors = async (req, res) => {
   try {
+    // console.log("hii");
     // Fetch all Doctors from the database
     const doctors = await Doctor.find(); // Exclude the password field
 
@@ -14,7 +14,7 @@ const getAllDoctors = async (req, res) => {
     });
   } catch (error) {
     // Handle errors and send error response
-    console.error("Error fetching Doctors:", error);
+    // console.error("Error fetching Doctors:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch Doctors",
@@ -60,6 +60,8 @@ const getDoctorById = async (req, res) => {
 };
 
 const createDoctor = async (req, res) => {
+
+  // console.log(req.body);
   try {
     const requiredFields = [
       "firstName",
@@ -96,8 +98,10 @@ const createDoctor = async (req, res) => {
 
     // Create a new doctor
     const newDoctor = await Doctor.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      fullName: {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName
+      },
       email: req.body.email,
       gender: req.body.gender,
       phone: req.body.phone,
@@ -107,9 +111,10 @@ const createDoctor = async (req, res) => {
       hospital: req.body.hospital,
       availableDays: req.body.availableDays,
       availableTime: req.body.availableTime,
-      rating: 0,
-      reviews: [],
-      isActive: true, // Default value
+      patientsPerDay: req.body.patientsPerDay, // This field is required in the schema
+      rating: 0, // Default rating
+      reviews: [], // Default reviews
+      isActive: true // Default value
     });
     console.log("hello");
     if (newDoctor) {

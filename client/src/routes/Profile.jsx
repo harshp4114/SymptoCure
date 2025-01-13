@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { toggle } from "../redux/slices/signInSlice";
+import { userLoggedin, userLoggedout } from "../redux/slices/signInSlice";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
@@ -21,16 +21,19 @@ const Profile = () => {
         }
       );
 
-      if (result.data.userData) {
-        dispatch(toggle(true));
-      }
       setUserProfile(result.data.userData);
     } catch (error) {
-      navigate("/login");
+      console.log("error", error);
     }
   };
   // console.log(userProfile);
   useEffect(() => {
+    if(Cookies.get("jwt-token")){
+      dispatch(userLoggedin());
+    }else{
+      dispatch(userLoggedout());
+      navigate("/login");
+    }
     getUser();
   }, []);
   return (

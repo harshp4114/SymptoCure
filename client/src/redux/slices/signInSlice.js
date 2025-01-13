@@ -6,12 +6,15 @@ const signinSlice=createSlice({
         isSignedIn:false
     },
     reducers:{
-        toggle:(state)=>{
-            state.isSignedIn=!state.isSignedIn;
-        }
+        userLoggedin:(state)=>{
+            state.isSignedIn=true;
+        },
+        userLoggedout:(state)=>{
+            state.isSignedIn=false;
+        },
     }
 });
 
-export const {toggle}=signinSlice.actions;
+export const {userLoggedin,userLoggedout}=signinSlice.actions;
 
 export default signinSlice.reducer;
