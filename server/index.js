@@ -5,7 +5,10 @@ const userRoutes = require("./routes/userRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const ConsultationRoutes=require("./routes/consultationRoutes")
 const cors = require('cors');
+
+console.log("monogo connecting")
 connectMongo();
+console.log("monogo connecting")
 
 const app = express();
 const PORT = 5000;

@@ -2,18 +2,25 @@ import { useEffect, useState } from "react";
 import DoctorCard from "../components/doctorCard";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useDispatch } from "react-redux";
-import { userLoggedin, userLoggedout } from "../redux/slices/signInSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { userLoggedin } from "../redux/slices/signInSlice";
+import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import useLoadingNavigate from "../hooks/useLoadingNavigate";
+import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 
 const Consultancy = () => {
+  useAuth(); // Trigger the authentication logic (runs on mount)
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const token = Cookies.get("jwt-token");
-  const dispatch=useDispatch();
-
+  const navigate = useNavigate();
+  const [loader, setLoader] = useState(true);
+  const dispatch = useDispatch();
   const getDoctors = async () => {
     try {
+      dispatch(showLoader());
       const result = await axios.get("http://localhost:5000/api/doctor/", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -23,6 +30,8 @@ const Consultancy = () => {
       setFilteredDoctors(result?.data?.data); // Initialize with full list
     } catch (error) {
       console.error("Error fetching doctors:", error);
+    }finally{
+      dispatch(hideLoader());
     }
   };
 
@@ -43,15 +52,20 @@ const Consultancy = () => {
     }
   };
 
+  const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
+
+
   useEffect(() => {
-    if(Cookies.get("jwt-token")){
-          dispatch(userLoggedin());
-        }else{
-          dispatch(userLoggedout());
-          navigate("/login");
-        }
+    if(loader) return
+    if (!isAuthenticated) {
+      navigate("/login"); // Redirect if the user is not authenticated
+    }
     getDoctors();
-  }, []);
+  }, [isAuthenticated, loader]); // Add dependencies to avoid unnecessary re-renders
+
+  useEffect(()=>{
+    setLoader(false);
+  },[])
 
   return (
     <div className="absolute mt-24 w-full h-[96.5vh] bg-slate-800">

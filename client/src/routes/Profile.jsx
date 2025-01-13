@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userLoggedin, userLoggedout } from "../redux/slices/signInSlice";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import "ldrs/helix"; // Ensure this path is valid
+import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
+import useLoadingNavigate from "../hooks/useLoadingNavigate";
+
 
 const Profile = () => {
+  useAuth(); // Trigger the authentication logic (runs on mount)
+  const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = Cookies.get("jwt-token");
+  const dispatch = useDispatch();
+
   const getUser = async () => {
+    dispatch(showLoader()); // Show loader before API call
     try {
       const result = await axios.get(
         "http://localhost:5000/api/user/profile/",
@@ -24,19 +33,31 @@ const Profile = () => {
       setUserProfile(result.data.userData);
     } catch (error) {
       console.log("error", error);
+    }finally{
+      dispatch(hideLoader()); // Hide loader after API call
     }
   };
-  // console.log(userProfile);
+  const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
+
   useEffect(() => {
-    if(Cookies.get("jwt-token")){
-      dispatch(userLoggedin());
-    }else{
-      dispatch(userLoggedout());
-      navigate("/login");
+    if (loading) return;
+    if (!isAuthenticated) {
+      console.log(isAuthenticated);
+      navigate("/login"); // Redirect if the user is not authenticated
     }
     getUser();
+  }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
+  // console.log(userProfile);
+
+  useEffect(() => {
+    setLoading(false);
   }, []);
-  return (
+
+  return loading ? (
+    <div className=" w-full h-full flex justify-center items-center">
+      <l-helix size="45" speed="2.5" color="black"></l-helix>
+    </div>
+  ) : (
     <div className="bg-gray-100 absolute mt-24 w-full h-[86.7vh] flex justify-center items-center">
       {/* Outer Container */}
       <div className="bg-white w-3/4 h-full rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">

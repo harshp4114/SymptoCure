@@ -6,7 +6,7 @@ import { userLoggedout } from "../redux/slices/signInSlice";
 const Header = () => {
   const dispatch = useDispatch();
   const isSignedIn = useSelector((state) => state.signin.isSignedIn);
-
+  // console.log(isSignedIn,"from header");
   const handleLogout = () => {
     console.log(Cookies.get("jwt-token"));
     if (Cookies.get("jwt-token")) {
@@ -62,7 +62,7 @@ const Header = () => {
               id="div1"
               className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-2/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
             >
-              <Link to="/" onClick={handleLogout}>
+              <Link to="/home" onClick={handleLogout}>
                 Logout
               </Link>
             </div>

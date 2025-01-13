@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -7,16 +7,22 @@ import { useDispatch } from "react-redux";
 import { userLoggedin } from "../redux/slices/signInSlice";
 import signUpValidateSchema from "../yupValidators/signUpValidate";
 import loginValidateSchema from "../yupValidators/loginValidate";
+import useAuth from "../hooks/useAuth";
+import useLoadingNavigate from "../hooks/useLoadingNavigate";
+import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
   const [isLogin, setIsLogin] = useState(true);
-
   const signUpValidationSchema = signUpValidateSchema;
 
   const loginValidationSchema = loginValidateSchema;
+
+  useAuth();
+  useEffect(()=>{
+  },[]);
 
   // Initial Values
   const LoginInitialValues = {
@@ -42,6 +48,7 @@ const Login = () => {
 
   const handleSubmitLogin = async (values) => {
     try {
+      dispatch(showLoader());
       // console.log("Form Data:", values);
       const result = await axios.post(
         "http://localhost:5000/api/user/login/",
@@ -59,10 +66,12 @@ const Login = () => {
       // console.log(useSelector((state)=>state?.signin?.isSignedIn));
       // console.log(Cookies.get('jwt-token'));
       console.log("User created successfully", result);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.log("last", error);
       setError(error.response.data.message || "Something went wrong");
+    }finally{
+      dispatch(hideLoader());
     }
   };
 
@@ -84,7 +93,7 @@ const Login = () => {
       dispatch(userLoggedin());
       // console.log(Cookies.get('jwt-token'));
       // console.log("User created successfully", result);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.log(error);
       setError(error?.response?.data?.message || "Something went wrong");
