@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   getAllUsers,
   createUser,
@@ -11,7 +12,7 @@ const {
 } = require("../controllers/userController"); // Import the controller
 
 router.get("/", getAllUsers);
-router.get("/profile", getUserProfile);
+router.get("/profile",authMiddleware, getUserProfile);
 router.post("/login",getUserByEmail);
 router.post("/", createUser);
 router.delete("/:id", deleteUserById);
