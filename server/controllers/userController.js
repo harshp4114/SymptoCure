@@ -111,14 +111,18 @@ const getUserProfile = async (req, res) => {
     const { email, id } = req.user;
 
     const user = await User.findOne({ email });
-    // console.log(user);
+    // console.log("user data backend",user);
+
+    const address = await Address.findById(user.address);
+    user.address = address;
+
     return res.status(201).json({
       success: true,
       message: "profile found successfully",
       userData: user,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong",

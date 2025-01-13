@@ -1,20 +1,35 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { toggle } from "../redux/slices/signInSlice";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const token = Cookies.get("jwt-token");
   const getUser = async () => {
-    const result = await axios.get("http://localhost:5000/api/user/profile/", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(result);
-    setUserProfile(result.data.userData);
-  };
+    try {
+      const result = await axios.get(
+        "http://localhost:5000/api/user/profile/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      if (result.data.userData) {
+        dispatch(toggle(true));
+      }
+      setUserProfile(result.data.userData);
+    } catch (error) {
+      navigate("/login");
+    }
+  };
+  // console.log(userProfile);
   useEffect(() => {
     getUser();
   }, []);
@@ -63,15 +78,21 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Email:</label>
-              <p className="text-gray-600">{userProfile?.email}</p>
+              <p className="text-gray-600 ">{userProfile?.email}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Phone:</label>
               <p className="text-gray-600">{userProfile?.phone}</p>
             </div>
             <div className="flex items-center space-x-4">
-              <label className="text-gray-700 font-medium w-40">Address:</label>
-              <p className="text-gray-600">{userProfile?.address}</p>
+              <label className="text-gray-700 self-start font-medium w-40">
+                Address:
+              </label>
+              <p className="text-gray-600">
+                {userProfile?.address.address}, {userProfile?.address.city},{" "}
+                {userProfile?.address.state}, {userProfile?.address.country}-
+                {userProfile?.address.zipCode}
+              </p>
             </div>
           </div>
 
@@ -106,11 +127,15 @@ const Profile = () => {
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <label className="text-gray-700 font-medium w-40">Symptoms :</label>
-              <p className="text-gray-600">{(userProfile?.symptoms?.length)?userProfile?.symptoms?.map((symp)=>(symp+", ")) : "Flu, Fever, Cold, Sore Throat"}</p>
+              <label className="text-gray-700 font-medium w-40">
+                Symptoms :
+              </label>
+              <p className="text-gray-600">
+                {userProfile?.symptoms?.length
+                  ? userProfile?.symptoms?.map((symp) => symp + ", ")
+                  : "Flu, Fever, Cold, Sore Throat"}
+              </p>
             </div>
-            
-            
           </div>
         </div>
       </div>
