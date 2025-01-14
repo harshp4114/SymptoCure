@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/user", userRoutes);
 app.use("/api/doctor",doctorRoutes);
-app.use("/api/consultation/",consultationRoutes);
-app.use("/api/appointment/",appointmentRoutes);
+app.use("/api/consultation",consultationRoutes);
+app.use("/api/appointment",appointmentRoutes);
 
 app.use((req, res) => {
   res.end("hello from server");

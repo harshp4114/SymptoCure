@@ -1,5 +1,6 @@
 const Doctor = require("../models/doctorModel"); // Import the Doctor model
 const mongoose = require("mongoose");
+const Appointment = require("../models/appointmentModel");
 const getAllDoctors = async (req, res) => {
   try {
     // console.log("hii");
@@ -58,6 +59,64 @@ const getDoctorById = async (req, res) => {
     });
   }
 };
+
+const getAppointmentsByDoctorId = async (req, res) => {
+  const doctorId = req.params.id;
+
+  try {
+    // Fetch doctor details to get patientsPerDay
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
+
+    const patientsPerDay = doctor.patientsPerDay;
+
+    // Aggregate appointments to find fully booked dates
+    const fullyBookedDates = await Appointment.aggregate([
+      {
+        $match: {
+          doctorId: new mongoose.Types.ObjectId(doctorId), // Match doctorId
+          status: "confirmed", // Only consider confirmed appointments
+        },
+      },
+      {
+        $group: {
+          _id: "$date", // Group by date
+          count: { $sum: 1 }, // Count the number of appointments per date
+        },
+      },
+      {
+        $match: { count: { $gte: patientsPerDay } }, // Filter dates where count >= patientsPerDay
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id", // Rename _id to date
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      fullyBookedDates: fullyBookedDates.map((entry) => entry.date), // Return an array of fully booked dates
+    });
+  } catch (error) {
+    console.error("Error fetching fully booked dates:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+
+
+
 
 const createDoctor = async (req, res) => {
 
@@ -214,4 +273,5 @@ module.exports = {
   createDoctor,
   deleteDoctorById,
   updateDoctor,
+  getAppointmentsByDoctorId,
 };

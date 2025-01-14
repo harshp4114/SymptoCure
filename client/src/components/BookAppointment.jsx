@@ -18,6 +18,7 @@ const BookAppointment = ({ doctor, onClose }) => {
   const [loading, setLoading] = useState(true); // Synchronize the authentication check
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [fullyBooked, setFullyBooked] = useState([]);
   const token = Cookies.get("jwt-token");
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
 
@@ -28,9 +29,24 @@ const BookAppointment = ({ doctor, onClose }) => {
     }
   }, [isAuthenticated, loading]);
 
-  const handleBookAppointment = async (values) => {
+  useEffect(() => {
+    updateCalendarAppointments();
+  }, []);
 
-    console.log("in handle axios function")
+  const updateCalendarAppointments = async () => {
+    try {
+      const result = await axios.get(
+        `http://localhost:5000/api/doctor/${doctor._id}/appointments`
+      );
+      console.log("result of appointments", result);
+      setFullyBooked(result.data.fullyBookedDates);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleBookAppointment = async (values) => {
+    console.log("in handle axios function");
     dispatch(showLoader());
 
     try {
@@ -61,10 +77,38 @@ const BookAppointment = ({ doctor, onClose }) => {
 
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full name is required"),
-    email: Yup.string().email("Invalid email address").required("Email is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
     phone: Yup.string().required("Phone number is required"),
     reason: Yup.string().required("Reason for visit is required"),
   });
+
+  const modifiersStyles = {
+    fullyBooked: {
+      borderRadius: '50%',
+      backgroundColor: 'rgba(255, 0, 0, 1)',
+      color: 'white'
+    }
+  };
+
+  const modifiers = {
+    fullyBooked: (date) => {
+      return fullyBooked.some(bookedDate => {
+        const bookedDay = new Date(bookedDate).toISOString().split('T')[0];
+        const currentDay = date.toISOString().split('T')[0];
+        return bookedDay === currentDay;
+      });
+    }
+  };
+
+  const isDateFullyBooked = (date) => {
+    return fullyBooked.some(bookedDate => {
+      const bookedDay = new Date(bookedDate).toISOString().split('T')[0];
+      const currentDay = date.toISOString().split('T')[0];
+      return bookedDay === currentDay;
+    });
+  };
 
   return loading ? (
     <Loader />
@@ -174,18 +218,24 @@ const BookAppointment = ({ doctor, onClose }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Date
                 </label>
+                <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+                  <div className="w-8 h-8 rounded-full border-2 border-red-400 bg-red-400"></div>
+                  <span>Fully booked slots</span>
+                </div>
                 <DayPicker
                   mode="single"
                   selected={selectedDate}
                   onSelect={setSelectedDate}
                   disabled={(date) => {
-                    if (date < new Date()) return true;
+                    if (date < new Date() || isDateFullyBooked(date)) return true;
                     const day = date.toLocaleDateString("en-US", {
                       weekday: "long",
                     });
                     return !doctor?.availableDays?.includes(day);
                   }}
-                  className="border rounded-md bg-white p-3"
+                  className="border rounded-md font-semibold bg-white p-3"
+                  modifiers={modifiers}
+                  modifiersStyles={modifiersStyles}
                 />
               </div>
             </div>
