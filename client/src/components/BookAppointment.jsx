@@ -1,0 +1,216 @@
+import React, { useEffect, useState } from "react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "./Loader";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
+
+const BookAppointment = ({ doctor, onClose }) => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  useAuth(); // Trigger the authentication logic (runs on mount)
+  const [loading, setLoading] = useState(true); // Synchronize the authentication check
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = Cookies.get("jwt-token");
+  const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isAuthenticated) {
+      navigate("/login"); // Redirect if the user is not authenticated
+    }
+  }, [isAuthenticated, loading]);
+
+  const handleBookAppointment = async (values) => {
+
+    console.log("in handle axios function")
+    dispatch(showLoader());
+
+    try {
+      const result = await axios.post(
+        `http://localhost:5000/api/appointment/${doctor._id}`,
+        {
+          ...values,
+          selectedDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("result appointment created", result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      dispatch(hideLoader());
+    }
+  };
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  const validationSchema = Yup.object({
+    fullName: Yup.string().required("Full name is required"),
+    email: Yup.string().email("Invalid email address").required("Email is required"),
+    phone: Yup.string().required("Phone number is required"),
+    reason: Yup.string().required("Reason for visit is required"),
+  });
+
+  return loading ? (
+    <Loader />
+  ) : (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white h-4/4  rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-blue-600 p-6 text-white">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold">Book Appointment</h2>
+            <button
+              className="text-white hover:bg-blue-700 p-2 rounded-lg"
+              onClick={onClose}
+            >
+              ✕
+            </button>
+          </div>
+          <p className="mt-2">
+            with Dr. {doctor?.fullName?.firstName} {doctor?.fullName?.lastName}
+          </p>
+        </div>
+
+        {/* Content */}
+        <Formik
+          initialValues={{
+            fullName: "",
+            email: "",
+            phone: "",
+            reason: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={(values) => handleBookAppointment(values)}
+        >
+          <Form className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <Field
+                  type="text"
+                  name="fullName"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your full name"
+                />
+                <ErrorMessage
+                  name="fullName"
+                  component="div"
+                  className="text-red-600 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <Field
+                  type="email"
+                  name="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your email"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-600 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number
+                </label>
+                <Field
+                  type="tel"
+                  name="phone"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your phone number"
+                />
+                <ErrorMessage
+                  name="phone"
+                  component="div"
+                  className="text-red-600 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Reason for Visit
+                </label>
+                <Field
+                  as="textarea"
+                  name="reason"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
+                  placeholder="Please describe your symptoms or reason for visit"
+                />
+                <ErrorMessage
+                  name="reason"
+                  component="div"
+                  className="text-red-600 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Date
+                </label>
+                <DayPicker
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={(date) => {
+                    if (date < new Date()) return true;
+                    const day = date.toLocaleDateString("en-US", {
+                      weekday: "long",
+                    });
+                    return !doctor?.availableDays?.includes(day);
+                  }}
+                  className="border rounded-md bg-white p-3"
+                />
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="col-span-full flex justify-end gap-4 mt-6">
+              <button
+                type="button"
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Confirm Booking
+              </button>
+            </div>
+          </Form>
+        </Formik>
+      </div>
+    </div>
+  );
+};
+
+export default BookAppointment;

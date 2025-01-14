@@ -8,7 +8,6 @@ import { userLoggedin } from "../redux/slices/signInSlice";
 import signUpValidateSchema from "../yupValidators/signUpValidate";
 import loginValidateSchema from "../yupValidators/loginValidate";
 import useAuth from "../hooks/useAuth";
-import useLoadingNavigate from "../hooks/useLoadingNavigate";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 
 const Login = () => {
@@ -20,7 +19,7 @@ const Login = () => {
 
   const loginValidationSchema = loginValidateSchema;
 
-  useAuth();
+  // useAuth();
   useEffect(()=>{
   },[]);
 

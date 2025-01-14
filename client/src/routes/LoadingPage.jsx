@@ -1,6 +1,5 @@
 import "ldrs/helix"; // Ensure this path is valid
 import { useNavigate } from "react-router-dom";
-import useLoadingNavigate from "../hooks/useLoadingNavigate";
 
 const LoadingPage = () => {
     

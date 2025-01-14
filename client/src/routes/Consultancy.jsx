@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { userLoggedin } from "../redux/slices/signInSlice";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import useLoadingNavigate from "../hooks/useLoadingNavigate";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 
 const Consultancy = () => {

@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import "ldrs/helix"; // Ensure this path is valid
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
-import useLoadingNavigate from "../hooks/useLoadingNavigate";
 
 
 const Profile = () => {
