@@ -2,11 +2,11 @@ const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
   // Get the token from the header
-    console.log(req.headers.authorization);
-    console.log("hiiiii from middleware");
+  //console.log(req.headers.authorization);
+  //console.log("hiiiii from middleware");
 
   const token = req.headers.authorization.split(" ")[1];
-  console.log(token);
+  //console.log(token);
   // Check if the token is provided
   if (!token) {
     return res.status(401).json({
@@ -18,8 +18,8 @@ const authMiddleware = (req, res, next) => {
   try {
     // Verify the token
     const decoded = jwt.verify(token, "harshp4114");
-    console.log("hiii");
-    console.log("decoded", decoded);
+    //console.log("hiii");
+    //console.log("decoded", decoded);
     // Attach user info to the request object
     req.user = decoded;
 

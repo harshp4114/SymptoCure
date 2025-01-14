@@ -10,22 +10,30 @@ import Loader from "./Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const BookAppointment = ({ doctor, onClose }) => {
+const BookAppointment = ({
+  doctor,
+  onClose,
+  toggleSuccess,
+  toggleFailure,
+  toggleExist,
+}) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  useAuth(); // Trigger the authentication logic (runs on mount)
-  const [loading, setLoading] = useState(true); // Synchronize the authentication check
+  useAuth();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [fullyBooked, setFullyBooked] = useState([]);
   const token = Cookies.get("jwt-token");
-  const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
+  const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
 
   useEffect(() => {
     if (loading) return;
     if (!isAuthenticated) {
-      navigate("/login"); // Redirect if the user is not authenticated
+      navigate("/login");
     }
   }, [isAuthenticated, loading]);
 
@@ -38,19 +46,16 @@ const BookAppointment = ({ doctor, onClose }) => {
       const result = await axios.get(
         `http://localhost:5000/api/doctor/${doctor._id}/appointments`
       );
-      console.log("result of appointments", result);
       setFullyBooked(result.data.fullyBookedDates);
     } catch (error) {
-      console.log(error);
+      // //console.log(error);
     }
   };
 
   const handleBookAppointment = async (values) => {
-    console.log("in handle axios function");
     dispatch(showLoader());
-
     try {
-      const result = await axios.post(
+      await axios.post(
         `http://localhost:5000/api/appointment/${doctor._id}`,
         {
           ...values,
@@ -62,10 +67,22 @@ const BookAppointment = ({ doctor, onClose }) => {
           },
         }
       );
-
-      console.log("result appointment created", result);
+      // //console.log(toggleSuccess);
+      toggleSuccess();
+      onClose();
     } catch (error) {
-      console.log(error);
+      //console.log("error", error);
+      if (
+        error?.response?.data?.message ==
+        "Appointment already exists for this date"
+      ) {
+        //console.log(toggleExist)
+        toggleExist();
+      } else {
+        //console.log(toggleFailure)
+        toggleFailure();
+      }
+      onClose();
     } finally {
       dispatch(hideLoader());
     }
@@ -86,26 +103,26 @@ const BookAppointment = ({ doctor, onClose }) => {
 
   const modifiersStyles = {
     fullyBooked: {
-      borderRadius: '50%',
-      backgroundColor: 'rgba(255, 0, 0, 1)',
-      color: 'white'
-    }
+      borderRadius: "50%",
+      backgroundColor: "rgba(255, 0, 0, 1)",
+      color: "white",
+    },
   };
 
   const modifiers = {
     fullyBooked: (date) => {
-      return fullyBooked.some(bookedDate => {
-        const bookedDay = new Date(bookedDate).toISOString().split('T')[0];
-        const currentDay = date.toISOString().split('T')[0];
+      return fullyBooked.some((bookedDate) => {
+        const bookedDay = new Date(bookedDate).toISOString().split("T")[0];
+        const currentDay = date.toISOString().split("T")[0];
         return bookedDay === currentDay;
       });
-    }
+    },
   };
 
   const isDateFullyBooked = (date) => {
-    return fullyBooked.some(bookedDate => {
-      const bookedDay = new Date(bookedDate).toISOString().split('T')[0];
-      const currentDay = date.toISOString().split('T')[0];
+    return fullyBooked.some((bookedDate) => {
+      const bookedDay = new Date(bookedDate).toISOString().split("T")[0];
+      const currentDay = date.toISOString().split("T")[0];
       return bookedDay === currentDay;
     });
   };
@@ -114,7 +131,7 @@ const BookAppointment = ({ doctor, onClose }) => {
     <Loader />
   ) : (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white h-4/4  rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
+      <div className="bg-white h-4/4 rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
         {/* Header */}
         <div className="bg-blue-600 p-6 text-white">
           <div className="flex justify-between items-center">
@@ -227,7 +244,8 @@ const BookAppointment = ({ doctor, onClose }) => {
                   selected={selectedDate}
                   onSelect={setSelectedDate}
                   disabled={(date) => {
-                    if (date < new Date() || isDateFullyBooked(date)) return true;
+                    if (date < new Date() || isDateFullyBooked(date))
+                      return true;
                     const day = date.toLocaleDateString("en-US", {
                       weekday: "long",
                     });

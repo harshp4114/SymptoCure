@@ -48,26 +48,26 @@ const Login = () => {
   const handleSubmitLogin = async (values) => {
     try {
       dispatch(showLoader());
-      // console.log("Form Data:", values);
+      // //console.log("Form Data:", values);
       const result = await axios.post(
         "http://localhost:5000/api/user/login/",
         values
       );
-      // console.log(result)
+      // //console.log(result)
       const token = result.data.token;
-      // console.log("token",token);
+      // //console.log("token",token);
       Cookies.set("jwt-token", token, {
         expires: 1,
         secure: true,
         sameSite: "strict",
       });
       dispatch(userLoggedin());
-      // console.log(useSelector((state)=>state?.signin?.isSignedIn));
-      // console.log(Cookies.get('jwt-token'));
-      console.log("User created successfully", result);
+      // //console.log(useSelector((state)=>state?.signin?.isSignedIn));
+      // //console.log(Cookies.get('jwt-token'));
+      //console.log("User created successfully", result);
       navigate("/home");
     } catch (error) {
-      console.log("last", error);
+      //console.log("last", error);
       setError(error.response.data.message || "Something went wrong");
     }finally{
       dispatch(hideLoader());
@@ -75,7 +75,7 @@ const Login = () => {
   };
 
   const handleSubmit = async (values) => {
-    console.log("Form Data:", values);
+    //console.log("Form Data:", values);
     try {
       const result = await axios.post(
         "http://localhost:5000/api/user/",
@@ -83,18 +83,18 @@ const Login = () => {
       );
 
       const token = result?.data?.token;
-      // console.log("token",token);
+      // //console.log("token",token);
       Cookies.set("jwt-token", token, {
         expires: 1,
         secure: true,
         sameSite: "strict",
       });
       dispatch(userLoggedin());
-      // console.log(Cookies.get('jwt-token'));
-      // console.log("User created successfully", result);
+      // //console.log(Cookies.get('jwt-token'));
+      // //console.log("User created successfully", result);
       navigate("/home");
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       setError(error?.response?.data?.message || "Something went wrong");
     }
   };

@@ -17,7 +17,7 @@ const getAllUsers = async (req, res) => {
     });
   } catch (error) {
     // Handle errors and send error response
-    console.error("Error fetching users:", error);
+    //console.error("Error fetching users:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch users",
@@ -53,7 +53,7 @@ const getUserById = async (req, res) => {
     }
   } catch (error) {
     // Handle any server errors
-    console.error("Error fetching user by id :", error);
+    //console.error("Error fetching user by id :", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -64,14 +64,14 @@ const getUserById = async (req, res) => {
 
 const getUserByEmail = async (req, res) => {
   const { email, password } = req.body;
-  console.log("request body", req.body);
+  //console.log("request body", req.body);
   try {
     const user = await User.findOne({ email });
-    console.log("user with the same email", user);
+    //console.log("user with the same email", user);
     if (user) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        console.log("pass is wrong");
+        //console.log("pass is wrong");
         return res.status(404).json({
           success: false,
           message: "Invalid Email or Password",
@@ -82,7 +82,7 @@ const getUserByEmail = async (req, res) => {
         "harshp4114",
         { expiresIn: "1h" }
       );
-      console.log("backend token", token);
+      //console.log("backend token", token);
 
       res.status(200).json({
         success: true,
@@ -106,12 +106,12 @@ const getUserByEmail = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
-  // console.log("req.user    ",req.user);
+  // //console.log("req.user    ",req.user);
   try {
     const { email, id } = req.user;
 
     const user = await User.findOne({ email });
-    // console.log("user data backend",user);
+    // //console.log("user data backend",user);
 
     const address = await Address.findById(user.address);
     user.address = address;
@@ -122,7 +122,7 @@ const getUserProfile = async (req, res) => {
       userData: user,
     });
   } catch (error) {
-    // console.log(error);
+    // //console.log(error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
@@ -147,7 +147,7 @@ const createUser = async (req, res) => {
       "country",
       "zipCode",
     ];
-    // console.log(req.body);
+    // //console.log(req.body);
     // Check if all required fields are present
     for (const field of requiredFields) {
       if (!req.body[field]) {
@@ -170,7 +170,7 @@ const createUser = async (req, res) => {
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const { zipCode, country, state, city, address } = req.body;
-    console.log(Address);
+    //console.log(Address);
     const newAddress = new Address({
       zipCode: zipCode,
       country: country,
@@ -178,11 +178,11 @@ const createUser = async (req, res) => {
       city: city,
       address: address,
     });
-    console.log(newAddress);
+    //console.log(newAddress);
     // Save the address to get its ObjectId
     const savedAddress = await newAddress.save();
     // Create a new user
-    console.log("hhhhhhhhhhhhhhhhhhhhhh");
+    //console.log("hhhhhhhhhhhhhhhhhhhhhh");
     const newUser = await User.create({
       fullName: {
         firstName: req.body.firstName,
@@ -202,7 +202,7 @@ const createUser = async (req, res) => {
       isActive: true, // Default value
     });
 
-    console.log("user data", newUser);
+    //console.log("user data", newUser);
     // Return success response
     if (newUser) {
       const token = jwt.sign(
@@ -251,7 +251,7 @@ const updateUser = async (req, res) => {
     }
   } catch (error) {
     // Handle any server errors
-    console.error("Error updating user:", error);
+    //console.error("Error updating user:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -292,7 +292,7 @@ const deleteUserById = async (req, res) => {
     });
   } catch (error) {
     // Handle any server errors
-    console.error("Error deleting user:", error);
+    //console.error("Error deleting user:", error);
     res.status(500).json({
       success: false,
       message: "Server error",

@@ -6,9 +6,9 @@ import { userLoggedout } from "../redux/slices/signInSlice";
 const Header = () => {
   const dispatch = useDispatch();
   const isSignedIn = useSelector((state) => state.signin.isSignedIn);
-  // console.log(isSignedIn,"from header");
+  // //console.log(isSignedIn,"from header");
   const handleLogout = () => {
-    console.log(Cookies.get("jwt-token"));
+    //console.log(Cookies.get("jwt-token"));
     if (Cookies.get("jwt-token")) {
       Cookies.remove("jwt-token");
       dispatch(userLoggedout());
@@ -19,9 +19,9 @@ const Header = () => {
     <>
       <div
         id="header"
-        className="w-full h-24 z-50 fixed bg-black  border-black/[0.2] text-white shadow-2xl  border-[1px] flex backdrop-blur-2xl justify-between items-center transition-all duration-1000"
+        className="w-full h-24 z-50 fixed bg-black  border-black/[0.2] text-white shadow-2xl  border-[1px] flex backdrop-blur-2xl justify-start items-center transition-all duration-1000"
       >
-        <div className="w-9/12 flex justify-between items-center">
+        <div className="w-9/12 flex justify-start items-center">
           <div
             id="div1"
             className="text-xl font-NumFont font-extralight flex justify-center items-center cursor-pointer h-3/6 w-3/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
@@ -35,19 +35,13 @@ const Header = () => {
             id="div1"
             className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-3/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
           >
-            <Link to="/disease">Check Disease</Link>
+            <Link to="/disease-detection">Check Disease</Link>
           </div>
           <div
             id="div1"
             className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-3/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
           >
             <Link to="/consultancy">Get Consultancy</Link>
-          </div>
-          <div
-            id="div1"
-            className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-3/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
-          >
-            <Link to="/about">About</Link>
           </div>
         </div>
         {isSignedIn ? (

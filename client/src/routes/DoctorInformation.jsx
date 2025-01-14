@@ -5,6 +5,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Loader from "../components/Loader";
 import BookAppointment from "../components/BookAppointment";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { set } from "date-fns";
 
 const DoctorInformation = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
@@ -14,6 +17,10 @@ const DoctorInformation = () => {
   const location = useLocation();
   const doctorInfo = location.state.doctor;
   const [showBooking, setShowBooking] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showFailureToast, setShowFailureToast] = useState(false);
+  const [showExistToast, setShowExistToast] = useState(false);
+
   useEffect(() => {
     if (loader) return;
     if (!isAuthenticated) {
@@ -23,7 +30,28 @@ const DoctorInformation = () => {
 
   useEffect(() => {
     setLoader(false);
-  }, []);
+    //console.log("hiiiiii");
+    // toast.success("Appointment Booked Successfully!");
+
+    if (showSuccessToast) {
+      //console.log("hiiiiii from success",showSuccessToast);
+
+      toast.success("Appointment Booked Successfully!");
+      setShowSuccessToast(false);
+    }
+    if (showFailureToast) {
+      //console.log("hiiiiii fsail",showFailureToast);
+
+      toast.error("Failed to book the appointment. Please try again.");
+      setShowFailureToast(false);
+    }
+    if (showExistToast) {
+      //console.log("hiiiiii from exist",showExistToast);
+
+      toast.error("Appointment already exists.");
+      setShowExistToast(false);
+    }
+  }, [showExistToast, showFailureToast, showSuccessToast]);
 
   return loader ? (
     <Loader />
@@ -33,8 +61,22 @@ const DoctorInformation = () => {
         <BookAppointment
           doctor={doctorInfo}
           onClose={() => setShowBooking(false)}
+          toggleSuccess={() => setShowSuccessToast(true)}
+          toggleFailure={() => setShowFailureToast(true)}
+          toggleExist={() => setShowExistToast(true)}
         />
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="w-full max-w-3xl bg-white shadow-xl rounded-lg p-8">
         {/* Back Button */}
         <div className="mb-6">

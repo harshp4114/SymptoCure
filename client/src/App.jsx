@@ -11,7 +11,6 @@ import {
 import DetectDisease from "./routes/DetectDisease";
 import Consultancy from "./routes/Consultancy";
 import Profile from "./routes/Profile";
-import About from "./routes/About";
 import Login from "./routes/LogIn";
 import { Provider, useSelector } from "react-redux";
 import store from "./redux/store/store";
@@ -42,7 +41,7 @@ const appRouter = createBrowserRouter([
         element: <Body />,
       },
       {
-        path: "/disease",
+        path: "/disease-detection",
         element: <DetectDisease />,
       },
       {
@@ -52,10 +51,6 @@ const appRouter = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
-      },
-      {
-        path: "/about",
-        element: <About />,
       },
       {
         path: "/profile",

@@ -24,11 +24,11 @@ const getAllAppointments = async (req, res) => {
 const createAppointment = async (req, res) => {
   try {
     const { selectedDate, reason } = req.body;
-    // console.log(req.body);
-    // console.log(req.user);
+    // //console.log(req.body);
+    // //console.log(req.user);
     const userId = req.user.id;
     const doctorId = req.params.id;
-    console.log(selectedDate);
+    //console.log(selectedDate);
 
     const existingAppointment = await Appointment.findOne({
       userId,
@@ -48,9 +48,9 @@ const createAppointment = async (req, res) => {
       reason,
       status: "confirmed",
     });
-    console.log(appointment);
+    //console.log(appointment);
     const newAppointment = await appointment.save();
-    console.log(newAppointment);
+    //console.log(newAppointment);
     if (newAppointment) {
       return res.status(201).json({
         success: true,

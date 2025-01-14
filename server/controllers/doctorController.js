@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Appointment = require("../models/appointmentModel");
 const getAllDoctors = async (req, res) => {
   try {
-    // console.log("hii");
+    // //console.log("hii");
     // Fetch all Doctors from the database
     const doctors = await Doctor.find(); // Exclude the password field
 
@@ -15,7 +15,7 @@ const getAllDoctors = async (req, res) => {
     });
   } catch (error) {
     // Handle errors and send error response
-    // console.error("Error fetching Doctors:", error);
+    // //console.error("Error fetching Doctors:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch Doctors",
@@ -35,7 +35,7 @@ const getDoctorById = async (req, res) => {
         message: "Invalid Doctor ID",
       });
     }
-    console.log("hiiii");
+    //console.log("hiiii");
     const doctor = await Doctor.findById(doctorId);
     if (doctor) {
       res.status(200).json({
@@ -51,7 +51,7 @@ const getDoctorById = async (req, res) => {
     }
   } catch (error) {
     // Handle any server errors
-    console.error("Error fetching Doctor by id :", error);
+    //console.error("Error fetching Doctor by id :", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -105,7 +105,7 @@ const getAppointmentsByDoctorId = async (req, res) => {
       fullyBookedDates: fullyBookedDates.map((entry) => entry.date), // Return an array of fully booked dates
     });
   } catch (error) {
-    console.error("Error fetching fully booked dates:", error);
+    //console.error("Error fetching fully booked dates:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -114,13 +114,8 @@ const getAppointmentsByDoctorId = async (req, res) => {
   }
 };
 
-
-
-
-
 const createDoctor = async (req, res) => {
-
-  // console.log(req.body);
+  // //console.log(req.body);
   try {
     const requiredFields = [
       "firstName",
@@ -159,7 +154,7 @@ const createDoctor = async (req, res) => {
     const newDoctor = await Doctor.create({
       fullName: {
         firstName: req.body.firstName,
-        lastName: req.body.lastName
+        lastName: req.body.lastName,
       },
       email: req.body.email,
       gender: req.body.gender,
@@ -173,9 +168,9 @@ const createDoctor = async (req, res) => {
       patientsPerDay: req.body.patientsPerDay, // This field is required in the schema
       rating: 0, // Default rating
       reviews: [], // Default reviews
-      isActive: true // Default value
+      isActive: true, // Default value
     });
-    console.log("hello");
+    //console.log("hello");
     if (newDoctor) {
       // Return success response
       return res.status(201).send("Doctor created successfully ");
@@ -217,7 +212,7 @@ const updateDoctor = async (req, res) => {
     }
   } catch (error) {
     // Handle any server errors
-    console.error("Error updating doctor:", error);
+    //console.error("Error updating doctor:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -258,7 +253,7 @@ const deleteDoctorById = async (req, res) => {
     });
   } catch (error) {
     // Handle any server errors
-    console.error("Error deleting doctor:", error);
+    //console.error("Error deleting doctor:", error);
     res.status(500).json({
       success: false,
       message: "Server error",

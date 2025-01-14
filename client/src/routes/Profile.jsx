@@ -8,7 +8,6 @@ import useAuth from "../hooks/useAuth";
 import "ldrs/helix"; // Ensure this path is valid
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 
-
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
   const [loading, setLoading] = useState(true);
@@ -31,8 +30,8 @@ const Profile = () => {
 
       setUserProfile(result.data.userData);
     } catch (error) {
-      console.log("error", error);
-    }finally{
+      //console.log("error", error);
+    } finally {
       dispatch(hideLoader()); // Hide loader after API call
     }
   };
@@ -41,12 +40,12 @@ const Profile = () => {
   useEffect(() => {
     if (loading) return;
     if (!isAuthenticated) {
-      console.log(isAuthenticated);
+      //console.log(isAuthenticated);
       navigate("/login"); // Redirect if the user is not authenticated
     }
     getUser();
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
-  // console.log(userProfile);
+  // //console.log(userProfile);
 
   useEffect(() => {
     setLoading(false);
