@@ -56,7 +56,7 @@ const Profile = () => {
       <l-helix size="45" speed="2.5" color="black"></l-helix>
     </div>
   ) : (
-    <div className="bg-gray-100 absolute mt-24 w-full h-[86.7vh] flex justify-center items-center">
+    <div className="bg-gray-100 absolute  w-full h-[86.7vh] flex justify-center items-center">
       {/* Outer Container */}
       <div className="bg-white w-3/4 h-full rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
         {/* Sidebar/Profile Picture Section */}

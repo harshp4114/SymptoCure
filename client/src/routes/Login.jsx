@@ -170,7 +170,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex justify-center absolute mt-24 bg-gray-100 py-8 px-4">
+    <div className="min-h-screen w-full flex justify-center  bg-gray-100 py-8 px-4">
       <div className="max-w-full mx-auto bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
           Create Your Account

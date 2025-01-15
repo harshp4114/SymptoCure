@@ -3,21 +3,34 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'FiraCode';
-    src: url('/fonts/FiraCode.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "FiraCode";
+  src: url("/fonts/FiraCode.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "TTHoves";
+  src: url("/fonts/TTHoves.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Gilroy";
+  src: url("/fonts/Gilroy.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@layer utilities {
+  /* Remove number input spinners */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    @apply appearance-none;
+    margin: 0;
   }
 
-  @layer utilities {
-    /* Remove number input spinners */
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      @apply appearance-none;
-      margin: 0;
-    }
-  
-    input[type="number"] {
-      @apply appearance-none;
-    }
+  input[type="number"] {
+    @apply appearance-none;
   }
+}
+

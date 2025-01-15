@@ -11,6 +11,9 @@ module.exports = {
       fontFamily: {
         'NumFont': ['NumFont', 'sans-serif'],
         'FiraCode': ['FiraCode', 'sans-serif'],
+        'TTHoves': ['TTHoves', 'sans-serif'], 
+        'Gilroy': ['Gilroy', 'sans-serif'], 
+
       },
     },
   },

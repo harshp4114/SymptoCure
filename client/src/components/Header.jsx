@@ -19,54 +19,78 @@ const Header = () => {
     <>
       <div
         id="header"
-        className="w-full h-24 z-50 fixed bg-black  border-black/[0.2] text-white shadow-2xl  border-[1px] flex backdrop-blur-2xl justify-start items-center transition-all duration-1000"
+        className="w-full h-24 sticky top-0 z-50 bg-[#16165C] flex justify-between py-2 px-10 items-center"
       >
-        <div className="w-9/12 flex justify-start items-center">
-          <div
-            id="div1"
-            className="text-xl font-NumFont font-extralight flex justify-center items-center cursor-pointer h-3/6 w-3/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
-          >
-            <Link to="/home" className="flex items-center space-x-4">
-              <img src="./logo.png" className="w-14 rounded-full"></img>
-              <p className="text-2xl font-FiraCode">SymptoCure</p>
+        <div className="w-9/12 h-full flex justify-start ml-16 text-white items-center">
+          <div id="div1" className="inline-flex items-center w-62 space-x-2">
+            <Link to="/home" className="flex items-center">
+              <img
+                src="./logo.png"
+                alt="Logo"
+                className="h-16 w-16 rounded-full border-2 border-white"
+              />
+              <p className="text-3xl mb-[4px] ml-4 font-bold">SymptoCure</p>
             </Link>
           </div>
-          <div
-            id="div1"
-            className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-3/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
-          >
-            <Link to="/disease-detection">Check Disease</Link>
-          </div>
-          <div
-            id="div1"
-            className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-3/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
-          >
-            <Link to="/consultancy">Get Consultancy</Link>
+          <div id="div1" className="inline-flex ml-16 items-center">
+            <Link
+              to="/disease-detection"
+              className="flex justify-center items-center group hover:text-[#2EE9FF] transition-all duration-700"
+            >
+              <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                ➔
+              </span>
+              <span className="text-xl ml-4 font-semibold">Check Disease</span>
+            </Link>
+
+            <Link
+              to="/consultancy"
+              className="flex justify-center ml-14 items-center group hover:text-[#2EE9FF] transition-all duration-700"
+            >
+              <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                ➔
+              </span>
+              <span className="text-xl ml-4 font-semibold">
+                Get Consultancy
+              </span>
+            </Link>
           </div>
         </div>
         {isSignedIn ? (
-          <>
-            <div
-              id="div1"
-              className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-2/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
-            >
-              <Link to="/profile">Profile</Link>
-            </div>
-            <div
-              id="div1"
-              className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-2/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
-            >
-              <Link to="/home" onClick={handleLogout}>
-                Logout
+          <div className="flex mr-16 h-full items-center w-auto text-white">
+              <Link
+                to="/profile"
+                className="flex justify-center items-center group mr-14 hover:text-[#2EE9FF] transition-all duration-700"
+              >
+                <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                  ➔
+                </span>
+                <span className="text-xl ml-4 font-semibold">Profile</span>
               </Link>
-            </div>
-          </>
+              <Link
+                to="/home"
+                onClick={handleLogout}
+                className="flex justify-center items-center group hover:text-[#2EE9FF] transition-all duration-700"
+              >
+                <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                  ➔
+                </span>
+                <span className="text-xl ml-4 font-semibold">Logout</span>
+              </Link>
+          </div>
         ) : (
-          <div
-            id="div1"
-            className="text-xl font-FiraCode font-extralight flex justify-center items-center cursor-pointer h-3/6 w-2/12 rounded-full text-center m-2 p-3 hover:bg-gray-200/[0.8] ease-in-out hover:text-black hover:font-normal transition-all duration-700"
-          >
-            <Link to="/login">SignIn / SignUp</Link>
+          <div id="div1" className="inline-flex items-center text-white mr-16">
+            <Link
+              to="/login"
+              className="flex justify-center items-center group hover:text-[#2EE9FF] transition-all duration-700"
+            >
+              <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                ➔
+              </span>
+              <span className="text-xl ml-4 font-semibold">
+                SignIn / SignUp
+              </span>
+            </Link>
           </div>
         )}
       </div>

@@ -66,7 +66,7 @@ const Consultancy = () => {
   }, []);
 
   return (
-    <div className="absolute mt-24 w-full h-[96.5vh] bg-slate-800">
+    <div className="absolute w-full h-[96.5vh] bg-slate-800">
       <div className="w-full h-32 flex items-center justify-center space-x-6">
         <h2 className="text-2xl font-FiraCode font-extrabold text-white">
           Search Doctors :{" "}

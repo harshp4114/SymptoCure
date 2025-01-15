@@ -5,7 +5,7 @@ const DetectDisease = () => {
   useEffect(() => {
     // useAuth();
   }, []);
-  return <div className="absolute mt-24">DNSSJNCJAN</div>;
+  return <div className="absolute">DNSSJNCJAN</div>;
 };
 
 export default DetectDisease;
