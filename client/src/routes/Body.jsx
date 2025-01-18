@@ -26,6 +26,11 @@ const Body = () => {
         {
           y: -220,
           duration: 1,
+          onComplete: () => {
+            setFirstWord((prevWord) =>
+              prevWord === "manageable" ? "personalized" : "manageable"
+            );
+          },
         }
       );
 
@@ -147,6 +152,3 @@ export default Body;
 //       .set(".heroHeading2", { y: 0 }, "<");
 //   }, 1000);
 // }, []);
-
-
-
