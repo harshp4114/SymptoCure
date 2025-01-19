@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 import gsap from "gsap";
 
 const Body = () => {
-  const words = ["manageable", "easy", "personalized"];
+  const words = ["manageable.", "easy.", "personalized."];
   const [firstWord, setFirstWord] = useState(words[0]);
   const [secondWord, setSecondWord] = useState(words[1]);
   const setNewWord = (Word) => {
@@ -28,7 +28,7 @@ const Body = () => {
           duration: 1,
           onComplete: () => {
             setFirstWord((prevWord) =>
-              prevWord === "manageable" ? "personalized" : "manageable"
+              prevWord === "manageable." ? "personalized." : "manageable."
             );
           },
         }
@@ -82,12 +82,12 @@ const Body = () => {
           <h2 className="text-[#FFFFFF] text-8xl font-Gilroy font-extrabold">
             healthcare
           </h2>
-          <div className="container w-[640px] h-40 overflow-hidden border-dotted items-start p-8 pt-5 mt-4 border-[3px] border-opacity-50 rounded-2xl border-white">
+          <div className="container w-[640px] h-32 overflow-hidden justify-end border-dotted items-start p-4 pt-2 mt-4  border-[3px] border-opacity-50 rounded-2xl border-white">
             {/* The animated element */}
-            <h2 className="heroHeading1 text-[#2EE9FF] text-8xl font-Gilroy font-extrabold mb-6">
+            <h2 className="heroHeading1 text-[#2EE9FF] text-8xl ml-2 font-Gilroy font-extrabold mb-6">
               {firstWord}
             </h2>
-            <h2 className="heroHeading2 text-[#2EE9FF] text-8xl font-Gilroy font-extrabold mb-6">
+            <h2 className="heroHeading2 text-[#2EE9FF] text-8xl ml-2 font-Gilroy font-extrabold mb-6">
               {secondWord}
             </h2>
           </div>

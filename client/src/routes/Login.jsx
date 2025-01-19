@@ -9,6 +9,7 @@ import signUpValidateSchema from "../yupValidators/signUpValidate";
 import loginValidateSchema from "../yupValidators/loginValidate";
 import useAuth from "../hooks/useAuth";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
+import { cardio } from "ldrs";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,10 +19,10 @@ const Login = () => {
   const signUpValidationSchema = signUpValidateSchema;
 
   const loginValidationSchema = loginValidateSchema;
+  cardio.register();
 
   // useAuth();
-  useEffect(()=>{
-  },[]);
+  useEffect(() => {}, []);
 
   // Initial Values
   const LoginInitialValues = {
@@ -69,7 +70,7 @@ const Login = () => {
     } catch (error) {
       //console.log("last", error);
       setError(error.response.data.message || "Something went wrong");
-    }finally{
+    } finally {
       dispatch(hideLoader());
     }
   };
@@ -101,68 +102,86 @@ const Login = () => {
 
   if (isLogin) {
     return (
-      <div className="flex justify-center w-full h-full items-center mx-auto min-h-screen absolute mt-24 bg-gray-100">
-        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-          <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-            Sign In
-          </h1>
-          <Formik
-            initialValues={LoginInitialValues}
-            validationSchema={loginValidationSchema}
-            onSubmit={handleSubmitLogin}
-          >
-            <Form>
-              <label htmlFor="email" className="block text-gray-700">
-                Email
-              </label>
-              <Field
-                type="email"
-                name="email"
-                className="border-2 border-gray-600 rounded-lg my-2 p-2 w-full bg-gray-200"
-              />
-              <ErrorMessage
-                name="email"
-                component="div"
-                className="text-red-700 text-sm font-bold my-1"
-              />
-
-              <label htmlFor="password" className="block text-gray-700">
-                Password
-              </label>
-              <Field
-                type="password"
-                name="password"
-                className="border-2 border-gray-600 rounded-lg my-2 p-2 w-full bg-gray-200"
-              />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="text-red-700 text-sm font-bold my-1"
-              />
-
-              <button
-                type="submit"
-                className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg w-full mt-4 hover:bg-blue-600 transition"
-              >
-                Submit
-              </button>
-              {error != "" && (
-                <div>
-                  <p className="my-2 text-red-500 font-bold">{error}</p>
-                </div>
-              )}
-            </Form>
-          </Formik>
-
-          <div>
-            <p
-              className="mt-4 text-gray-700 cursor-pointer"
-              onClick={() => {
-                setIsLogin(!isLogin);
-              }}
+      <div className="flex justify-center w-full h-[86.8vh] items-center mx-auto absolute bg-[#403CD5]">
+        <div className="bg-[#16165C] shadow-lg flex rounded-3xl p-8 w-9/12 h-5/6 ">
+          <div className="w-1/2 h-full flex flex-wrap content-start items-start">
+            <div className="w-40 flex h-24 ml-3">
+              <l-cardio
+                size="130"
+                stroke="6"
+                speed="1.9"
+                color="white"
+              ></l-cardio>
+            </div>
+            <div className="basis-full flex flex-wrap">
+              <h1 className="text-[4.8rem] leading-none font-Gilroy text-left font-bold text-white basis-full">
+                Detect.
+              </h1>
+              <h1 className="text-[4.8rem] leading-none font-Gilroy font-semibold text-left text-white basis-full">
+                Connect.
+              </h1>
+              <h1 className="text-[4.8rem] leading-none font-Gilroy font-semibold text-left mb-2 text-white basis-full">
+                Cure.
+              </h1>
+            </div>
+            <div className="w-3/4 h-[2px] bg-gradient-to-r from-transparent via-[#4B48D1] to-transparent my-4"></div>
+            <div><h1 className="text-[#a0c4ff] font-Gilroy text-3xl font-semibold ml-1 mt-2">Sign In to Access Your Profile</h1></div>
+          </div>
+          <div className="w-1/2 h-full flex flex-wrap">
+            <Formik
+              initialValues={LoginInitialValues}
+              validationSchema={loginValidationSchema}
+              onSubmit={handleSubmitLogin}
             >
-              Don't have an account? Sign Up
-            </p>
+              <Form>
+                <Field
+                  type="email"
+                  name="email"
+                  placeholder="Email Address*"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="absolute right-6 top-5 text-[#42caff] text-sm font-semibold uppercase"
+                />
+
+                <Field
+                  type="password"
+                  name="password"
+                  placeholder="Password*"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-700 text-sm font-bold my-1"
+                />
+
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg w-full mt-4 hover:bg-blue-600 transition"
+                >
+                  Submit
+                </button>
+                {error != "" && (
+                  <div>
+                    <p className="my-2 text-red-500 font-bold">{error}</p>
+                  </div>
+                )}
+              </Form>
+            </Formik>
+
+            <div className="w-full">
+              <p
+                className="mt-4 text-gray-700 cursor-pointer"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                }}
+              >
+                Don't have an account? Sign Up
+              </p>
+            </div>
           </div>
         </div>
       </div>
