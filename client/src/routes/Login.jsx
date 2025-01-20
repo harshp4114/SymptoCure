@@ -107,25 +107,29 @@ const Login = () => {
           <div className="w-1/2 h-full flex flex-wrap content-start items-start">
             <div className="w-40 flex h-24 ml-3">
               <l-cardio
-                size="130"
+                size="110"
                 stroke="6"
                 speed="1.9"
                 color="white"
               ></l-cardio>
             </div>
             <div className="basis-full flex flex-wrap">
-              <h1 className="text-[4.8rem] leading-none font-Gilroy text-left font-bold text-white basis-full">
+              <h1 className="text-[4.4rem] leading-none font-Gilroy text-left font-bold text-white basis-full">
                 Detect.
               </h1>
-              <h1 className="text-[4.8rem] leading-none font-Gilroy font-semibold text-left text-white basis-full">
+              <h1 className="text-[4.4rem] leading-none font-Gilroy font-semibold text-left text-white basis-full">
                 Connect.
               </h1>
-              <h1 className="text-[4.8rem] leading-none font-Gilroy font-semibold text-left mb-2 text-white basis-full">
+              <h1 className="text-[4.4rem] leading-none font-Gilroy font-semibold text-left mb-8 text-white basis-full">
                 Cure.
               </h1>
             </div>
             <div className="w-3/4 h-[2px] bg-gradient-to-r from-transparent via-[#4B48D1] to-transparent my-4"></div>
-            <div><h1 className="text-[#a0c4ff] font-Gilroy text-3xl font-semibold ml-1 mt-2">Sign In to Access Your Profile</h1></div>
+            <div>
+              <h1 className="text-[#a0c4ff] font-Gilroy text-3xl font-semibold ml-1 mt-2">
+                Sign In to Access Your Profile
+              </h1>
+            </div>
           </div>
           <div className="w-1/2 h-full flex flex-wrap">
             <Formik
@@ -133,7 +137,7 @@ const Login = () => {
               validationSchema={loginValidationSchema}
               onSubmit={handleSubmitLogin}
             >
-              <Form>
+              <Form className="w-full">
                 <Field
                   type="email"
                   name="email"
@@ -143,7 +147,7 @@ const Login = () => {
                 <ErrorMessage
                   name="email"
                   component="div"
-                  className="absolute right-6 top-5 text-[#42caff] text-sm font-semibold uppercase"
+                  className="text-[#2BB6DB] text-md font-semibold w-full my-2"
                 />
 
                 <Field
@@ -155,15 +159,37 @@ const Login = () => {
                 <ErrorMessage
                   name="password"
                   component="div"
-                  className="text-red-700 text-sm font-bold my-1"
+                  className="text-[#2BB6DB] text-md w-full font-semibold my-2"
                 />
 
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg w-full mt-4 hover:bg-blue-600 transition"
-                >
-                  Submit
-                </button>
+                <div className="w-full">
+                  <p
+                    className="mt-2 mb-2 text-[#9DC1FC] text-md cursor-pointer"
+                    onClick={() => {
+                      setIsLogin(!isLogin);
+                    }}
+                  >
+                    Don't have an account? Sign Up
+                  </p>
+                </div>
+
+                <div className="relative top-2 w-5/12 h-16 mt-2">
+                  <button
+                    type="submit"
+                    className="bg-[#E6E4FD] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
+                  >
+                    {/* Default Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                      Submit Information
+                    </span>
+
+                    {/* Hover Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                      Submit Information
+                    </span>
+                  </button>
+                </div>
+
                 {error != "" && (
                   <div>
                     <p className="my-2 text-red-500 font-bold">{error}</p>
@@ -171,17 +197,6 @@ const Login = () => {
                 )}
               </Form>
             </Formik>
-
-            <div className="w-full">
-              <p
-                className="mt-4 text-gray-700 cursor-pointer"
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                }}
-              >
-                Don't have an account? Sign Up
-              </p>
-            </div>
           </div>
         </div>
       </div>
