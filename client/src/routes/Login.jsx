@@ -192,7 +192,7 @@ const Login = () => {
 
                 {error != "" && (
                   <div>
-                    <p className="my-2 text-red-500 font-bold">{error}</p>
+                    <p className="text-[#2BB6DB] text-md font-semibold w-full my-2">{error}</p>
                   </div>
                 )}
               </Form>
@@ -204,298 +204,239 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex justify-center  bg-gray-100 py-8 px-4">
-      <div className="max-w-full mx-auto bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Create Your Account
-        </h1>
-
-        <Formik
-          initialValues={SignUpInitialValues}
-          validationSchema={signUpValidationSchema}
-          onSubmit={handleSubmit}
-        >
-          <Form className="space-y-6">
-            {/* Personal Information Section */}
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-              <div className="space-y-2">
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  First Name
-                </label>
-                <Field
-                  type="text"
-                  name="firstName"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="firstName"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Last Name
-                </label>
-                <Field
-                  type="text"
-                  name="lastName"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="lastName"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email
-                </label>
-                <Field
-                  type="email"
-                  name="email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Phone Number
-                </label>
-                <Field
-                  type="number"
-                  name="phone"
-                  className="w-full appearance-none px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="phone"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Password
-                </label>
-                <Field
-                  type="password"
-                  name="password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Confirm Password
-                </label>
-                <Field
-                  type="password"
-                  name="confirmPassword"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="confirmPassword"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="age"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Age
-                </label>
-                <Field
-                  type="number"
-                  name="age"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="age"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="gender"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Gender ( Male / Female / Other )
-                </label>
-                <Field
-                  type="text"
-                  name="gender"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <ErrorMessage
-                  name="gender"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            {/* Address Section */}
-            <div className="pt-4">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Address Information
-              </h2>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-                <div className="col-span-2 space-y-2">
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Street Address
-                  </label>
-                  <Field
-                    type="text"
-                    name="address"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <ErrorMessage
-                    name="address"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    City
-                  </label>
-                  <Field
-                    type="text"
-                    name="city"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <ErrorMessage
-                    name="city"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="state"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    State
-                  </label>
-                  <Field
-                    type="text"
-                    name="state"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <ErrorMessage
-                    name="state"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Country
-                  </label>
-                  <Field
-                    type="text"
-                    name="country"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <ErrorMessage
-                    name="country"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="zipCode"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    ZIP Code
-                  </label>
-                  <Field
-                    type="text"
-                    name="zipCode"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <ErrorMessage
-                    name="zipCode"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {error && (
-              <div className="text-red-600 text-center font-medium">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-200 ease-in-out"
-            >
-              Create Account
-            </button>
-          </Form>
-        </Formik>
-
-        <div className="text-center mt-6">
-          <p
-            className="text-gray-600 hover:text-blue-600 cursor-pointer transition duration-200"
-            onClick={() => setIsLogin(!isLogin)}
+    <div className="flex justify-center w-full h-fit items-center mx-auto absolute bg-[#403CD5]">
+      <div className="bg-[#16165C] shadow-lg flex mt-20 rounded-3xl p-8 w-9/12 h-5/6 ">
+        <div className="w-1/2 text-white h-full flex flex-wrap content-start items-start">
+          <div className="w-40 flex h-24 ml-3">
+            <l-cardio
+              size="110"
+              stroke="6"
+              speed="1.9"
+              color="white"
+            ></l-cardio>
+          </div>
+          <div className="basis-full flex flex-wrap">
+            <h1 className="text-[4.4rem] leading-none font-Gilroy text-left font-bold text-white basis-full">
+              Detect.
+            </h1>
+            <h1 className="text-[4.4rem] leading-none font-Gilroy font-semibold text-left text-white basis-full">
+              Connect.
+            </h1>
+            <h1 className="text-[4.4rem] leading-none font-Gilroy font-semibold text-left mb-8 text-white basis-full">
+              Cure.
+            </h1>
+          </div>
+          <div className="w-3/4 h-[2px] bg-gradient-to-r from-transparent via-[#4B48D1] to-transparent my-4"></div>
+          <div>
+            <h1 className="text-[#a0c4ff] font-Gilroy text-3xl font-semibold ml-1 mt-2">
+              From Symptoms to Solutions
+            </h1>
+            <h1 className="text-[#a0c4ff] font-Gilroy text-3xl font-semibold ml-1 mt-2">
+              Get Started Today
+            </h1>
+          </div>
+        </div>
+        <div className="w-1/2 h-full flex flex-wrap">
+          <Formik
+            initialValues={SignUpInitialValues}
+            validationSchema={signUpValidationSchema}
+            onSubmit={handleSubmit}
           >
-            Already have an account? Sign In
-          </p>
+            <Form className="w-full">
+              {/* Personal Information Section */}
+              <Field
+                type="text"
+                name="firstName"
+                placeholder="First Name*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="firstName"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                type="text"
+                name="lastName"
+                placeholder="Last Name*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="lastName"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                type="email"
+                name="email"
+                placeholder="Email Address*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                type="number"
+                name="phone"
+                placeholder="Phone Number*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="phone"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                type="password"
+                name="password"
+                placeholder="Password*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="confirmPassword"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                type="number"
+                name="age"
+                placeholder="Years Young*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="age"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                type="text"
+                name="gender"
+                placeholder="Gender (Male / Female / Other)*"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+              />
+              <ErrorMessage
+                name="gender"
+                component="div"
+                className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              {/* Address Section */}
+                <h2 className="ml-2 mt-4 text-3xl font-Gilroy font-semibold text-[#9dc1fc] mb-4">
+                  Your Location - 🌍
+                </h2>
+
+                <Field
+                  type="text"
+                  name="address"
+                  placeholder="Street Address*"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                />
+                <ErrorMessage
+                  name="address"
+                  component="div"
+                  className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+                />
+
+                <Field
+                  type="text"
+                  name="city"
+                  placeholder="Current City*"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                />
+                <ErrorMessage
+                  name="city"
+                  component="div"
+                  className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+                />
+
+                <Field
+                  type="text"
+                  name="state"
+                  placeholder="State*"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                />
+                <ErrorMessage
+                  name="state"
+                  component="div"
+                  className="text-[#2BB6DB] text-md font-semibold w-full my-2"
+                />
+
+                <Field
+                  type="text"
+                  name="country"
+                  placeholder="Country*"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                />
+                <ErrorMessage
+                  name="country"
+                  component="div"
+                  className="text-[#2BB6DB] text-md font-semibold w-full my-2"
+                />
+
+                <Field
+                  type="text"
+                  name="zipCode"
+                  placeholder="ZIP Code*"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                />
+                <ErrorMessage
+                  name="zipCode"
+                  component="div"
+                  className="text-[#2BB6DB] text-md font-semibold w-full my-2"
+                />
+
+              
+              <div className="w-full">
+                <p
+                  className="mt-2 mb-2 text-[#9DC1FC] text-md cursor-pointer"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  Already have an account? Sign In
+                </p>
+              </div>
+              <div className="relative top-2 w-5/12 h-16 mt-2">
+              <button
+                    type="submit"
+                    className="bg-[#E6E4FD] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
+                  >
+                    {/* Default Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                      Create Account
+                    </span>
+
+                    {/* Hover Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                      Create Account
+                    </span>
+                  </button>
+              </div>
+              {error && (
+                <div className="text-[#2BB6DB] text-md font-semibold w-full my-2">
+                  {error}
+                </div>
+              )}
+            </Form>
+          </Formik>
         </div>
       </div>
     </div>
