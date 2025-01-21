@@ -11,7 +11,7 @@ import {
 import DetectDisease from "./routes/DetectDisease";
 import Consultancy from "./routes/Consultancy";
 import Profile from "./routes/Profile";
-import Login from "./routes/LogIn";
+import Login from "./routes/Login";
 import { Provider, useSelector } from "react-redux";
 import store from "./redux/store/store";
 import DoctorInformation from "./routes/DoctorInformation";
