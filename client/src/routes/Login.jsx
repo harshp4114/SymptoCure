@@ -180,12 +180,12 @@ const Login = () => {
                   >
                     {/* Default Text */}
                     <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
-                      Submit Information
+                      Submit Credentials
                     </span>
 
                     {/* Hover Text */}
                     <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                      Submit Information
+                      Submit Credentials
                     </span>
                   </button>
                 </div>
