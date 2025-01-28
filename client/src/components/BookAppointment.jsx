@@ -10,8 +10,6 @@ import Loader from "./Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const BookAppointment = ({
   doctor,

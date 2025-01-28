@@ -12,6 +12,7 @@ const Header = () => {
     if (Cookies.get("jwt-token")) {
       Cookies.remove("jwt-token");
       dispatch(userLoggedout());
+      localStorage.removeItem("symptomFields");
     }
   };
 
@@ -19,7 +20,7 @@ const Header = () => {
     <>
       <div
         id="header"
-        className="w-full h-24 sticky top-0 z-50 bg-[#16165C] flex justify-between py-2 px-10 items-center"
+        className="w-full h-24 sticky top-0 z-50 bg-[#16165C] border-b-[1px] border-opacity-65 border-white flex justify-between py-2 px-10 items-center"
       >
         <div className="w-9/12 h-full flex justify-start ml-16 text-white items-center">
           <div id="div1" className="inline-flex items-center w-62 space-x-2">

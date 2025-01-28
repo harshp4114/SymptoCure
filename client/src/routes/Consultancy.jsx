@@ -51,6 +51,9 @@ const Consultancy = () => {
     }
   };
 
+       // dispatch(showLoader()); ADD THIS IN THE TRY OF ANY API CALL MADE TO THE BACKEND
+      // dispatch(hideLoader()); ADD THIS IN THE FINALLY OF ANY API CALL MADE TO THE BACKEND
+
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
 
   useEffect(() => {
