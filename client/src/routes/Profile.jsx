@@ -19,14 +19,11 @@ const Profile = () => {
   const getUser = async () => {
     dispatch(showLoader()); // Show loader before API call
     try {
-      const result = await axios.get(
-        "http://localhost:5000/api/user/profile/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const result = await axios.get(`${BASE_URL}/api/user/profile/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setUserProfile(result.data.userData);
     } catch (error) {

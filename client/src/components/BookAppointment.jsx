@@ -10,7 +10,7 @@ import Loader from "./Loader";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
-
+import { BASE_URL } from "../utils/constants";
 const BookAppointment = ({
   doctor,
   onClose,
@@ -42,7 +42,7 @@ const BookAppointment = ({
   const updateCalendarAppointments = async () => {
     try {
       const result = await axios.get(
-        `http://localhost:5000/api/doctor/${doctor._id}/appointments`
+        `${BASE_URL}/api/doctor/${doctor._id}/appointments`
       );
       setFullyBooked(result.data.fullyBookedDates);
     } catch (error) {
@@ -54,7 +54,7 @@ const BookAppointment = ({
     dispatch(showLoader());
     try {
       await axios.post(
-        `http://localhost:5000/api/appointment/${doctor._id}`,
+        `${BASE_URL}/api/appointment/${doctor._id}`,
         {
           ...values,
           selectedDate,

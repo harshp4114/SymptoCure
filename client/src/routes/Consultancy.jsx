@@ -7,6 +7,7 @@ import { userLoggedin } from "../redux/slices/signInSlice";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
+import { BASE_URL } from "../utils/constants";
 
 const Consultancy = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
@@ -20,7 +21,7 @@ const Consultancy = () => {
   const getDoctors = async () => {
     try {
       dispatch(showLoader());
-      const result = await axios.get("http://localhost:5000/api/doctor/", {
+      const result = await axios.get(`${BASE_URL}/api/doctor/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -51,8 +52,8 @@ const Consultancy = () => {
     }
   };
 
-       // dispatch(showLoader()); ADD THIS IN THE TRY OF ANY API CALL MADE TO THE BACKEND
-      // dispatch(hideLoader()); ADD THIS IN THE FINALLY OF ANY API CALL MADE TO THE BACKEND
+  // dispatch(showLoader()); ADD THIS IN THE TRY OF ANY API CALL MADE TO THE BACKEND
+  // dispatch(hideLoader()); ADD THIS IN THE FINALLY OF ANY API CALL MADE TO THE BACKEND
 
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
 
