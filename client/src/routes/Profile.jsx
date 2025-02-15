@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import "ldrs/helix"; // Ensure this path is valid
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
-
+import { BASE_URL } from "../utils/constants";
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
   const [loading, setLoading] = useState(true);
@@ -24,10 +24,10 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      // console.log(result)
       setUserProfile(result.data.userData);
     } catch (error) {
-      //console.log("error", error);
+      // console.log("error", error);
     } finally {
       dispatch(hideLoader()); // Hide loader after API call
     }

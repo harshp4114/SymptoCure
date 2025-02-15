@@ -78,7 +78,7 @@ const userSchema = new mongoose.Schema(
     // Account-related fields
     role: {
       type: String,
-      enum: ["user", "admin"], // Default role is "user", can be "admin" for admin access
+      enum: ["user", "admin","doctor"], // Default role is "user", can be "admin" for admin access
       default: "user",
     },
     isActive: {

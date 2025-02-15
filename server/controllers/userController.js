@@ -63,10 +63,10 @@ const getUserById = async (req, res) => {
 };
 
 const getUserByEmail = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
   //console.log("request body", req.body);
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, role });
     //console.log("user with the same email", user);
     if (user) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -77,8 +77,9 @@ const getUserByEmail = async (req, res) => {
           message: "Invalid Email or Password",
         });
       }
+      const roleLower=role.toLowerCase();
       const token = jwt.sign(
-        { id: user._id, email: user.email },
+        { id: user._id, email: user.email, role: roleLower },
         "harshp4114",
         { expiresIn: "1h" }
       );
@@ -93,7 +94,7 @@ const getUserByEmail = async (req, res) => {
     } else {
       return res.status(404).json({
         success: false,
-        message: "Invalid Email or Password",
+        message: "Invalid Email or Password for the selected role",
       });
     }
   } catch (error) {
@@ -111,7 +112,7 @@ const getUserProfile = async (req, res) => {
     const { email, id } = req.user;
 
     const user = await User.findOne({ email });
-    // //console.log("user data backend",user);
+    console.log("user data backend", user);
 
     const address = await Address.findById(user.address);
     user.address = address;
@@ -132,11 +133,13 @@ const getUserProfile = async (req, res) => {
 
 // Controller to create a user
 const createUser = async (req, res) => {
+  console.log("hhhhhhh");
   try {
     const requiredFields = [
       "firstName",
       "lastName",
       "email",
+      "role",
       "password",
       "age",
       "gender",
@@ -147,7 +150,7 @@ const createUser = async (req, res) => {
       "country",
       "zipCode",
     ];
-    // //console.log(req.body);
+    console.log(req.body);
     // Check if all required fields are present
     for (const field of requiredFields) {
       if (!req.body[field]) {
@@ -170,7 +173,7 @@ const createUser = async (req, res) => {
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const { zipCode, country, state, city, address } = req.body;
-    //console.log(Address);
+    // console.log(Address);
     const newAddress = new Address({
       zipCode: zipCode,
       country: country,
@@ -178,11 +181,14 @@ const createUser = async (req, res) => {
       city: city,
       address: address,
     });
-    //console.log(newAddress);
+    console.log(newAddress);
     // Save the address to get its ObjectId
     const savedAddress = await newAddress.save();
     // Create a new user
-    //console.log("hhhhhhhhhhhhhhhhhhhhhh");
+    // console.log("hhhhhhhhhhhhhhhhhhhhhh");
+
+    const role = req.body.role.toLowerCase();
+
     const newUser = await User.create({
       fullName: {
         firstName: req.body.firstName,
@@ -198,15 +204,15 @@ const createUser = async (req, res) => {
       detectedDisease: null,
       history: [],
       searchHistory: [],
-      role: req.body.role,
+      role: role,
       isActive: true, // Default value
     });
 
-    //console.log("user data", newUser);
+    // console.log("user data", newUser);
     // Return success response
     if (newUser) {
       const token = jwt.sign(
-        { id: newUser._id, email: newUser.email },
+        { id: newUser._id, email: newUser.email, role: role },
         "harshp4114",
         { expiresIn: "1h" }
       );

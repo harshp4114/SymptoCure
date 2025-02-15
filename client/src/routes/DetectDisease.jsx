@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { toast , ToastContainer} from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,7 +17,22 @@ const DetectDisease = () => {
   const [loader, setLoader] = useState(true);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
-
+  const symptomsAuto = [
+    "Fever",
+    "Cough",
+    "Shortness of breath",
+    "Tiredness",
+    "Aches and pains",
+    "Sore throat",
+    "Diarrhoea",
+    "Conjunctivitis",
+    "Headache",
+    "Loss of taste or smell",
+    "A rash on skin, or discolouration of fingers or toes",
+    "Difficulty breathing or shortness of breath",
+    "Chest pain or pressure",
+    "Loss of speech or movement",
+  ];
   useEffect(() => {
     if (loader) return;
     if (!isAuthenticated) {
@@ -121,7 +136,7 @@ const DetectDisease = () => {
   };
 
   return (
-    <div className="w-full h-full flex justify-center items-center bg-[#403CD5]">
+    <div className="w-full h-full flex justify-center items-start bg-[#403CD5]">
       <ToastContainer
         position="top-right"
         autoClose={2000}
@@ -133,7 +148,7 @@ const DetectDisease = () => {
         draggable
         pauseOnHover
       />
-      <div className="w-9/12 h-fit min-h-[73%] bg-[#16165C] rounded-3xl flex justify-center items-start px-10 py-10">
+      <div className="w-9/12 h-fit min-h-[73%] bg-[#16165C] rounded-3xl flex justify-center mt-6 items-start px-10 py-10">
         <div className="w-[40%] h-full flex flex-wrap content-start mr-10 items-start">
           <div className="w-40 flex h-24 item-center ml-3">
             <l-cardio
@@ -172,28 +187,31 @@ const DetectDisease = () => {
               <Form className="w-full">
                 <div className="grid grid-cols-2 gap-4">
                   {fields.map((field, index) => (
-                    <div key={index} className="flex flex-col relative">
-                      <Field
-                        type={field.type}
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl p-2 w-full bg-[#232269]"
-                      />
-                      <ErrorMessage
-                        name={field.name}
-                        component="div"
-                        className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeField(index)}
-                        className="absolute top-1/2 right-1 transform -translate-y-1/2 mr-1 text-[#9DC1FC] p-2 rounded-full transition-all duration-300 hover:scale-110 group"
-                      >
-                        <Trash2
-                          size={20}
-                          className="group-hover:rotate-12 transition-transform duration-300"
+                    <div key={index} className="flex flex-col">
+                      <div className="relative">
+                        <Field
+                          type={field.type}
+                          name={field.name}
+                          id={field.name}
+                          placeholder={field.placeholder}
+                          className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl p-2 w-full bg-[#232269]"
                         />
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => removeField(index)}
+                          className="absolute top-1/2 right-1 transform -translate-y-1/2 mr-1 text-[#9DC1FC] p-2 rounded-full transition-all duration-300 hover:scale-110 group"
+                        >
+                          <Trash2
+                            size={20}
+                            className="group-hover:rotate-12 transition-transform duration-300"
+                          />
+                        </button>
+                      </div>
+                      <ErrorMessage
+                          name={field.name}
+                          component="div"
+                          className="text-[#2BB6DB] text-md font-semibold w-full my-2"
+                        />
                     </div>
                   ))}
                 </div>
@@ -240,67 +258,3 @@ const DetectDisease = () => {
 
 export default DetectDisease;
 
-
-// use this to fix alignment error when errormessage is displayed
-// return (
-//   <div className="w-full h-full flex justify-center items-center bg-[#403CD5]">
-//     <ToastContainer
-//       position="top-right"
-//       autoClose={2000}
-//       hideProgressBar={false}
-//       newestOnTop={false}
-//       closeOnClick
-//       rtl={false}
-//       pauseOnFocusLoss
-//       draggable
-//       pauseOnHover
-//     />
-//     <div className="w-9/12 h-fit min-h-[73%] bg-[#16165C] rounded-3xl flex justify-center items-start px-10 py-10">
-//       {/* Left side content remains the same */}
-//       <div className="w-[58%] h-full">
-//         <Formik
-//           initialValues={generateInitialValues()}
-//           validationSchema={generateValidationSchema()}
-//           onSubmit={handleSubmit}
-//           enableReinitialize={true}
-//         >
-//           {({ isSubmitting }) => (
-//             <Form className="w-full">
-//               <div className="grid grid-cols-2 gap-4">
-//                 {fields.map((field, index) => (
-//                   <div key={index} className="flex flex-col">
-//                     <div className="relative">
-//                       <Field
-//                         type={field.type}
-//                         name={field.name}
-//                         placeholder={field.placeholder}
-//                         className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl p-2 w-full bg-[#232269]"
-//                       />
-//                       <button
-//                         type="button"
-//                         onClick={() => removeField(index)}
-//                         className="absolute top-1/2 right-1 transform -translate-y-1/2 mr-1 text-[#9DC1FC] p-2 rounded-full transition-all duration-300 hover:scale-110 group"
-//                       >
-//                         <Trash2
-//                           size={20}
-//                           className="group-hover:rotate-12 transition-transform duration-300"
-//                         />
-//                       </button>
-//                     </div>
-//                     <ErrorMessage
-//                       name={field.name}
-//                       component="div"
-//                       className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-//                     />
-//                   </div>
-//                 ))}
-//               </div>
-
-//               {/* Rest of the form remains the same */}
-//             </Form>
-//           )}
-//         </Formik>
-//       </div>
-//     </div>
-//   </div>
-// );

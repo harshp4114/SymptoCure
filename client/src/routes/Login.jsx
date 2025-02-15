@@ -11,6 +11,10 @@ import useAuth from "../hooks/useAuth";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { cardio } from "ldrs";
 import { BASE_URL } from "../utils/constants";
+import {
+  setRoleAsDoctor,
+  setRoleAsUser,
+} from "../redux/slices/roleSlice";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -29,6 +33,7 @@ const Login = () => {
   const LoginInitialValues = {
     email: "",
     password: "",
+    role: "",
   };
 
   const SignUpInitialValues = {
@@ -36,6 +41,7 @@ const Login = () => {
     lastName: "",
     email: "",
     password: "",
+    role: "",
     confirmPassword: "",
     phone: "",
     age: "",
@@ -52,9 +58,17 @@ const Login = () => {
       dispatch(showLoader());
       // //console.log("Form Data:", values);
       const result = await axios.post(`${BASE_URL}/api/user/login/`, values);
-      // //console.log(result)
+      console.log(result);
+      const role = result.data.user.role;
+
+      if (role == "user") {
+        dispatch(setRoleAsUser());
+      } else if (role == "doctor") {
+        dispatch(setRoleAsDoctor());
+      }
       const token = result.data.token;
-      // //console.log("token",token);
+      console.log("token", token);
+
       Cookies.set("jwt-token", token, {
         expires: 1,
         secure: true,
@@ -77,9 +91,18 @@ const Login = () => {
     //console.log("Form Data:", values);
     try {
       const result = await axios.post(`${BASE_URL}/api/user/`, values);
-
+      console.log("result", result);
       const token = result?.data?.token;
       // //console.log("token",token);
+
+      const role = result.data.user.role;
+
+      if (role == "user") {
+        dispatch(setRoleAsUser());
+      } else if (role == "doctor") {
+        dispatch(setRoleAsDoctor());
+      }
+
       Cookies.set("jwt-token", token, {
         expires: 1,
         secure: true,
@@ -157,6 +180,23 @@ const Login = () => {
                   className="text-[#2BB6DB] text-md w-full font-semibold my-2"
                 />
 
+                <Field
+                  as="select"
+                  name="role"
+                  className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 w-full bg-[#232269]"
+                >
+                  <option value="" disabled>
+                    Select Role*
+                  </option>
+                  <option value="user">User</option>
+                  <option value="doctor">Doctor</option>
+                </Field>
+                <ErrorMessage
+                  name="role"
+                  component="div"
+                  className="text-[#2BB6DB] text-md w-full font-semibold my-2"
+                />
+
                 <div className="w-full">
                   <p
                     className="mt-2 mb-2 text-[#9DC1FC] text-md cursor-pointer"
@@ -187,7 +227,7 @@ const Login = () => {
 
                 {error != "" && (
                   <div>
-                    <p className="text-[#2BB6DB] text-md font-semibold w-full my-2">
+                    <p className="text-[#2BB6DB] text-lg font-semibold w-full my-6">
                       {error}
                     </p>
                   </div>
@@ -311,6 +351,24 @@ const Login = () => {
                 name="confirmPassword"
                 component="div"
                 className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+              />
+
+              <Field
+                as="select"
+                name="role"
+                className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 w-full bg-[#232269]"
+              >
+                <option value="" disabled>
+                  Select Role*
+                </option>
+                <option value="user">User</option>
+                <option value="doctor">Doctor</option>
+              </Field>
+
+              <ErrorMessage
+                name="role"
+                component="div"
+                className="text-[#2BB6DB] text-md w-full font-semibold my-2"
               />
 
               <Field
