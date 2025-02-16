@@ -1,5 +1,6 @@
 const Doctor = require("../models/doctorModel"); // Import the Doctor model
 const mongoose = require("mongoose");
+const jwt=require("jsonwebtoken");
 const Appointment = require("../models/appointmentModel");
 const getAllDoctors = async (req, res) => {
   try {
@@ -28,6 +29,7 @@ const getDoctorById = async (req, res) => {
   try {
     // Extract the Doctor ID from the URL parameters
     const doctorId = req.params.id;
+    // console.log("inside get by ud")
     // Check if the provided ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(doctorId)) {
       return res.status(400).json({
@@ -59,6 +61,36 @@ const getDoctorById = async (req, res) => {
     });
   }
 };
+
+const getDoctorProfile = async (req, res) => {
+  try {
+    // Extract the Doctor ID from the URL parameters
+    const {email,id} = req.user;
+
+    //console.log("hiiii");
+    const doctor = await Doctor.findOne({email});
+    if (doctor) {
+      res.status(200).json({
+        success: true,
+        message: `Doctor with ${id} is fetched successfully`,
+        data: doctor,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
+  } catch (error) {
+    // Handle any server errors
+    //console.error("Error fetching Doctor by id :", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
 
 const getAppointmentsByDoctorId = async (req, res) => {
   const doctorId = req.params.id;
@@ -172,8 +204,13 @@ const createDoctor = async (req, res) => {
     });
     //console.log("hello");
     if (newDoctor) {
+      const token = jwt.sign(
+        { id: newDoctor._id, email: newDoctor.email},
+        "harshp4114",
+        { expiresIn: "1h" }
+      );
       // Return success response
-      return res.status(201).send("Doctor created successfully ");
+      return res.status(201).json({ message: "Doctor created successfully", token });
     }
   } catch (error) {
     res.status(500).json({
@@ -269,4 +306,5 @@ module.exports = {
   deleteDoctorById,
   updateDoctor,
   getAppointmentsByDoctorId,
+  getDoctorProfile,
 };

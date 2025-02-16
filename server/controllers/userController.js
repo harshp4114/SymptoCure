@@ -77,7 +77,7 @@ const getUserByEmail = async (req, res) => {
           message: "Invalid Email or Password",
         });
       }
-      const roleLower=role.toLowerCase();
+      const roleLower = role.toLowerCase();
       const token = jwt.sign(
         { id: user._id, email: user.email, role: roleLower },
         "harshp4114",
@@ -134,99 +134,104 @@ const getUserProfile = async (req, res) => {
 // Controller to create a user
 const createUser = async (req, res) => {
   console.log("hhhhhhh");
-  try {
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "role",
-      "password",
-      "age",
-      "gender",
-      "phone",
-      "address",
-      "city",
-      "state",
-      "country",
-      "zipCode",
-    ];
-    console.log(req.body);
-    // Check if all required fields are present
-    for (const field of requiredFields) {
-      if (!req.body[field]) {
+
+  if (req.body.role == "user") {
+    try {
+      const requiredFields = [
+        "firstName",
+        "lastName",
+        "email",
+        "role",
+        "password",
+        "age",
+        "gender",
+        "phone",
+        "address",
+        "city",
+        "state",
+        "country",
+        "zipCode",
+      ];
+      console.log(req.body);
+      // Check if all required fields are present
+      for (const field of requiredFields) {
+        if (!req.body[field]) {
+          return res.status(400).json({
+            success: false,
+            message: `Missing required field: ${field}`,
+          });
+        }
+      }
+
+      // Check if user already exists
+      const existingUser = await User.findOne({ email: req.body.email });
+      if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: `Missing required field: ${field}`,
+          message: "User with this email already exists",
         });
       }
-    }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      return res.status(400).json({
+      // Hash the password before saving
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const { zipCode, country, state, city, address } = req.body;
+      // console.log(Address);
+      const newAddress = new Address({
+        zipCode: zipCode,
+        country: country,
+        state: state,
+        city: city,
+        address: address,
+      });
+      console.log(newAddress);
+      // Save the address to get its ObjectId
+      const savedAddress = await newAddress.save();
+      // Create a new user
+      // console.log("hhhhhhhhhhhhhhhhhhhhhh");
+
+      const role = req.body.role.toLowerCase();
+
+      const newUser = await User.create({
+        fullName: {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+        },
+        email: req.body.email,
+        password: hashedPassword, // Save the hashed password
+        age: req.body.age,
+        gender: req.body.gender,
+        phone: req.body.phone,
+        address: savedAddress._id,
+        symptoms: [],
+        detectedDisease: null,
+        history: [],
+        searchHistory: [],
+        role: role,
+        isActive: true, // Default value
+      });
+
+      // console.log("user data", newUser);
+      // Return success response
+      if (newUser) {
+        const token = jwt.sign(
+          { id: newUser._id, email: newUser.email },
+          "harshp4114",
+          { expiresIn: "1h" }
+        );
+
+        return res
+          .status(201)
+          .json({ message: "User created successfully", token });
+      }
+    } catch (error) {
+      res.status(500).json({
         success: false,
-        message: "User with this email already exists",
+        message: "Failed to create user",
+        error: error.message,
       });
     }
+  }else if(req.body.role=="doctor"){
 
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const { zipCode, country, state, city, address } = req.body;
-    // console.log(Address);
-    const newAddress = new Address({
-      zipCode: zipCode,
-      country: country,
-      state: state,
-      city: city,
-      address: address,
-    });
-    console.log(newAddress);
-    // Save the address to get its ObjectId
-    const savedAddress = await newAddress.save();
-    // Create a new user
-    // console.log("hhhhhhhhhhhhhhhhhhhhhh");
-
-    const role = req.body.role.toLowerCase();
-
-    const newUser = await User.create({
-      fullName: {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-      },
-      email: req.body.email,
-      password: hashedPassword, // Save the hashed password
-      age: req.body.age,
-      gender: req.body.gender,
-      phone: req.body.phone,
-      address: savedAddress._id,
-      symptoms: [],
-      detectedDisease: null,
-      history: [],
-      searchHistory: [],
-      role: role,
-      isActive: true, // Default value
-    });
-
-    // console.log("user data", newUser);
-    // Return success response
-    if (newUser) {
-      const token = jwt.sign(
-        { id: newUser._id, email: newUser.email, role: role },
-        "harshp4114",
-        { expiresIn: "1h" }
-      );
-
-      return res
-        .status(201)
-        .json({ message: "User created successfully", token });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to create user",
-      error: error.message,
-    });
   }
 };
 
