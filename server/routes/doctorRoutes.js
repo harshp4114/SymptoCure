@@ -8,11 +8,13 @@ const {
   deleteDoctorById,
   updateDoctor,
   getAppointmentsByDoctorId,
-  getDoctorProfile
+  getDoctorProfile,
+  getDoctorByEmail,
 } = require("../controllers/doctorController");
 
 router.get("/",authMiddleware, getAllDoctors);
 router.post("/", createDoctor);
+router.post("/login",getDoctorByEmail);
 router.get("/:id/appointments", getAppointmentsByDoctorId);
 router.get("/profile",authMiddleware, getDoctorProfile);
 router.get("/:id", getDoctorById);

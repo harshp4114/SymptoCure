@@ -13,8 +13,8 @@ const {
 
 router.get("/", getAllUsers);
 router.get("/profile",authMiddleware, getUserProfile);
-router.post("/login",getUserByEmail);
-router.post("/", createUser);
+router.post("/login",getUserByEmail); //y
+router.post("/", createUser);//y
 router.delete("/:id", deleteUserById);
 router.get("/:id", getUserById);
 router.put("/:id",updateUser);

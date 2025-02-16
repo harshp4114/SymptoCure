@@ -25,8 +25,8 @@ const createAppointment = async (req, res) => {
   try {
     const { selectedDate, reason } = req.body;
     // //console.log(req.body);
-    // //console.log(req.user);
-    const userId = req.user.id;
+    // //console.log(req.patient);
+    const userId = req.patient.id;
     const doctorId = req.params.id;
     //console.log(selectedDate);
 

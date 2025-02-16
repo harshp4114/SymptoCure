@@ -31,6 +31,11 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
 
     // Professional information
     specialization: {
@@ -80,6 +85,12 @@ const doctorSchema = new mongoose.Schema(
         reviewedAt: { type: Date, default: Date.now },
       },
     ],
+    // Account-related fields
+    // role: {
+    //   type: String,
+    //   enum: ["doctor"], 
+    //   default: "doctor",
+    // },
 
     // Account details
     isActive: {

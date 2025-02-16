@@ -20,8 +20,8 @@ const authMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, "harshp4114");
     //console.log("hiii");
     // console.log("decoded", decoded);
-    // Attach user info to the request object
-    req.user = decoded;
+    // Attach patient info to the request object
+    req.patient = decoded;
 
     next(); // Proceed to the next middleware or route handler
   } catch (error) {

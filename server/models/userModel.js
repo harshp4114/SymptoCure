@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ["Male", "Female", "Other","male","female","other"],
+      enum: ["Male", "Female", "Other", "male", "female", "other"],
       required: true,
     },
     phone: {
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema(
 
     // Machine learning-related fields
     symptoms: {
-      type: [String], // Current symptoms provided by the user
+      type: [String], // Current symptoms provided by the patient
       default: [],
     },
     detectedDisease: {
@@ -78,11 +78,11 @@ const userSchema = new mongoose.Schema(
     // Account-related fields
     role: {
       type: String,
-      enum: ["user", "admin","doctor"], // Default role is "user", can be "admin" for admin access
-      default: "user",
+      enum: ["patient", "admin", "doctor"], // Default role is "patient", can be "admin" for admin access
+      default: "patient",
     },
     isActive: {
-      type: Boolean, // Indicates whether the user account is active
+      type: Boolean, // Indicates whether the patient account is active
       default: true,
     },
   },

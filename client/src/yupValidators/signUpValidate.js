@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 // Validation Schema
-const signUpValidateSchema = Yup.object({
+const signUpUserValidateSchema = Yup.object({
   firstName: Yup.string()
     .max(20, "Must be 20 characters or less")
     .required("First Name is required"),
@@ -17,7 +17,6 @@ const signUpValidateSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm Password is required"),
-  role: Yup.string().required("Role is required"),
   phone: Yup.string()
     .matches(/^[0-9]+$/, "Phone number must contain only digits")
     .min(10, "Phone number must be at least 10 digits") // Adjust if country-specific
@@ -49,4 +48,4 @@ const signUpValidateSchema = Yup.object({
     .required("Zip Code is required"),
 });
 
-export default signUpValidateSchema;
+export default signUpUserValidateSchema;

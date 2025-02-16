@@ -23,8 +23,8 @@ const App = () => {
   return (
     <Provider store={store}>
       <div className="h-[100vh] w-full">
-        {isLoading && <Loader />} 
-        {location.pathname !== "/" && <Header /> }
+        {isLoading && <Loader />} {/* Show loader if isLoading is true */}
+        {location.pathname !== "/" && <Header /> } {/*Dont Show header on loading page */}
         <Outlet />
       </div>
     </Provider>

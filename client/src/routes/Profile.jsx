@@ -16,12 +16,12 @@ const Profile = () => {
   const token = Cookies.get("jwt-token");
   const dispatch = useDispatch();
   const role = useSelector((state) => state.role.roleName);
-  console.log(role);
+  // console.log(role);
   const getUser = async () => {
     dispatch(showLoader()); // Show loader before API call
     try {
-      if (role == "user") {
-        const result = await axios.get(`${BASE_URL}/api/user/profile/`, {
+      if (role == "patient") {
+        const result = await axios.get(`${BASE_URL}/api/patient/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -50,7 +50,7 @@ const Profile = () => {
     if (loading) return;
     if (!isAuthenticated) {
       //console.log(isAuthenticated);
-      navigate("/login"); // Redirect if the user is not authenticated
+      navigate("/login"); // Redirect if the patient is not authenticated
     }
     getUser();
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
@@ -64,7 +64,7 @@ const Profile = () => {
     <div className=" w-full h-full flex justify-center items-center">
       <l-helix size="45" speed="2.5" color="black"></l-helix>
     </div>
-  ) : role === "user" ? (
+  ) : role === "patient" ? (
     <div className="bg-gray-100 absolute  w-full h-[86.7vh] flex justify-center items-center">
       {/* Outer Container */}
       <div className="bg-white w-3/4 h-full rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
@@ -84,7 +84,7 @@ const Profile = () => {
           </h1>
           {/* Role */}
           <p className="text-sm text-gray-200">
-            {profileData?.role == "user" ? "PATIENT" : "DOCTOR"}
+            {profileData?.role == "patient" ? "PATIENT" : "DOCTOR"}
           </p>
         </div>
 

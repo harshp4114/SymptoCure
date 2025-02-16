@@ -1,6 +1,7 @@
+const bcrypt = require("bcrypt"); // For password hashing
 const Doctor = require("../models/doctorModel"); // Import the Doctor model
 const mongoose = require("mongoose");
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const Appointment = require("../models/appointmentModel");
 const getAllDoctors = async (req, res) => {
   try {
@@ -65,10 +66,10 @@ const getDoctorById = async (req, res) => {
 const getDoctorProfile = async (req, res) => {
   try {
     // Extract the Doctor ID from the URL parameters
-    const {email,id} = req.user;
+    const { email, id } = req.patient;
 
     //console.log("hiiii");
-    const doctor = await Doctor.findOne({email});
+    const doctor = await Doctor.findOne({ email });
     if (doctor) {
       res.status(200).json({
         success: true,
@@ -90,7 +91,55 @@ const getDoctorProfile = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
+
+
+const getDoctorByEmail = async (req, res) => {
+
+  console.log("correct cntroller");
+  const { email, password, role } = req.body;
+  //console.log("request body", req.body);
+  try {
+    const doctor = await Doctor.findOne({ email });
+    console.log("doc with the same email", doctor);
+    if (doctor) {
+      const isPasswordValid = await bcrypt.compare(password, doctor.password);
+      if (!isPasswordValid) {
+        //console.log("pass is wrong");
+        return res.status(404).json({
+          success: false,
+          message: "Invalid Email or Password",
+        });
+      }
+      console.log(doctor)
+      const roleLower = role.toLowerCase();
+      const token = jwt.sign(
+        { id: doctor._id, email: doctor.email, role: roleLower },
+        "harshp4114",
+        { expiresIn: "1h" }
+      );
+      //console.log("backend token", token);
+
+      res.status(200).json({
+        success: true,
+        message: "User Logged in Successfully",
+        doctor: doctor,
+        token,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid Email or Password for the selected role",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something Went Wrong",
+    });
+  }
+};
+
 
 const getAppointmentsByDoctorId = async (req, res) => {
   const doctorId = req.params.id;
@@ -154,6 +203,7 @@ const createDoctor = async (req, res) => {
       "lastName",
       "email",
       "specialization",
+      "password",
       "experience",
       "gender",
       "phone",
@@ -181,6 +231,9 @@ const createDoctor = async (req, res) => {
         message: "Doctor with this email already exists",
       });
     }
+    //bcrypt the password for safety purposes
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    
 
     // Create a new doctor
     const newDoctor = await Doctor.create({
@@ -190,6 +243,7 @@ const createDoctor = async (req, res) => {
       },
       email: req.body.email,
       gender: req.body.gender,
+      password: hashedPassword,
       phone: req.body.phone,
       specialization: req.body.specialization,
       qualifications: req.body.qualifications,
@@ -202,15 +256,18 @@ const createDoctor = async (req, res) => {
       reviews: [], // Default reviews
       isActive: true, // Default value
     });
+
     //console.log("hello");
     if (newDoctor) {
       const token = jwt.sign(
-        { id: newDoctor._id, email: newDoctor.email},
+        { id: newDoctor._id, email: newDoctor.email },
         "harshp4114",
         { expiresIn: "1h" }
       );
       // Return success response
-      return res.status(201).json({ message: "Doctor created successfully", token });
+      return res
+        .status(201)
+        .json({ message: "Doctor created successfully", token });
     }
   } catch (error) {
     res.status(500).json({
@@ -307,4 +364,5 @@ module.exports = {
   updateDoctor,
   getAppointmentsByDoctorId,
   getDoctorProfile,
+  getDoctorByEmail,
 };

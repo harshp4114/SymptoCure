@@ -88,12 +88,12 @@ const DetectDisease = () => {
         (symptom) => symptom.trim() !== ""
       );
 
-      console.log("Symptoms to submit:", symptoms);
+      // console.log("Symptoms to submit:", symptoms);
       // Add your API call here
 
       toast.success("Symptoms submitted successfully!");
     } catch (error) {
-      console.error("Error submitting symptoms:", error);
+      // console.error("Error submitting symptoms:", error);
       toast.error("Failed to submit symptoms. Please try again.");
     } finally {
       dispatch(hideLoader());

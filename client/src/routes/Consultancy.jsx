@@ -60,7 +60,7 @@ const Consultancy = () => {
   useEffect(() => {
     if (loader) return;
     if (!isAuthenticated) {
-      navigate("/login"); // Redirect if the user is not authenticated
+      navigate("/login"); // Redirect if the patient is not authenticated
     }
     getDoctors();
   }, [isAuthenticated, loader]); // Add dependencies to avoid unnecessary re-renders

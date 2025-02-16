@@ -3,13 +3,14 @@ const User = require("../models/userModel"); // Import the User model
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const Address = require("../models/addressModel");
+const Doctor = require("../models/doctorModel");
 // Controller to get all users
 const getAllUsers = async (req, res) => {
   try {
     // Fetch all users from the database
     const users = await User.find(); // Exclude the password field
 
-    // Send a successful response with the user data
+    // Send a successful response with the patient data
     res.status(200).json({
       success: true,
       message: "All users fetched successfully",
@@ -28,22 +29,22 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    // Extract the user ID from the URL parameters
+    // Extract the patient ID from the URL parameters
     const userId = req.params.id;
     // Check if the provided ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid user ID",
+        message: "Invalid patient ID",
       });
     }
 
-    const user = await User.findById(userId);
-    if (user) {
+    const patient = await User.findById(userId);
+    if (patient) {
       res.status(200).json({
         success: true,
         message: `User with ${userId} is fetched successfully`,
-        data: user,
+        data: patient,
       });
     } else {
       res.status(404).json({
@@ -53,7 +54,7 @@ const getUserById = async (req, res) => {
     }
   } catch (error) {
     // Handle any server errors
-    //console.error("Error fetching user by id :", error);
+    //console.error("Error fetching patient by id :", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -66,10 +67,10 @@ const getUserByEmail = async (req, res) => {
   const { email, password, role } = req.body;
   //console.log("request body", req.body);
   try {
-    const user = await User.findOne({ email, role });
-    //console.log("user with the same email", user);
-    if (user) {
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+    const patient = await User.findOne({ email });
+    // console.log("patient with the same email", patient);
+    if (patient) {
+      const isPasswordValid = await bcrypt.compare(password, patient.password);
       if (!isPasswordValid) {
         //console.log("pass is wrong");
         return res.status(404).json({
@@ -79,7 +80,7 @@ const getUserByEmail = async (req, res) => {
       }
       const roleLower = role.toLowerCase();
       const token = jwt.sign(
-        { id: user._id, email: user.email, role: roleLower },
+        { id: patient._id, email: patient.email, role: roleLower },
         "harshp4114",
         { expiresIn: "1h" }
       );
@@ -88,7 +89,7 @@ const getUserByEmail = async (req, res) => {
       res.status(200).json({
         success: true,
         message: "User Logged in Successfully",
-        user: user,
+        patient: patient,
         token,
       });
     } else {
@@ -107,20 +108,20 @@ const getUserByEmail = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
-  // //console.log("req.user    ",req.user);
+  // //console.log("req.patient    ",req.patient);
   try {
-    const { email, id } = req.user;
+    const { email, id } = req.patient;
 
-    const user = await User.findOne({ email });
-    console.log("user data backend", user);
+    const patient = await User.findOne({ email });
+    // console.log("patient data backend", patient);
 
-    const address = await Address.findById(user.address);
-    user.address = address;
+    const address = await Address.findById(patient.address);
+    patient.address = address;
 
     return res.status(201).json({
       success: true,
       message: "profile found successfully",
-      userData: user,
+      userData: patient,
     });
   } catch (error) {
     // //console.log(error);
@@ -131,17 +132,16 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// Controller to create a user
+// Controller to create a patient
 const createUser = async (req, res) => {
   console.log("hhhhhhh");
 
-  if (req.body.role == "user") {
+  // if (req.body.role == "patient") {
     try {
       const requiredFields = [
         "firstName",
         "lastName",
         "email",
-        "role",
         "password",
         "age",
         "gender",
@@ -152,7 +152,7 @@ const createUser = async (req, res) => {
         "country",
         "zipCode",
       ];
-      console.log(req.body);
+      // console.log(req.body);
       // Check if all required fields are present
       for (const field of requiredFields) {
         if (!req.body[field]) {
@@ -163,7 +163,7 @@ const createUser = async (req, res) => {
         }
       }
 
-      // Check if user already exists
+      // Check if patient already exists
       const existingUser = await User.findOne({ email: req.body.email });
       if (existingUser) {
         return res.status(400).json({
@@ -183,13 +183,12 @@ const createUser = async (req, res) => {
         city: city,
         address: address,
       });
-      console.log(newAddress);
+      // console.log(newAddress);
       // Save the address to get its ObjectId
       const savedAddress = await newAddress.save();
-      // Create a new user
+      // Create a new patient
       // console.log("hhhhhhhhhhhhhhhhhhhhhh");
 
-      const role = req.body.role.toLowerCase();
 
       const newUser = await User.create({
         fullName: {
@@ -206,11 +205,11 @@ const createUser = async (req, res) => {
         detectedDisease: null,
         history: [],
         searchHistory: [],
-        role: role,
+        role: "patient",
         isActive: true, // Default value
       });
 
-      // console.log("user data", newUser);
+      console.log("patient data", newUser);
       // Return success response
       if (newUser) {
         const token = jwt.sign(
@@ -226,13 +225,12 @@ const createUser = async (req, res) => {
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Failed to create user",
+        message: "Failed to create patient",
         error: error.message,
       });
     }
-  }else if(req.body.role=="doctor"){
-
-  }
+  // } else if (req.body.role == "doctor") {
+  // }
 };
 
 const updateUser = async (req, res) => {
@@ -243,13 +241,13 @@ const updateUser = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid user ID",
+        message: "Invalid patient ID",
       });
     }
 
-    const user = await User.findByIdAndUpdate(userId, Info);
+    const patient = await User.findByIdAndUpdate(userId, Info);
 
-    if (user) {
+    if (patient) {
       res.status(200).json({
         success: true,
         messages: "User updated successfully",
@@ -257,12 +255,12 @@ const updateUser = async (req, res) => {
     } else {
       res.status(404).json({
         success: false,
-        message: "No user with the given id",
+        message: "No patient with the given id",
       });
     }
   } catch (error) {
     // Handle any server errors
-    //console.error("Error updating user:", error);
+    //console.error("Error updating patient:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -273,22 +271,22 @@ const updateUser = async (req, res) => {
 
 const deleteUserById = async (req, res) => {
   try {
-    // Extract the user ID from the URL parameters
+    // Extract the patient ID from the URL parameters
     const userId = req.params.id;
 
     // Check if the provided ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid user ID",
+        message: "Invalid patient ID",
       });
     }
 
-    // Find the user by ID and delete them
-    const user = await User.findByIdAndDelete(userId);
+    // Find the patient by ID and delete them
+    const patient = await User.findByIdAndDelete(userId);
 
-    // If user doesn't exist, return a 404 response
-    if (!user) {
+    // If patient doesn't exist, return a 404 response
+    if (!patient) {
       return res.status(404).json({
         success: false,
         message: "User not found",
@@ -299,11 +297,11 @@ const deleteUserById = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
-      data: user, // Send the deleted user details if needed
+      data: patient, // Send the deleted patient details if needed
     });
   } catch (error) {
     // Handle any server errors
-    //console.error("Error deleting user:", error);
+    //console.error("Error deleting patient:", error);
     res.status(500).json({
       success: false,
       message: "Server error",

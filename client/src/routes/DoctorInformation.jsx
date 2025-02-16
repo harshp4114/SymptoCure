@@ -24,7 +24,7 @@ const DoctorInformation = () => {
   useEffect(() => {
     if (loader) return;
     if (!isAuthenticated) {
-      navigate("/login"); // Redirect if the user is not authenticated
+      navigate("/login"); // Redirect if the patient is not authenticated
     }
   }, [isAuthenticated, loader]);
 

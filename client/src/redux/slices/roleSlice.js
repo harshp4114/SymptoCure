@@ -1,20 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const roleSlice=createSlice({
-    name:"role",
-    initialState:{
-        roleName:"",
+// Retrieve role from localStorage (if available)
+const storedRole = localStorage.getItem("role") || "";
+
+const roleSlice = createSlice({
+  name: "role",
+  initialState: {
+    roleName: storedRole, // Use stored role if available
+  },
+  reducers: {
+    setRoleAsUser: (state) => {
+      state.roleName = "patient";
+      localStorage.setItem("role", "patient"); // Save to localStorage
     },
-    reducers:{
-        setRoleAsUser:(state)=>{
-            state.roleName="user";
-        },
-        setRoleAsDoctor:(state)=>{
-            state.roleName="doctor";
-        },
-    }
+    setRoleAsDoctor: (state) => {
+      state.roleName = "doctor";
+      localStorage.setItem("role", "doctor"); // Save to localStorage
+    },
+  },
 });
 
-export const {setRoleAsUser,setRoleAsDoctor}=roleSlice.actions;
+export const { setRoleAsUser, setRoleAsDoctor } = roleSlice.actions;
 
 export default roleSlice.reducer;

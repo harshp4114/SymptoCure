@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/user", userRoutes);
+app.use("/api/patient", userRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/consultation", consultationRoutes);
 app.use("/api/appointment", appointmentRoutes);
