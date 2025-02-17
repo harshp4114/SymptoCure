@@ -67,7 +67,7 @@ const Profile = () => {
   ) : role === "patient" ? (
     <div className="bg-gray-100 absolute  w-full h-[86.7vh] flex justify-center items-center">
       {/* Outer Container */}
-      <div className="bg-white w-3/4 h-full rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
+      <div className="bg-white w-full h-full shadow-lg flex flex-col md:flex-row overflow-hidden">
         {/* Sidebar/Profile Picture Section */}
         <div className="w-full md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-600 text-white flex flex-col items-center py-10 px-5">
           {/* Profile Picture */}
@@ -175,9 +175,9 @@ const Profile = () => {
   ) : (
     <div className="bg-gray-100 absolute w-full h-[86.7vh] flex justify-center items-center">
       {/* Outer Container */}
-      <div className="bg-white w-3/4 h-full rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
+      <div className="bg-white w-full h-full shadow-lg flex flex-col md:flex-row overflow-hidden">
         {/* Sidebar/Profile Picture Section */}
-        <div className="w-full md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-600 text-white flex flex-col items-center py-10 px-5">
+        <div className="w-fit md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-600 text-white flex flex-col items-center py-10 px-5">
           {/* Profile Picture */}
           <img
             src="./logo.png"
@@ -231,15 +231,15 @@ const Profile = () => {
               </label>
               <p className="text-gray-600">{profileData?.hospital}</p>
             </div>
+            <div className="flex items-center space-x-4">
+              <label className="text-gray-700 font-medium w-40">
+              Experience:
+              </label>
+              <p className="text-gray-600">{profileData?.experience} years</p>
+            </div>
           </div>
 
-          {/* About Me */}
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-800">Experience</h3>
-            <p className="text-gray-600 mt-2">
-              {profileData?.experience} years
-            </p>
-          </div>
+          
 
           {/* Action Buttons */}
           <div className="mt-8 flex space-x-4">

@@ -36,13 +36,13 @@ const Header = () => {
     }
     dispatch(setRoleAsUser());
   };
-  // console.log(role);
-  if (role == "patient" || role == null) {
+  console.log(role);
+  if (role == "patient" || role == null || role == "") {
     return (
       <>
         <div
           id="header"
-          className="w-full h-24 sticky top-0 z-50 bg-[#16165C] border-b-[1px] border-opacity-65 border-white flex justify-between py-2 px-10 items-center"
+          className="w-full h-[14vh]  sticky top-0 z-50 bg-[#16165C] border-b-[1px] border-opacity-65 border-white flex justify-between py-2 px-10 items-center"
         >
           <div className="w-9/12 h-full flex justify-start ml-16 text-white items-center">
             <div id="div1" className="inline-flex items-center w-62 space-x-2">
@@ -55,6 +55,19 @@ const Header = () => {
                 <p className="text-3xl mb-[4px] ml-4 font-bold">
                   SymptoCure
                 </p>
+              </Link>
+            </div>
+            <div id="div1" className="inline-flex ml-16 items-center">
+              <Link
+                to="/home"
+                className="flex justify-center items-center group hover:text-[#2EE9FF] transition-all duration-700"
+              >
+                <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                  ➔
+                </span>
+                <span className="text-xl ml-4 font-semibold">
+                  Home
+                </span>
               </Link>
             </div>
             <div id="div1" className="inline-flex ml-16 items-center">
@@ -144,6 +157,19 @@ const Header = () => {
                 <p className="text-3xl mb-[4px] ml-4 font-bold">
                   SymptoCure
                 </p>
+              </Link>
+            </div>
+            <div id="div1" className="inline-flex ml-16 items-center">
+              <Link
+                to="/home"
+                className="flex justify-center items-center group hover:text-[#2EE9FF] transition-all duration-700"
+              >
+                <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                  ➔
+                </span>
+                <span className="text-xl ml-4 font-semibold">
+                  Home
+                </span>
               </Link>
             </div>
             <div id="div1" className="inline-flex ml-16 items-center">
