@@ -6,7 +6,7 @@ const authMiddleware = (req, res, next) => {
   // console.log("hiiiii from middleware");
 
   const token = req.headers.authorization.split(" ")[1];
-  //console.log(token);
+  // console.log("token in auth",token);
   // Check if the token is provided
   if (!token) {
     return res.status(401).json({
@@ -17,11 +17,11 @@ const authMiddleware = (req, res, next) => {
 
   try {
     // Verify the token
+    // console.log("hiii");
     const decoded = jwt.verify(token, "harshp4114");
-    //console.log("hiii");
     // console.log("decoded", decoded);
     // Attach patient info to the request object
-    req.patient = decoded;
+    req.tokenData = decoded;
 
     next(); // Proceed to the next middleware or route handler
   } catch (error) {

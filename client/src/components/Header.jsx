@@ -2,21 +2,28 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedout } from "../redux/slices/signInSlice";
-import { useEffect, useState } from "react";
-import { setRoleAsUser } from "../redux/slices/roleSlice";
+import { useEffect } from "react";
+import { setRoleAsUser,setRoleAsDoctor } from "../redux/slices/roleSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
   // const whichRole = useSelector((state) => state.role.roleName);
-  const localRole=localStorage.getItem("role");
-  const [role, setRole] = useState(localRole);
+  // const localRole=localStorage.getItem("role");
+  // const [role, setRole] = useState(localRole);
+  const role=useSelector((state)=>state.role.roleName);
 
+  //reseting the redux role variable by checking the local storage
   useEffect(() => {
   const localRole=localStorage.getItem("role");
-    setRole(localRole);
-    console.log("inside useedfff",role);
-  }, [localRole]);
+    if(localRole=="patient"){
+      dispatch(setRoleAsUser());
+    }else if(localRole=="doctor"){
+      dispatch(setRoleAsDoctor());
+    }
+    // console.log("inside useedfff",role);
+  });
 
+  //used to decide whether to display login or logout button
   const isSignedIn = useSelector((state) => state.signin.isSignedIn);
   // //console.log(isSignedIn,"from header");
   const handleLogout = () => {
@@ -27,9 +34,9 @@ const Header = () => {
       localStorage.removeItem("symptomFields");
       localStorage.removeItem("role");
     }
-    useDispatch(setRoleAsUser());
+    dispatch(setRoleAsUser());
   };
-  console.log(role);
+  // console.log(role);
   if (role == "patient" || role == null) {
     return (
       <>
@@ -46,7 +53,7 @@ const Header = () => {
                   className="h-16 w-16 rounded-full border-2 border-white"
                 />
                 <p className="text-3xl mb-[4px] ml-4 font-bold">
-                  SymptoCure-{role}
+                  SymptoCure
                 </p>
               </Link>
             </div>
@@ -135,13 +142,13 @@ const Header = () => {
                   className="h-16 w-16 rounded-full border-2 border-white"
                 />
                 <p className="text-3xl mb-[4px] ml-4 font-bold">
-                  SymptoCure-{role}
+                  SymptoCure
                 </p>
               </Link>
             </div>
             <div id="div1" className="inline-flex ml-16 items-center">
               <Link
-                to="/disease-detection"
+                to="/check-patients"
                 className="flex justify-center items-center group hover:text-[#2EE9FF] transition-all duration-700"
               >
                 <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">

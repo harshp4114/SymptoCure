@@ -1,6 +1,6 @@
 const Appointment = require("../models/appointmentModel"); // Import the User model
 const mongoose = require("mongoose");
-const { create } = require("../models/consultationModel");
+// const { create } = require("../models/consultationModel");
 
 const getAllAppointments = async (req, res) => {
   try {
@@ -26,7 +26,7 @@ const createAppointment = async (req, res) => {
     const { selectedDate, reason } = req.body;
     // //console.log(req.body);
     // //console.log(req.patient);
-    const userId = req.patient.id;
+    const userId = req.tokenData.id;
     const doctorId = req.params.id;
     //console.log(selectedDate);
 

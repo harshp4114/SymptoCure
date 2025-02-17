@@ -30,6 +30,8 @@ const getDoctorById = async (req, res) => {
   try {
     // Extract the Doctor ID from the URL parameters
     const doctorId = req.params.id;
+    // console.log("auth middleware info",req.patient)
+    
     // console.log("inside get by ud")
     // Check if the provided ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(doctorId)) {
@@ -40,11 +42,14 @@ const getDoctorById = async (req, res) => {
     }
     //console.log("hiiii");
     const doctor = await Doctor.findById(doctorId);
+
+    console.log(doctor);
     if (doctor) {
       res.status(200).json({
         success: true,
         message: `Doctor with ${doctorId} is fetched successfully`,
         data: doctor,
+        patientData: req.tokenData,
       });
     } else {
       res.status(404).json({
@@ -66,7 +71,7 @@ const getDoctorById = async (req, res) => {
 const getDoctorProfile = async (req, res) => {
   try {
     // Extract the Doctor ID from the URL parameters
-    const { email, id } = req.patient;
+    const { email, id } = req.tokenData;
 
     //console.log("hiiii");
     const doctor = await Doctor.findOne({ email });
@@ -74,7 +79,8 @@ const getDoctorProfile = async (req, res) => {
       res.status(200).json({
         success: true,
         message: `Doctor with ${id} is fetched successfully`,
-        data: doctor,
+        doctorData: doctor,
+        // patientData: req.patient,
       });
     } else {
       res.status(404).json({
@@ -260,7 +266,7 @@ const createDoctor = async (req, res) => {
     //console.log("hello");
     if (newDoctor) {
       const token = jwt.sign(
-        { id: newDoctor._id, email: newDoctor.email },
+        { id: newDoctor._id, email: newDoctor.email,role:"doctor" },
         "harshp4114",
         { expiresIn: "1h" }
       );

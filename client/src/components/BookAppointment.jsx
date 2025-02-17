@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { BASE_URL } from "../utils/constants";
 const BookAppointment = ({
+  patient,
   doctor,
   onClose,
   toggleSuccess,
@@ -40,13 +41,17 @@ const BookAppointment = ({
   }, []);
 
   const updateCalendarAppointments = async () => {
+    dispatch(showLoader());
     try {
       const result = await axios.get(
         `${BASE_URL}/api/doctor/${doctor._id}/appointments`
       );
+      // console.log("result of fully booked app",result)
       setFullyBooked(result.data.fullyBookedDates);
     } catch (error) {
-      // //console.log(error);
+      console.log("error",error);
+    }finally{
+      dispatch(hideLoader());
     }
   };
 
@@ -91,11 +96,11 @@ const BookAppointment = ({
   }, []);
 
   const validationSchema = Yup.object({
-    fullName: Yup.string().required("Full name is required"),
+    fullName: Yup.string().required("Full name is required").default(patient?.fullName?.firstName+" "+patient?.fullName?.lastName),
     email: Yup.string()
       .email("Invalid email address")
-      .required("Email is required"),
-    phone: Yup.string().required("Phone number is required"),
+      .required("Email is required").default(patient?.email),
+    phone: Yup.string().required("Phone number is required").default(patient?.phone),
     reason: Yup.string().required("Reason for visit is required"),
   });
 
@@ -167,7 +172,7 @@ const BookAppointment = ({
                   type="text"
                   name="fullName"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your full name"
+                  placeholder={patient?.fullName?.firstName+" "+patient?.fullName?.lastName}
                 />
                 <ErrorMessage
                   name="fullName"
@@ -184,7 +189,7 @@ const BookAppointment = ({
                   type="email"
                   name="email"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your email"
+                  placeholder={patient?.email}
                 />
                 <ErrorMessage
                   name="email"
@@ -201,7 +206,7 @@ const BookAppointment = ({
                   type="tel"
                   name="phone"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your phone number"
+                  placeholder={patient?.phone}
                 />
                 <ErrorMessage
                   name="phone"
@@ -212,7 +217,7 @@ const BookAppointment = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Reason for Visit
+                  Reason for Visit*
                 </label>
                 <Field
                   as="textarea"

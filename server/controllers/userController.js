@@ -110,7 +110,7 @@ const getUserProfile = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   // //console.log("req.patient    ",req.patient);
   try {
-    const { email, id } = req.patient;
+    const { email, id } = req.tokenData;
 
     const patient = await User.findOne({ email });
     // console.log("patient data backend", patient);
@@ -134,7 +134,7 @@ const getUserProfile = async (req, res) => {
 
 // Controller to create a patient
 const createUser = async (req, res) => {
-  console.log("hhhhhhh");
+  // console.log("hhhhhhh");
 
   // if (req.body.role == "patient") {
     try {
@@ -213,7 +213,7 @@ const createUser = async (req, res) => {
       // Return success response
       if (newUser) {
         const token = jwt.sign(
-          { id: newUser._id, email: newUser.email },
+          { id: newUser._id, email: newUser.email , role:"patient"},
           "harshp4114",
           { expiresIn: "1h" }
         );

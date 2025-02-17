@@ -13,9 +13,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const navigate = useNavigate();
-  const token = Cookies.get("jwt-token");
   const dispatch = useDispatch();
-  const role = useSelector((state) => state.role.roleName);
+  const token = Cookies.get("jwt-token");
+  const role = localStorage.getItem("role");
   // console.log(role);
   const getUser = async () => {
     dispatch(showLoader()); // Show loader before API call
@@ -24,7 +24,7 @@ const Profile = () => {
         const result = await axios.get(`${BASE_URL}/api/patient/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
-          },
+          }
         });
         setProfileData(result.data.userData);
       } else {
@@ -35,7 +35,7 @@ const Profile = () => {
           },
         });
         // console.log(result);
-        setProfileData(result.data.data);
+        setProfileData(result.data.doctorData);
       }
       // console.log(result)
     } catch (error) {
@@ -47,7 +47,7 @@ const Profile = () => {
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) return; //is set to true until the whole page loads and the last useEffect is not called which sets it to false
     if (!isAuthenticated) {
       //console.log(isAuthenticated);
       navigate("/login"); // Redirect if the patient is not authenticated
@@ -84,6 +84,7 @@ const Profile = () => {
           </h1>
           {/* Role */}
           <p className="text-sm text-gray-200">
+            {console.log(profileData?.role)}
             {profileData?.role == "patient" ? "PATIENT" : "DOCTOR"}
           </p>
         </div>

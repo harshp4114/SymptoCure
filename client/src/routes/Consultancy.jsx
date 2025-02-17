@@ -11,11 +11,15 @@ import { BASE_URL } from "../utils/constants";
 
 const Consultancy = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
+
+  const navigate = useNavigate();
+  if(localStorage.getItem("role")!=="patient"){
+   navigate("/home"); 
+  }
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const token = Cookies.get("jwt-token");
-  const navigate = useNavigate();
   const [loader, setLoader] = useState(true);
   const dispatch = useDispatch();
   const getDoctors = async () => {

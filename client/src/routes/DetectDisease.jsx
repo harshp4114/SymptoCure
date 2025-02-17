@@ -14,6 +14,10 @@ const DetectDisease = () => {
   useAuth();
   const token = Cookies.get("jwt-token");
   const navigate = useNavigate();
+
+  if(localStorage.getItem("role")!=="patient"){
+    navigate("/home"); 
+   }
   const [loader, setLoader] = useState(true);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn);

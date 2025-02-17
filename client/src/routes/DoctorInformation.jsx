@@ -1,35 +1,84 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Loader from "../components/Loader";
 import BookAppointment from "../components/BookAppointment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { set } from "date-fns";
+import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
 
 const DoctorInformation = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
+  const dispatch = useDispatch();
+  // dispatch(showLoader());
+  const [doctorInfo, setDoctorInfo] = useState({});
+  const [patientId,setPatientId]=useState("");
   const [loader, setLoader] = useState(true); // Synchronize the authentication check
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
   const location = useLocation();
-  const doctorInfo = location.state.doctor;
+  const doctorId = location.state.doctor;
   const [showBooking, setShowBooking] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showFailureToast, setShowFailureToast] = useState(false);
   const [showExistToast, setShowExistToast] = useState(false);
+  const [patientData, setPatientData] = useState({});
+  const token = Cookies.get("jwt-token");
+
+  useEffect(() => {
+    if (showBooking) {
+      getPatientData();
+    }
+  }, [showBooking]);
+
+  const getPatientData = async () => {
+    dispatch(showLoader());
+    try {
+      const result=await axios.get(`${BASE_URL}/api/patient/${patientId}`,{
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      // console.log("patient data fetched when we press book app",result)
+      setPatientData(result?.data?.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      dispatch(hideLoader());
+    }
+  };
 
   useEffect(() => {
     if (loader) return;
     if (!isAuthenticated) {
       navigate("/login"); // Redirect if the patient is not authenticated
     }
+    // console.log("func claling");
+    getDoctor();
   }, [isAuthenticated, loader]);
+
+  const getDoctor = async () => {
+    dispatch(showLoader());
+    // console.log("workding");
+    try {
+      const result = await axios.get(`${BASE_URL}/api/doctor/${doctorId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // console.log("res", result);
+      setDoctorInfo(result?.data?.data);
+      setPatientId(result?.data?.patientData?.id);
+    } catch (error) {
+    } finally {
+      dispatch(hideLoader());
+    }
+  };
 
   useEffect(() => {
     setLoader(false);
+    // console.log(doctorInfo);
     //console.log("hiiiiii");
     // toast.success("Appointment Booked Successfully!");
 
@@ -60,6 +109,7 @@ const DoctorInformation = () => {
       {showBooking && (
         <BookAppointment
           doctor={doctorInfo}
+          patient={patientData}
           onClose={() => setShowBooking(false)}
           toggleSuccess={() => setShowSuccessToast(true)}
           toggleFailure={() => setShowFailureToast(true)}
@@ -143,7 +193,7 @@ const DoctorInformation = () => {
           <div>
             <p className="text-lg text-gray-600">
               <strong>Available Days:</strong>{" "}
-              {doctorInfo?.availableDays.join(", ")}
+              {doctorInfo?.availableDays?.join(", ")}
             </p>
             <p className="text-lg text-gray-600 mt-2">
               <strong>Available Time:</strong>{" "}
@@ -157,7 +207,7 @@ const DoctorInformation = () => {
           <div>
             <p className="text-lg text-gray-600">
               <strong>Qualifications:</strong>{" "}
-              {doctorInfo?.qualifications.join(", ")}
+              {doctorInfo?.qualifications?.join(", ")}
             </p>
             <p className="text-lg text-gray-600 mt-2">
               <strong>Gender:</strong> {doctorInfo?.gender}

@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const consultationRoutes = require("./routes/consultationRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
+const addressRoutes = require("./routes/addressRoutes");
 const cors = require("cors");
 
 //console.log("monogo connecting")
@@ -22,6 +23,7 @@ app.use("/api/patient", userRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/consultation", consultationRoutes);
 app.use("/api/appointment", appointmentRoutes);
+app.use("/api/address", addressRoutes);
 
 app.use((req, res) => {
   res.end("hello from server");

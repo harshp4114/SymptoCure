@@ -17,7 +17,7 @@ router.post("/", createDoctor);
 router.post("/login",getDoctorByEmail);
 router.get("/:id/appointments", getAppointmentsByDoctorId);
 router.get("/profile",authMiddleware, getDoctorProfile);
-router.get("/:id", getDoctorById);
+router.get("/:id",authMiddleware, getDoctorById);
 router.delete("/:id",deleteDoctorById);
 router.put("/:id",updateDoctor);
 module.exports = router;

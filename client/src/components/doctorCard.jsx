@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 const DoctorCard = (props) => {
   //console.log(props.data)
   return (
-    <Link to="/doctorInformation" state={{ doctor: props.data }}>
+    <Link to="/doctorInformation" state={{ doctor: props.data._id }}>
+      {/* {console.log("hiiii",props.data)} */}
       <div className="w-64 h-80 justify-center cursor-pointer items-start m-4 bg-gray-300 border-2 drop-shadow-md shadow-black rounded-lg shadow-md flex flex-wrap">
         <div className="w-full h-52 mx-3 mt-3">
           <img

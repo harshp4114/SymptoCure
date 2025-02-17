@@ -17,6 +17,7 @@ import store from "./redux/store/store";
 import DoctorInformation from "./routes/DoctorInformation";
 import LoadingPage from "./routes/LoadingPage";
 import Loader from "./components/Loader";
+import CheckPatients from "./routes/CheckPatients";
 const App = () => {
   const location = useLocation();
   const isLoading = useSelector((state) => state.loading.isLoading); // Access global loading state
@@ -24,7 +25,8 @@ const App = () => {
     <Provider store={store}>
       <div className="h-[100vh] w-full">
         {isLoading && <Loader />} {/* Show loader if isLoading is true */}
-        {location.pathname !== "/" && <Header /> } {/*Dont Show header on loading page */}
+        {location.pathname !== "/" && <Header />}{" "}
+        {/*Dont Show header on loading page */}
         <Outlet />
       </div>
     </Provider>
@@ -63,6 +65,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/",
         element: <LoadingPage />,
+      },
+      {
+        path: "/check-patients",
+        element: <CheckPatients />,
       },
     ],
   },
