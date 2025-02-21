@@ -14,6 +14,8 @@ import { BASE_URL } from "../utils/constants";
 import { setRoleAsDoctor, setRoleAsUser } from "../redux/slices/roleSlice";
 import SignUpDoctorValidate from "../yupValidators/signUpDoctorValidate";
 import Loader from "../components/Loader";
+import { Stethoscope } from "lucide-react";
+
 const Login = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState("patient"); //handles toggle in the signup page for patient/doctor
@@ -45,7 +47,6 @@ const Login = () => {
     phone: "",
     age: "",
     gender: "",
-    address: "",
     city: "",
     state: "",
     country: "",
@@ -64,9 +65,10 @@ const Login = () => {
     qualifications: [],
     experience: "",
     hospital: "",
-    availableDays: [],
-    availableTime: {},
-    patientsPerDay: 0,
+    city: "",
+    state: "",
+    country: "",
+    zipCode: "",
   };
 
   // on click functions for the patient/doctor toggle buttons
@@ -110,6 +112,7 @@ const Login = () => {
         // //console.log(useSelector((state)=>state?.signin?.isSignedIn));
         // //console.log(Cookies.get('jwt-token'));
         //console.log("User created successfully", result);
+        dispatch(setRoleAsUser());
         navigate("/home");
       } catch (error) {
         console.log("last", error);
@@ -148,6 +151,7 @@ const Login = () => {
         // //console.log(useSelector((state)=>state?.signin?.isSignedIn));
         // //console.log(Cookies.get('jwt-token'));
         //console.log("User created successfully", result);
+        dispatch(setRoleAsDoctor());
         navigate("/home");
       } catch (error) {
         console.log("last", error);
@@ -164,7 +168,7 @@ const Login = () => {
       // console.log("values", values);
       dispatch(showLoader());
       const result = await axios.post(`${BASE_URL}/api/patient/`, values);
-      console.log("result", result);
+      // console.log("result", result);
       const token = result?.data?.token;
       // //console.log("token",token);
 
@@ -179,6 +183,7 @@ const Login = () => {
       dispatch(userLoggedin());
       // //console.log(Cookies.get('jwt-token'));
       // //console.log("User created successfully", result);
+      dispatch(setRoleAsUser());
       navigate("/home");
     } catch (error) {
       console.log("error", error);
@@ -190,10 +195,10 @@ const Login = () => {
 
   const handleSubmitDoctor = async (values) => {
     try {
-      // console.log("values", values);
+      console.log("values", values);
       dispatch(showLoader());
       const result = await axios.post(`${BASE_URL}/api/doctor/`, values);
-      // console.log("result", result);
+      console.log("result", result);
       const token = result?.data?.token;
       // //console.log("token",token);
 
@@ -209,11 +214,12 @@ const Login = () => {
       dispatch(userLoggedin());
       // //console.log(Cookies.get('jwt-token'));
       // //console.log("User created successfully", result);
+      dispatch(setRoleAsDoctor());
       navigate("/home");
     } catch (error) {
       console.log(error);
       setError(error?.response?.data?.message || "Something went wrong");
-    }finally{
+    } finally {
       dispatch(hideLoader());
     }
   };
@@ -275,6 +281,7 @@ const Login = () => {
                     type="password"
                     name="password"
                     placeholder="Password*"
+                    autoComplete="password"
                     className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
                   />
                   <ErrorMessage
@@ -328,7 +335,7 @@ const Login = () => {
                     </button>
                   </div>
 
-                  {(error && isLogin) && (
+                  {error && isLogin && (
                     <div>
                       <p className="text-[#2BB6DB] text-lg font-semibold w-full my-6">
                         {error}
@@ -382,7 +389,9 @@ const Login = () => {
           </div>
           <div className="w-1/2 h-full flex flex-wrap">
             <div className="w-full mb-3 h-14 flex items-center justify-start">
-              <h2 className="w-44 text-2xl font-Gilroy text-[#a0c4ff] font-semibold">Select a Role:</h2>
+              <h2 className="w-44 text-2xl font-Gilroy text-[#a0c4ff] font-semibold">
+                Select a Role:
+              </h2>
               <button
                 onClick={handlePatientToggle}
                 className={`bg-blue-500 ${
@@ -461,6 +470,7 @@ const Login = () => {
                     type="password"
                     name="password"
                     placeholder="Password*"
+                    autoComplete="password"
                     className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
                   />
                   <ErrorMessage
@@ -473,6 +483,7 @@ const Login = () => {
                     type="password"
                     name="confirmPassword"
                     placeholder="Confirm Password*"
+                    autoComplete="confirmPassword"
                     className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
                   />
                   <ErrorMessage
@@ -509,18 +520,6 @@ const Login = () => {
                   <h2 className="ml-2 mt-4 text-3xl font-Gilroy font-semibold text-[#9dc1fc] mb-4">
                     Your Location - 🌍
                   </h2>
-
-                  <Field
-                    type="text"
-                    name="address"
-                    placeholder="Street Address*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="address"
-                    component="div"
-                    className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
-                  />
 
                   <Field
                     type="text"
@@ -594,7 +593,7 @@ const Login = () => {
                       </span>
                     </button>
                   </div>
-                  {(error && !isLogin) && (
+                  {error && !isLogin && (
                     <div className="text-[#2BB6DB] text-md font-semibold w-full my-2">
                       {error}
                     </div>
@@ -695,8 +694,59 @@ const Login = () => {
 
                   {/* Address Section */}
                   <h2 className="ml-2 mt-4 text-3xl font-Gilroy font-semibold text-[#9dc1fc] mb-4">
-                    Professional Bio - 🌍
+                    Your Location - 🌍
                   </h2>
+
+                  <Field
+                    type="text"
+                    name="city"
+                    placeholder="Current City*"
+                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                  />
+                  <ErrorMessage
+                    name="city"
+                    component="div"
+                    className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
+                  />
+
+                  <Field
+                    type="text"
+                    name="state"
+                    placeholder="State*"
+                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                  />
+                  <ErrorMessage
+                    name="state"
+                    component="div"
+                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
+                  />
+
+                  <Field
+                    type="text"
+                    name="country"
+                    placeholder="Country*"
+                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                  />
+                  <ErrorMessage
+                    name="country"
+                    component="div"
+                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
+                  />
+
+                  <Field
+                    type="text"
+                    name="zipCode"
+                    placeholder="ZIP Code*"
+                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+                  />
+                  <ErrorMessage
+                    name="zipCode"
+                    component="div"
+                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
+                  />
+                  <pre className="ml-2 mt-4 text-3xl flex font-Gilroy font-semibold text-[#9dc1fc] mb-4">
+                    Professional Bio - <Stethoscope size={40} color="#D3D3D3" />
+                  </pre>
 
                   <Field
                     type="text"
@@ -746,19 +796,7 @@ const Login = () => {
                     className="text-[#2BB6DB] text-md font-semibold w-full my-2"
                   />
 
-                  <Field
-                    type="number"
-                    name="patientsPerDay"
-                    placeholder="Patients Per Day*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="patientsPerDay"
-                    component="div"
-                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                  />
-
-                  <div className="w-full">
+                  {/* <div className="w-full">
                     <h2 className=" mt-4 text-3xl font-Gilroy font-semibold text-[#9dc1fc] mb-6">
                       Available Days*
                     </h2>
@@ -791,15 +829,15 @@ const Login = () => {
                       component="div"
                       className="text-[#2BB6DB] text-md font-semibold w-full my-4"
                     />
-                  </div>
+                  </div> */}
 
-                  <div className="w-full">
+                  {/* <div className="w-full">
                     <h2 className=" mt-4 text-3xl font-Gilroy font-semibold text-[#9dc1fc] mb-4">
                       Available Time*
-                    </h2>
+                    </h2> */}
 
-                    {/* Start Time */}
-                    <div className="mt-2">
+                  {/* Start Time */}
+                  {/* <div className="mt-2">
                       <h2 className="text-xl font-medium text-[#9dc1fc] mb-4">
                         Start Time:
                       </h2>
@@ -814,10 +852,10 @@ const Login = () => {
                         component="div"
                         className="text-[#2BB6DB] text-md font-semibold w-full my-2"
                       />
-                    </div>
+                    </div> */}
 
-                    {/* End Time */}
-                    <div className="mt-2">
+                  {/* End Time */}
+                  {/* <div className="mt-2">
                       <h2 className="text-xl mt-4 font-medium text-[#9dc1fc] mb-4">
                         End Time:
                       </h2>
@@ -832,8 +870,8 @@ const Login = () => {
                         component="div"
                         className="text-[#2BB6DB] text-md font-semibold w-full my-2 mb-4"
                       />
-                    </div>
-                  </div>
+                    </div> */}
+                  {/* </div> */}
 
                   <div className="w-full">
                     <p
@@ -859,7 +897,7 @@ const Login = () => {
                       </span>
                     </button>
                   </div>
-                  {(error && !isLogin) && (
+                  {error && !isLogin && (
                     <div className="text-[#2BB6DB] text-md font-semibold w-full my-2">
                       {error}
                     </div>

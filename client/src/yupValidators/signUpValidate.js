@@ -31,9 +31,6 @@ const signUpUserValidateSchema = Yup.object({
       "Invalid gender selection"
     )
     .required("Gender is required"),
-  address: Yup.string()
-    .max(100, "Address must be 100 characters or less")
-    .required("Address is required"),
   city: Yup.string()
     .max(50, "City must be 50 characters or less")
     .required("City is required"),

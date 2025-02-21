@@ -55,20 +55,20 @@ const doctorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Availability
-    availableDays: {
-      type: [String], // e.g., ["Monday", "Wednesday", "Friday"]
-      required: true,
-    },
-    availableTime: {
-      start: { type: String, required: true }, // e.g., "09:00 AM"
-      end: { type: String, required: true }, // e.g., "05:00 PM"
-    },
+    // // Availability
+    // availableDays: {
+    //   type: [String], // e.g., ["Monday", "Wednesday", "Friday"]
+    //   required: true,
+    // },
+    // availableTime: {
+    //   start: { type: String, required: true }, // e.g., "09:00 AM"
+    //   end: { type: String, required: true }, // e.g., "05:00 PM"
+    // },
 
-    patientsPerDay: {
-      type: Number,
-      required: true,
-    },
+    // patientsPerDay: {
+    //   type: Number,
+    //   required: true,
+    // },
 
     // Ratings and reviews
     rating: {
@@ -76,6 +76,11 @@ const doctorSchema = new mongoose.Schema(
       default: 0,
       min: 0,
       max: 5,
+    },
+    address: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
+      required: true,
     },
     reviews: [
       {
@@ -85,12 +90,6 @@ const doctorSchema = new mongoose.Schema(
         reviewedAt: { type: Date, default: Date.now },
       },
     ],
-    // Account-related fields
-    // role: {
-    //   type: String,
-    //   enum: ["doctor"], 
-    //   default: "doctor",
-    // },
 
     // Account details
     isActive: {

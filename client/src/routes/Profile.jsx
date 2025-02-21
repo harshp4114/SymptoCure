@@ -121,7 +121,7 @@ const Profile = () => {
                 Address:
               </label>
               <p className="text-gray-600">
-                {profileData?.address?.address}, {profileData?.address?.city},{" "}
+                 {profileData?.address?.city},{" "}
                 {profileData?.address?.state}, {profileData?.address?.country}-
                 {profileData?.address?.zipCode}
               </p>

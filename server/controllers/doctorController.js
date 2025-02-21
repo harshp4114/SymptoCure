@@ -1,8 +1,11 @@
 const bcrypt = require("bcrypt"); // For password hashing
 const Doctor = require("../models/doctorModel"); // Import the Doctor model
+const Address=require("../models/addressModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const Appointment = require("../models/appointmentModel");
+
+
 const getAllDoctors = async (req, res) => {
   try {
     // //console.log("hii");
@@ -31,7 +34,7 @@ const getDoctorById = async (req, res) => {
     // Extract the Doctor ID from the URL parameters
     const doctorId = req.params.id;
     // console.log("auth middleware info",req.patient)
-    
+
     // console.log("inside get by ud")
     // Check if the provided ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(doctorId)) {
@@ -99,9 +102,7 @@ const getDoctorProfile = async (req, res) => {
   }
 };
 
-
 const getDoctorByEmail = async (req, res) => {
-
   console.log("correct cntroller");
   const { email, password, role } = req.body;
   //console.log("request body", req.body);
@@ -117,7 +118,7 @@ const getDoctorByEmail = async (req, res) => {
           message: "Invalid Email or Password",
         });
       }
-      console.log(doctor)
+      console.log(doctor);
       const roleLower = role.toLowerCase();
       const token = jwt.sign(
         { id: doctor._id, email: doctor.email, role: roleLower },
@@ -145,7 +146,6 @@ const getDoctorByEmail = async (req, res) => {
     });
   }
 };
-
 
 const getAppointmentsByDoctorId = async (req, res) => {
   const doctorId = req.params.id;
@@ -208,15 +208,17 @@ const createDoctor = async (req, res) => {
       "firstName",
       "lastName",
       "email",
-      "specialization",
-      "password",
-      "experience",
-      "gender",
       "phone",
-      "availableDays",
-      "hospital",
+      "password",
+      "gender",
+      "city",
+      "state",
+      "country",
+      "zipCode",
+      "specialization",
       "qualifications",
-      "availableTime",
+      "experience",
+      "hospital",
     ];
 
     // Check if all required fields are present
@@ -239,7 +241,16 @@ const createDoctor = async (req, res) => {
     }
     //bcrypt the password for safety purposes
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    
+    const { zipCode, country, state, city } = req.body;
+
+    const newAddress = new Address({
+      zipCode: zipCode,
+      country: country,
+      state: state,
+      city: city,
+    });
+
+    const savedAddress = await newAddress.save();
 
     // Create a new doctor
     const newDoctor = await Doctor.create({
@@ -247,26 +258,28 @@ const createDoctor = async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
       },
-      email: req.body.email,
       gender: req.body.gender,
-      password: hashedPassword,
+      email: req.body.email,
       phone: req.body.phone,
+      password: hashedPassword,
       specialization: req.body.specialization,
       qualifications: req.body.qualifications,
       experience: req.body.experience,
       hospital: req.body.hospital,
-      availableDays: req.body.availableDays,
-      availableTime: req.body.availableTime,
-      patientsPerDay: req.body.patientsPerDay, // This field is required in the schema
+      address:savedAddress._id,
+      // availableDays: req.body.availableDays,
+      // availableTime: req.body.availableTime,
+      // patientsPerDay: req.body.patientsPerDay, // This field is required in the schema
       rating: 0, // Default rating
       reviews: [], // Default reviews
       isActive: true, // Default value
     });
 
     //console.log("hello");
+    console.log("new doctor that is created ",newDoctor)
     if (newDoctor) {
       const token = jwt.sign(
-        { id: newDoctor._id, email: newDoctor.email,role:"doctor" },
+        { id: newDoctor._id, email: newDoctor.email, role: "doctor" },
         "harshp4114",
         { expiresIn: "1h" }
       );

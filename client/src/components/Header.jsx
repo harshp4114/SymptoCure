@@ -21,7 +21,7 @@ const Header = () => {
       dispatch(setRoleAsDoctor());
     }
     // console.log("inside useedfff",role);
-  });
+  },[]);
 
   //used to decide whether to display login or logout button
   const isSignedIn = useSelector((state) => state.signin.isSignedIn);
@@ -36,7 +36,7 @@ const Header = () => {
     }
     dispatch(setRoleAsUser());
   };
-  console.log(role);
+  console.log("hhhhhh",role);
   if (role == "patient" || role == null || role == "") {
     return (
       <>
@@ -182,6 +182,19 @@ const Header = () => {
                 </span>
                 <span className="text-xl ml-4 font-semibold">
                   Check Pateints
+                </span>
+              </Link>
+            </div>
+            <div id="div1" className="inline-flex ml-16 items-center">
+              <Link
+                to="/check-appointments"
+                className="flex justify-center items-center group hover:text-[#2EE9FF] transition-all duration-700"
+              >
+                <span className="text-2xl transform transition-transform duration-700 group-hover:translate-x-3">
+                  ➔
+                </span>
+                <span className="text-xl ml-4 font-semibold">
+                  Check Appointments
                 </span>
               </Link>
             </div>

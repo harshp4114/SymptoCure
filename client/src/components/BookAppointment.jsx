@@ -20,6 +20,7 @@ const BookAppointment = ({
   toggleExist,
 }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  console.log("patient",patient);
 
   useAuth();
   const [loading, setLoading] = useState(true);
@@ -100,6 +101,7 @@ const BookAppointment = ({
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required").default(patient?.email),
+      disease: Yup.string().required("Disease is required").default(patient?.disease),
     phone: Yup.string().required("Phone number is required").default(patient?.phone),
     reason: Yup.string().required("Reason for visit is required"),
   });
@@ -158,6 +160,7 @@ const BookAppointment = ({
             email: "",
             phone: "",
             reason: "",
+            disease: "",
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => handleBookAppointment(values)}
@@ -166,7 +169,7 @@ const BookAppointment = ({
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
+                  Full Name*
                 </label>
                 <Field
                   type="text"
@@ -183,7 +186,7 @@ const BookAppointment = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
+                  Email*
                 </label>
                 <Field
                   type="email"
@@ -200,7 +203,7 @@ const BookAppointment = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number
+                  Phone Number*
                 </label>
                 <Field
                   type="tel"
@@ -210,6 +213,23 @@ const BookAppointment = ({
                 />
                 <ErrorMessage
                   name="phone"
+                  component="div"
+                  className="text-red-600 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Disease*
+                </label>
+                <Field
+                  type="text"
+                  name="disease"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={patient?.disease || "Enter your disease"}
+                />
+                <ErrorMessage
+                  name="disease"
                   component="div"
                   className="text-red-600 text-sm"
                 />

@@ -18,7 +18,7 @@ const CheckPatients = () => {
   const getAppointments = async () => {
     dispatch(showLoader());
     try {
-      const result = await axios.get(`${BASE_URL}/api/appointment/`, {
+      const result = await axios.get(`${BASE_URL}/api/appointment/doctor`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(result)

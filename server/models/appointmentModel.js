@@ -16,13 +16,17 @@ const AppointmentSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    disease: {
+      type: String, // Disease detected by the doctor
+      maxlength: 100,
+    },
     reason: {
       type: String, // Reason for the appointment
       maxlength: 500,
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "completed", "canceled","rejected"],
+      enum: ["pending", "confirmed", "rejected"],
       default: "pending", // Default status is pending
     },
   },

@@ -142,11 +142,10 @@ const createUser = async (req, res) => {
         "firstName",
         "lastName",
         "email",
+        "phone",
         "password",
         "age",
         "gender",
-        "phone",
-        "address",
         "city",
         "state",
         "country",
@@ -174,14 +173,13 @@ const createUser = async (req, res) => {
 
       // Hash the password before saving
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const { zipCode, country, state, city, address } = req.body;
+      const { zipCode, country, state, city } = req.body;
       // console.log(Address);
       const newAddress = new Address({
         zipCode: zipCode,
         country: country,
         state: state,
         city: city,
-        address: address,
       });
       // console.log(newAddress);
       // Save the address to get its ObjectId
