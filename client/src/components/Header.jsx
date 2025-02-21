@@ -36,7 +36,7 @@ const Header = () => {
     }
     dispatch(setRoleAsUser());
   };
-  console.log("hhhhhh",role);
+  // console.log("hhhhhh",role);
   if (role == "patient" || role == null || role == "") {
     return (
       <>

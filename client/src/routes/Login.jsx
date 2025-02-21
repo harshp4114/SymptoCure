@@ -15,6 +15,9 @@ import { setRoleAsDoctor, setRoleAsUser } from "../redux/slices/roleSlice";
 import SignUpDoctorValidate from "../yupValidators/signUpDoctorValidate";
 import Loader from "../components/Loader";
 import { Stethoscope } from "lucide-react";
+import CityAutocomplete from "../components/CityAutoComplete";
+import SpecializationAutoComplete from "../components/SpecializationAutoComplete";
+import QualificationAutoComplete from "../components/QualificationAutoComplete";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -167,6 +170,8 @@ const Login = () => {
     try {
       // console.log("values", values);
       dispatch(showLoader());
+      // console.log("Form Data:", values);
+
       const result = await axios.post(`${BASE_URL}/api/patient/`, values);
       // console.log("result", result);
       const token = result?.data?.token;
@@ -521,53 +526,7 @@ const Login = () => {
                     Your Location - 🌍
                   </h2>
 
-                  <Field
-                    type="text"
-                    name="city"
-                    placeholder="Current City*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="city"
-                    component="div"
-                    className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
-                  />
-
-                  <Field
-                    type="text"
-                    name="state"
-                    placeholder="State*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="state"
-                    component="div"
-                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                  />
-
-                  <Field
-                    type="text"
-                    name="country"
-                    placeholder="Country*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="country"
-                    component="div"
-                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                  />
-
-                  <Field
-                    type="text"
-                    name="zipCode"
-                    placeholder="ZIP Code*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="zipCode"
-                    component="div"
-                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                  />
+                  <CityAutocomplete />
 
                   <div className="w-full">
                     <p
@@ -697,80 +656,14 @@ const Login = () => {
                     Your Location - 🌍
                   </h2>
 
-                  <Field
-                    type="text"
-                    name="city"
-                    placeholder="Current City*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="city"
-                    component="div"
-                    className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
-                  />
-
-                  <Field
-                    type="text"
-                    name="state"
-                    placeholder="State*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="state"
-                    component="div"
-                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                  />
-
-                  <Field
-                    type="text"
-                    name="country"
-                    placeholder="Country*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="country"
-                    component="div"
-                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                  />
-
-                  <Field
-                    type="text"
-                    name="zipCode"
-                    placeholder="ZIP Code*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="zipCode"
-                    component="div"
-                    className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                  />
+                  <CityAutocomplete />
                   <pre className="ml-2 mt-4 text-3xl flex font-Gilroy font-semibold text-[#9dc1fc] mb-4">
                     Professional Bio - <Stethoscope size={40} color="#D3D3D3" />
                   </pre>
 
-                  <Field
-                    type="text"
-                    name="specialization"
-                    placeholder="Your specialization*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="specialization"
-                    component="div"
-                    className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
-                  />
+                  <SpecializationAutoComplete />
 
-                  <Field
-                    type="text"
-                    name="qualifications"
-                    placeholder="MBBS, MD, etc.*"
-                    className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
-                  />
-                  <ErrorMessage
-                    name="qualifications"
-                    component="div"
-                    className="ml-2 text-[#2BB6DB] text-lg font-semibold w-full mt-2 mb-2"
-                  />
+                  <QualificationAutoComplete/>
 
                   <Field
                     type="number"

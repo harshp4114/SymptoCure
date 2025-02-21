@@ -24,7 +24,7 @@ const Profile = () => {
         const result = await axios.get(`${BASE_URL}/api/patient/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
-          }
+          },
         });
         setProfileData(result.data.userData);
       } else {
@@ -121,9 +121,8 @@ const Profile = () => {
                 Address:
               </label>
               <p className="text-gray-600">
-                 {profileData?.address?.city},{" "}
-                {profileData?.address?.state}, {profileData?.address?.country}-
-                {profileData?.address?.zipCode}
+                {profileData?.address?.city}, {profileData?.address?.state},{" "}
+                {profileData?.address?.country}-{profileData?.address?.zipCode}
               </p>
             </div>
           </div>
@@ -232,14 +231,21 @@ const Profile = () => {
               <p className="text-gray-600">{profileData?.hospital}</p>
             </div>
             <div className="flex items-center space-x-4">
+              <label className="text-gray-700 self-start font-medium w-40">
+                Address:
+              </label>
+              <p className="text-gray-600">
+                {profileData?.address?.city}, {profileData?.address?.state},{" "}
+                {profileData?.address?.country}-{profileData?.address?.zipCode}
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">
-              Experience:
+                Experience:
               </label>
               <p className="text-gray-600">{profileData?.experience} years</p>
             </div>
           </div>
-
-          
 
           {/* Action Buttons */}
           <div className="mt-8 flex space-x-4">
@@ -270,31 +276,12 @@ const Profile = () => {
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <label className="text-gray-700 font-medium w-40">
-                Patients Per Day:
-              </label>
-              <p className="text-gray-600">{profileData?.patientsPerDay}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <label className="text-gray-700 font-medium w-40">
-                Available Days:
-              </label>
-              <p className="text-gray-600">
-                {profileData?.availableDays?.join(", ")}
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <label className="text-gray-700 font-medium w-40">
-                Available Time:
-              </label>
-              <p className="text-gray-600">
-                {profileData?.availableTime?.start} -{" "}
-                {profileData?.availableTime?.end}
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Rating:</label>
-              <p className="text-gray-600">{profileData?.rating} stars</p>
+              <p className="text-gray-600">
+                {profileData?.rating === 0
+                  ? "No reviews yet"
+                  : `${profileData?.rating} stars`}
+              </p>
             </div>
           </div>
         </div>

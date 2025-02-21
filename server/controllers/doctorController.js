@@ -78,6 +78,10 @@ const getDoctorProfile = async (req, res) => {
 
     //console.log("hiiii");
     const doctor = await Doctor.findOne({ email });
+
+    const address = await Address.findById(doctor.address);
+    doctor.address = address;
+    // console.log("dcoctor", doctor);
     if (doctor) {
       res.status(200).json({
         success: true,
