@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import "ldrs/helix"; // Ensure this path is valid
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL ,capitalizeFirstLetter} from "../utils/constants";
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
   const [loading, setLoading] = useState(true);
@@ -78,15 +78,12 @@ const Profile = () => {
           />
           {/* Name */}
           <h1 className="mt-4 text-xl font-bold">
-            {profileData?.fullName?.firstName +
+            {capitalizeFirstLetter(profileData?.fullName?.firstName) +
               " " +
-              profileData?.fullName?.lastName}
+              capitalizeFirstLetter(profileData?.fullName?.lastName)}
           </h1>
           {/* Role */}
-          <p className="text-sm text-gray-200">
-            {console.log(profileData?.role)}
-            {profileData?.role == "patient" ? "PATIENT" : "DOCTOR"}
-          </p>
+          <p className="text-md text-gray-200">{capitalizeFirstLetter(role)}</p>
         </div>
 
         {/* Profile Details Section */}
@@ -185,12 +182,12 @@ const Profile = () => {
           />
           {/* Name */}
           <h1 className="mt-4 text-xl font-bold">
-            {profileData?.fullName?.firstName +
+            {capitalizeFirstLetter(profileData?.fullName?.firstName) +
               " " +
-              profileData?.fullName?.lastName}
+              capitalizeFirstLetter(profileData?.fullName?.lastName)}
           </h1>
-          {/* Specialization */}
-          <p className="text-sm text-gray-200">{profileData?.specialization}</p>
+          {/* Role */}
+          <p className="text-md text-gray-200">{capitalizeFirstLetter(role)}</p>
         </div>
 
         {/* Profile Details Section */}

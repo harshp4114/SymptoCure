@@ -31,7 +31,6 @@ const Header = () => {
     if (Cookies.get("jwt-token")) {
       Cookies.remove("jwt-token");
       dispatch(userLoggedout());
-      localStorage.removeItem("symptomFields");
       localStorage.removeItem("role");
     }
     dispatch(setRoleAsUser());

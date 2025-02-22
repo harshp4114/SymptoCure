@@ -9,15 +9,18 @@ import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import "react-toastify/dist/ReactToastify.css";
+import DiseaseAutoComplete from "../components/DiseaseAutoComplete";
+import symptomsValidateSchema from "../yupValidators/symptomsValidate";
 
 const DetectDisease = () => {
   useAuth();
   const token = Cookies.get("jwt-token");
   const navigate = useNavigate();
+  const symptomsValidation = symptomsValidateSchema;
 
-  if(localStorage.getItem("role")!=="patient"){
-    navigate("/home"); 
-   }
+  if (localStorage.getItem("role") !== "patient") {
+    navigate("/home");
+  }
   const [loader, setLoader] = useState(true);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
@@ -48,95 +51,51 @@ const DetectDisease = () => {
     setLoader(false);
   }, []);
 
-  const [fields, setFields] = useState(() => {
-    const savedFields = localStorage.getItem("symptomFields");
-    return savedFields
-      ? JSON.parse(savedFields)
-      : [
-          { type: "text", name: "field1", placeholder: "Symptom 1*" },
-          { type: "text", name: "field2", placeholder: "Symptom 2*" },
-          { type: "text", name: "field3", placeholder: "Symptom 3*" },
-        ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("symptomFields", JSON.stringify(fields));
-  }, [fields]);
-
   // Generate initial values dynamically
-  const generateInitialValues = () => {
-    const values = {};
-    fields.forEach((field) => {
-      values[field.name] = "";
-    });
-    return values;
-  };
+  // const generateInitialValues = () => {
+  //   const values = {};
+  //   fields.forEach((field) => {
+  //     values[field.name] = "";
+  //   });
+  //   return values;
+  // };
 
   // Generate validation schema dynamically
-  const generateValidationSchema = () => {
-    const schemaObject = {};
-    fields.forEach((field) => {
-      schemaObject[field.name] = Yup.string()
-        .required("Symptom is required")
-        .min(3, "Symptom must be at least 3 characters")
-        .matches(/^[a-zA-Z\s]+$/, "Only letters and spaces are allowed");
-    });
-    return Yup.object().shape(schemaObject);
-  };
+  // const generateValidationSchema = () => {
+  //   const schemaObject = {};
+  //   fields.forEach((field) => {
+  //     schemaObject[field.name] = Yup.string()
+  //       .required("Symptom is required")
+  //       .min(3, "Symptom must be at least 3 characters")
+  //       .matches(/^[a-zA-Z\s]+$/, "Only letters and spaces are allowed");
+  //   });
+  //   return Yup.object().shape(schemaObject);
+  // };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
+      console.log("submit click");
+      console.log("values", values);
       dispatch(showLoader());
       // Convert values object to array of symptoms
-      const symptoms = Object.values(values).filter(
-        (symptom) => symptom.trim() !== ""
-      );
+      // const symptoms = Object.values(values).filter(
+      //   (symptom) => symptom.trim() !== ""
+      // );
+
+      // console.log("symptoms", symptoms);
 
       // console.log("Symptoms to submit:", symptoms);
       // Add your API call here
 
       toast.success("Symptoms submitted successfully!");
     } catch (error) {
-      // console.error("Error submitting symptoms:", error);
+      console.error("Error submitting symptoms:", error);
+
       toast.error("Failed to submit symptoms. Please try again.");
     } finally {
       dispatch(hideLoader());
       setSubmitting(false);
     }
-  };
-
-  const updateFieldNumbers = (fieldArray) => {
-    return fieldArray.map((field, index) => ({
-      ...field,
-      name: `field${index + 1}`,
-      placeholder: `Symptom ${index + 1}*`,
-    }));
-  };
-
-  const removeField = (index) => {
-    if (fields.length <= 3) {
-      toast.error("Minimum 3 symptoms are required!");
-      return;
-    }
-
-    setFields((prevFields) => {
-      const newFields = prevFields.filter((_, i) => i !== index);
-      return updateFieldNumbers(newFields);
-    });
-  };
-
-  const addField = () => {
-    setFields((prevFields) => {
-      const newFields = [
-        ...prevFields,
-        {
-          type: "text",
-          name: `field${prevFields.length + 1}`,
-          placeholder: `Symptom ${prevFields.length + 1}*`,
-        },
-      ];
-      return newFields;
-    });
   };
 
   return (
@@ -182,60 +141,18 @@ const DetectDisease = () => {
         </div>
         <div className="w-[58%] h-full">
           <Formik
-            initialValues={generateInitialValues()}
-            validationSchema={generateValidationSchema()}
+            initialValues={{
+              symptoms: [],
+            }}
+            validationSchema={symptomsValidation}
             onSubmit={handleSubmit}
-            enableReinitialize={true}
+            // enableReinitialize={true}
           >
             {({ isSubmitting }) => (
               <Form className="w-full">
-                <div className="grid grid-cols-2 gap-4">
-                  {fields.map((field, index) => (
-                    <div key={index} className="flex flex-col">
-                      <div className="relative">
-                        <Field
-                          type={field.type}
-                          name={field.name}
-                          id={field.name}
-                          placeholder={field.placeholder}
-                          className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl p-2 w-full bg-[#232269]"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeField(index)}
-                          className="absolute top-1/2 right-1 transform -translate-y-1/2 mr-1 text-[#9DC1FC] p-2 rounded-full transition-all duration-300 hover:scale-110 group"
-                        >
-                          <Trash2
-                            size={20}
-                            className="group-hover:rotate-12 transition-transform duration-300"
-                          />
-                        </button>
-                      </div>
-                      <ErrorMessage
-                          name={field.name}
-                          component="div"
-                          className="text-[#2BB6DB] text-md font-semibold w-full my-2"
-                        />
-                    </div>
-                  ))}
-                </div>
+                <DiseaseAutoComplete />
 
-                <div className="w-full h-fit flex mt-10">
-                  <div className="w-4/12 h-16 mr-6">
-                    <button
-                      type="button"
-                      onClick={addField}
-                      className="bg-[#E6E4FD] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
-                    >
-                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
-                        Add Field
-                      </span>
-                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                        Add Field
-                      </span>
-                    </button>
-                  </div>
-
+                <div className="w-full h-fit flex mt-4">
                   <div className="w-5/12 h-16">
                     <button
                       type="submit"
@@ -246,7 +163,7 @@ const DetectDisease = () => {
                         {isSubmitting ? "Submitting..." : "Submit Symptoms"}
                       </span>
                       <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                        {isSubmitting ? "Submitting..." : "Submit Symptoms"}
+                        {isSubmitting ? "Submitting..." : "Submit Symptoms"}                
                       </span>
                     </button>
                   </div>
@@ -261,4 +178,3 @@ const DetectDisease = () => {
 };
 
 export default DetectDisease;
-
