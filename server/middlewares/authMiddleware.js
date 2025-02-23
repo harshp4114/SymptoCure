@@ -3,10 +3,10 @@ const jwt = require("jsonwebtoken");
 const authMiddleware = (req, res, next) => {
   // Get the token from the header
   //console.log(req.headers.authorization);
-  console.log("hiiiii from middleware");
+  // console.log("hiiiii from middleware");
 
   const token = req.headers.authorization.split(" ")[1];
-  console.log("token in auth",token);
+  // console.log("token in auth",token);
   // Check if the token is provided
   if (!token) {
     return res.status(401).json({
@@ -19,7 +19,7 @@ const authMiddleware = (req, res, next) => {
     // Verify the token
     // console.log("hiii");
     const decoded = jwt.verify(token, "harshp4114");
-    console.log("decoded", decoded);
+    // console.log("decoded", decoded);
     // Attach patient info to the request object
     req.tokenData = decoded;
 

@@ -38,9 +38,9 @@ const CityAutocomplete = () => {
     // console.log("handleSelect triggered:", city.display_name); // Debug log
     setFieldValue("city", city?.name);
     // console.log("City:", city); // Debug log
-    setFieldValue("state", city.address?.state || "");
+    setFieldValue("state", city.address?.state || city.address?.town || "");
     setFieldValue("country", city.address?.country || "");
-    setFieldValue("zipCode", city.address?.postcode || "");
+    setFieldValue("zipCode", city.address?.postcode || city.address?.["ISO3166-2-lvl4"] || "342645");
     setQuery(city?.name);
     setValidCity(true);
     setSuggestions([]);
@@ -95,6 +95,7 @@ const CityAutocomplete = () => {
         name="state"
         placeholder="State*"
         className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+        disabled
       />
       <ErrorMessage
         name="state"
@@ -107,6 +108,7 @@ const CityAutocomplete = () => {
         name="country"
         placeholder="Country*"
         className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+        disabled
       />
       <ErrorMessage
         name="country"
@@ -119,6 +121,7 @@ const CityAutocomplete = () => {
         name="zipCode"
         placeholder="ZIP Code*"
         className="border-[1px] border-opacity-45 h-16 px-6 py-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] rounded-xl  my-2 p-2 w-full bg-[#232269]"
+        disabled
       />
       <ErrorMessage
         name="zipCode"

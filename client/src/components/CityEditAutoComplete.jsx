@@ -1,44 +1,55 @@
-import React, { useState } from "react";
-import { ErrorMessage, useFormikContext } from "formik";
+import React, { useState, useEffect } from "react";
+import { useFormikContext } from "formik";
 
 const CityEditAutocomplete = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [validCity, setValidCity] = useState(false);
   const { values, setFieldValue, setFieldTouched, errors, touched } = useFormikContext();
   const [query, setQuery] = useState(values.city);
+  const [hasUserEdited,setHasUserEdited]=useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleInputChange = async (e) => {
-    const value = e.target.value;
-    setQuery(value);
-    setValidCity(false);
-
-    if (value.length > 1) {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?city=${value}&format=json&addressdetails=1`
-      );
-      const data = await response.json();
-
-      const sortedCities = data
-        .sort((a, b) => {
-          const aStarts = a.display_name
-            .toLowerCase()
-            .startsWith(value.toLowerCase());
-          const bStarts = b.display_name
-            .toLowerCase()
-            .startsWith(value.toLowerCase());
-          return aStarts === bStarts
-            ? a.display_name.localeCompare(b.display_name)
-            : aStarts
-            ? -1
-            : 1;
-        })
-        .slice(0, 5);
-
-      setSuggestions(sortedCities);
-    } else {
+  // Debounce API call with useEffect
+  useEffect(() => {
+    if (!hasUserEdited || !query || query.length < 2) {
       setSuggestions([]);
+      return;
     }
-  };
+
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?city=${query}&format=json&addressdetails=1`
+        );
+        const data = await response.json();
+
+        const sortedCities = data
+          .sort((a, b) => {
+            const aStarts = a.display_name
+              .toLowerCase()
+              .startsWith(query.toLowerCase());
+            const bStarts = b.display_name
+              .toLowerCase()
+              .startsWith(query.toLowerCase());
+            return aStarts === bStarts
+              ? a.display_name.localeCompare(b.display_name)
+              : aStarts
+              ? -1
+              : 1;
+          })
+          .slice(0, 5);
+
+        setSuggestions(sortedCities);
+      } catch (error) {
+        console.error("Error fetching city data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }, 800); 
+
+    return () => clearTimeout(timer); // Cleanup previous timer if input changes
+  }, [query]);
 
   const handleSelect = (city) => {
     const state = city.address?.state || "";
@@ -63,7 +74,7 @@ const CityEditAutocomplete = () => {
         setFieldValue("city", "");
       }
       setSuggestions([]);
-      setFieldTouched("city", true); // Mark city as touched
+      setFieldTouched("city", true);
     }, 500);
   };
 
@@ -76,7 +87,11 @@ const CityEditAutocomplete = () => {
           type="text"
           name="city"
           value={query}
-          onChange={handleInputChange}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setValidCity(false);
+            setHasUserEdited(true);
+          }}
           onBlur={handleBlur}
           placeholder="City"
           className="border p-2 hover:border-black transition-all duration-500 rounded w-full"

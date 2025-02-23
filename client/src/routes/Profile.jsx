@@ -13,12 +13,15 @@ import editUserValidationSchema from "../yupValidators/editUserValidationSchema"
 import CityEditAutocomplete from "../components/CityEditAutoComplete";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
+import editDoctorValidationSchema from "../yupValidators/editDoctorValidationSchema";
+import { Pencil } from "lucide-react";
 
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
-  const [editProfile, setEditProfile] = useState(false);
+  const [editUserProfile, setEditUserProfile] = useState(false);
+  const [editDoctorProfile, setEditDoctorProfile] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = Cookies.get("jwt-token");
@@ -39,11 +42,35 @@ const Profile = () => {
       );
       // console.log("result",result);
       getUser();
-      setEditProfile(false);
+      setEditUserProfile(false);
       toast.success("Profile updated successfully!!");
     } catch (error) {
       console.log(error);
-      setEditProfile(false);
+      setEditUserProfile(false);
+      toast.error(error?.response?.data?.message);
+    } finally {
+      dispatch(hideLoader());
+    }
+  };
+
+  const handleDoctorProfileUpdate = async (values) => {
+    // console.log("func called");
+    dispatch(showLoader());
+    try {
+      // const token = Cookies.get("jwt-token");
+      const decoded = jwtDecode(token);
+      // console.log("decoded",decoded);
+      const result = await axios.put(
+        `${BASE_URL}/api/doctor/${decoded.id}`,
+        values
+      );
+      console.log("result", result);
+      getUser();
+      setEditDoctorProfile(false);
+      toast.success("Profile updated successfully!!");
+    } catch (error) {
+      console.log(error);
+      setEditUserProfile(false);
       toast.error(error?.response?.data?.message);
     } finally {
       dispatch(hideLoader());
@@ -60,8 +87,8 @@ const Profile = () => {
           },
         });
         setProfileData(result.data.userData);
-      } else if(role=="doctor") {
-        // console.log("hiihiihihi")
+      } else if (role == "doctor") {
+        console.log("hiihiihihi");
         const result = await axios.get(`${BASE_URL}/api/doctor/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -110,7 +137,7 @@ const Profile = () => {
         draggable
         pauseOnHover
       />
-      {editProfile ? (
+      {editUserProfile ? (
         <div className="flex items-center justify-center absolute w-full h-full bg-gray-800 bg-opacity-70">
           <div className="bg-white w-1/2 h-11/12 rounded-lg p-8 shadow-lg">
             <h1 className="font-bold text-3xl mb-5">Edit Profile</h1>
@@ -229,7 +256,7 @@ const Profile = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setEditProfile(false)}
+                    onClick={() => setEditUserProfile(false)}
                     className="bg-gray-500 text-white px-4 py-2 rounded"
                   >
                     Cancel
@@ -265,12 +292,26 @@ const Profile = () => {
         {/* Profile Details Section */}
         <div className="w-full md:w-3/4 h-full bg-gray-50 p-8 flex flex-col">
           {/* Section Header */}
-          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-6">
-            Profile Information
-          </h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-2xl font-semibold text-gray-800 ">
+              Profile Information
+            </h2>
+            {/* Action Buttons */}
+            <div className="flex ml-4">
+              <button
+                onClick={() => {
+                  // console.log("edit clik");
+                  return setEditDoctorProfile(true);
+                }}
+                className=" flex items-center rounded-lg "
+              >
+                <h2 className="mr-3 text-2xl font-semibold text-gray-800">Edit Profile</h2> <Pencil className="" size={20} />
+              </button>
+            </div>
+          </div>
 
           {/* Profile Info */}
-          <div className="space-y-4">
+          <div className="space-y-4 border-t pt-6">
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">
                 Full Name:
@@ -313,15 +354,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="mt-8 flex space-x-4">
-            <button
-              onClick={() => setEditProfile(true)}
-              className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600"
-            >
-              Edit Profile
-            </button>
-          </div>
+          
         </div>
         <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-8 flex flex-col">
           <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-6">
@@ -352,6 +385,149 @@ const Profile = () => {
     </div>
   ) : (
     <div className="bg-gray-100 absolute w-full h-[86.7vh] flex justify-center items-center">
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      {editDoctorProfile ? (
+        <div className="flex items-center justify-center absolute w-full h-full bg-gray-800 bg-opacity-70">
+          <div className="bg-white w-1/2 h-full p-8 shadow-lg">
+            <h1 className="font-bold text-3xl mb-5">Edit Profile</h1>
+            <Formik
+              initialValues={{
+                firstName: profileData?.fullName?.firstName,
+                lastName: profileData?.fullName?.lastName,
+                gender: profileData?.gender,
+                experience: profileData?.experience,
+                email: profileData?.email,
+                phone: profileData?.phone,
+                city: profileData?.address?.city,
+                state: profileData?.address?.state,
+                country: profileData?.address?.country,
+                zipCode: profileData?.address?.zipCode,
+              }}
+              validationSchema={editDoctorValidationSchema}
+              onSubmit={handleDoctorProfileUpdate}
+            >
+              <Form className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-medium">First Name</label>
+                  <Field
+                    name="firstName"
+                    type="text"
+                    className="w-full hover:border-black transition-all duration-500 p-2 border rounded"
+                  />
+                  <ErrorMessage
+                    name="firstName"
+                    component="p"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium">Last Name</label>
+                  <Field
+                    name="lastName"
+                    type="text"
+                    className="w-full p-2 hover:border-black transition-all duration-500 border rounded"
+                  />
+                  <ErrorMessage
+                    name="lastName"
+                    component="p"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium">Gender</label>
+                  <Field
+                    type="text"
+                    name="gender"
+                    className="w-full p-2 hover:border-black transition-all duration-500 border rounded"
+                  />
+                  <ErrorMessage
+                    name="gender"
+                    component="p"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium">Experience</label>
+                  <Field
+                    name="experience"
+                    type="number"
+                    className="w-full p-2 hover:border-black transition-all duration-500 border rounded"
+                  />
+                  <ErrorMessage
+                    name="experience"
+                    component="p"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium">Phone</label>
+                  <Field
+                    name="phone"
+                    type="text"
+                    className="w-full p-2 hover:border-black transition-all duration-500 border rounded"
+                  />
+                  <ErrorMessage
+                    name="phone"
+                    component="p"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium">Email</label>
+                  <Field
+                    name="email"
+                    type="email"
+                    disabled
+                    className="w-full p-2 bg-gray-100 transition-all duration-500 border rounded"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="p"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <CityEditAutocomplete />
+                </div>
+
+                <div className="col-span-2 flex justify-between">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditDoctorProfile(false)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </Form>
+            </Formik>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
       {/* Outer Container */}
       <div className="bg-white w-full h-full shadow-lg flex flex-col md:flex-row overflow-hidden">
         {/* Sidebar/Profile Picture Section */}
@@ -375,12 +551,27 @@ const Profile = () => {
         {/* Profile Details Section */}
         <div className="w-full md:w-3/4 h-full bg-gray-50 p-8 flex flex-col">
           {/* Section Header */}
-          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-6">
-            Profile Information
-          </h2>
+
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-2xl font-semibold text-gray-800 ">
+              Profile Information
+            </h2>
+            {/* Action Buttons */}
+            <div className="flex ml-4">
+              <button
+                onClick={() => {
+                  // console.log("edit clik");
+                  return setEditDoctorProfile(true);
+                }}
+                className=" flex items-center rounded-lg "
+              >
+                <h2 className="mr-3 text-2xl font-semibold text-gray-800">Edit Profile</h2> <Pencil className="" size={20} />
+              </button>
+            </div>
+          </div>
 
           {/* Profile Info */}
-          <div className="space-y-4">
+          <div className="space-y-4 border-t pt-6">
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">
                 Full Name:
@@ -424,19 +615,6 @@ const Profile = () => {
               </label>
               <p className="text-gray-600">{profileData?.experience} years</p>
             </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="mt-8 flex space-x-4">
-            <button
-              onClick={() => {
-                console.log("edit clik");
-                return setEditProfile(true);
-              }}
-              className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600"
-            >
-              Edit Profile
-            </button>
           </div>
         </div>
 
