@@ -107,13 +107,13 @@ const getUserByEmail = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
+  // const token = req.headers.authorization.split(" ")[1];
   // //console.log("req.patient    ",req.patient);
   try {
     const { email, id } = req.tokenData;
 
     const patient = await User.findOne({ email });
-    // console.log("patient data backend", patient);
+    console.log("patient data backend", patient);
 
     const address = await Address.findById(patient.address);
     patient.address = address;
@@ -124,7 +124,7 @@ const getUserProfile = async (req, res) => {
       userData: patient,
     });
   } catch (error) {
-    // //console.log(error);
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
@@ -137,96 +137,95 @@ const createUser = async (req, res) => {
   // console.log("hhhhhhh");
 
   // if (req.body.role == "patient") {
-    try {
-      const requiredFields = [
-        "firstName",
-        "lastName",
-        "email",
-        "phone",
-        "password",
-        "age",
-        "gender",
-        "city",
-        "state",
-        "country",
-        "zipCode",
-      ];
-      // console.log(req.body);
-      // Check if all required fields are present
-      for (const field of requiredFields) {
-        if (!req.body[field]) {
-          return res.status(400).json({
-            success: false,
-            message: `Missing required field: ${field}`,
-          });
-        }
-      }
-
-      // Check if patient already exists
-      const existingUser = await User.findOne({ email: req.body.email });
-      if (existingUser) {
+  try {
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "password",
+      "age",
+      "gender",
+      "city",
+      "state",
+      "country",
+      "zipCode",
+    ];
+    // console.log(req.body);
+    // Check if all required fields are present
+    for (const field of requiredFields) {
+      if (!req.body[field]) {
         return res.status(400).json({
           success: false,
-          message: "User with this email already exists",
+          message: `Missing required field: ${field}`,
         });
       }
+    }
 
-      // Hash the password before saving
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const { zipCode, country, state, city } = req.body;
-      // console.log(Address);
-      const newAddress = new Address({
-        zipCode: zipCode,
-        country: country,
-        state: state,
-        city: city,
-      });
-      // console.log(newAddress);
-      // Save the address to get its ObjectId
-      const savedAddress = await newAddress.save();
-      // Create a new patient
-      // console.log("hhhhhhhhhhhhhhhhhhhhhh");
-
-
-      const newUser = await User.create({
-        fullName: {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-        },
-        email: req.body.email,
-        password: hashedPassword, // Save the hashed password
-        age: req.body.age,
-        gender: req.body.gender,
-        phone: req.body.phone,
-        address: savedAddress._id,
-        symptoms: [],
-        detectedDisease: null,
-        history: [],
-        searchHistory: [],
-        role: "patient",
-        isActive: true, // Default value
-      });
-
-      console.log("patient data", newUser);
-      // Return success response
-      if (newUser) {
-        const token = jwt.sign(
-          { id: newUser._id, email: newUser.email , role:"patient"},
-          "harshp4114",
-          { expiresIn: "1h" }
-        );
-
-        return res
-          .status(201)
-          .json({ message: "User created successfully", token });
-      }
-    } catch (error) {
-      res.status(500).json({
+    // Check if patient already exists
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(400).json({
         success: false,
-        message: "Failed to create patient",
-        error: error.message,
+        message: "User with this email already exists",
       });
     }
+
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const { zipCode, country, state, city } = req.body;
+    // console.log(Address);
+    const newAddress = new Address({
+      zipCode: zipCode,
+      country: country,
+      state: state,
+      city: city,
+    });
+    // console.log(newAddress);
+    // Save the address to get its ObjectId
+    const savedAddress = await newAddress.save();
+    // Create a new patient
+    // console.log("hhhhhhhhhhhhhhhhhhhhhh");
+
+    const newUser = await User.create({
+      fullName: {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+      },
+      email: req.body.email,
+      password: hashedPassword, // Save the hashed password
+      age: req.body.age,
+      gender: req.body.gender,
+      phone: req.body.phone,
+      address: savedAddress._id,
+      symptoms: [],
+      detectedDisease: null,
+      history: [],
+      searchHistory: [],
+      role: "patient",
+      isActive: true, // Default value
+    });
+
+    console.log("patient data", newUser);
+    // Return success response
+    if (newUser) {
+      const token = jwt.sign(
+        { id: newUser._id, email: newUser.email, role: "patient" },
+        "harshp4114",
+        { expiresIn: "1h" }
+      );
+
+      return res
+        .status(201)
+        .json({ message: "User created successfully", token });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to create patient",
+      error: error.message,
+    });
+  }
   // } else if (req.body.role == "doctor") {
   // }
 };
@@ -235,6 +234,7 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const Info = req.body;
+
     // Check if the provided ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
@@ -242,16 +242,57 @@ const updateUser = async (req, res) => {
         message: "Invalid patient ID",
       });
     }
+    
 
-    const patient = await User.findByIdAndUpdate(userId, Info);
+    const patientInfo=await User.findById(userId);
+    // console.log("patient info",patientInfo);
+    const addressInfo={
+      city:Info.city,
+      state:Info.state,
+      country:Info.country,
+      zipCode:Info.zipCode,
+    }
+    const addressId=patientInfo.address;
+    // console.log("address id",addressId);
+    // console.log("address info",addressInfo);
 
+    const addressUpdated=await Address.findByIdAndUpdate(addressId,addressInfo,{
+      new:true,});
+    
+    // console.log("address updated",addressUpdated);
+
+    // Handle `fullName` separately
+    const updatedInfo = {
+      ...Info,
+      fullName: {
+        firstName: Info.firstName,
+        lastName: Info.lastName,
+      },
+      address: addressUpdated._id,
+    };
+
+    delete updatedInfo.city;
+    delete updatedInfo.state;
+    delete updatedInfo.country;
+    delete updatedInfo.zipCode;
+    delete updatedInfo.firstName;
+    delete updatedInfo.lastName;
+
+    // console.log("info in backend to update", updatedInfo);
+
+    const patient = await User.findByIdAndUpdate(userId, updatedInfo, {
+      new: true, // Return the updated document
+      runValidators: true, // Validate update against schema
+    });
+
+    // console.log("patient in backend updated", patient);
     if (patient) {
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         messages: "User updated successfully",
       });
     } else {
-      res.status(404).json({
+      return res.status(404).json({
         success: false,
         message: "No patient with the given id",
       });
@@ -259,7 +300,7 @@ const updateUser = async (req, res) => {
   } catch (error) {
     // Handle any server errors
     //console.error("Error updating patient:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server error",
       error: error.message,

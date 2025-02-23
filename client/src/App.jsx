@@ -30,14 +30,12 @@ const App = () => {
   const location = useLocation();
   const isLoading = useSelector((state) => state.loading.isLoading); // Access global loading state
   return (
-    <Provider store={store}>
       <div className="h-[100vh] w-full">
         {isLoading && <Loader />} {/* Show loader if isLoading is true */}
         {location.pathname !== "/" && <Header />}
         {/*Dont Show header on loading page */}
         <Outlet />
       </div>
-    </Provider>
   );
 };
 
