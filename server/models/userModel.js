@@ -67,14 +67,6 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // Search history
-    searchHistory: [
-      {
-        disease: { type: String },
-        searchedAt: { type: Date, default: Date.now },
-      },
-    ],
-
     // Account-related fields
     role: {
       type: String,

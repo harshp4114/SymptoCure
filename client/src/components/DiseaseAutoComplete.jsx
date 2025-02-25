@@ -73,7 +73,7 @@ const DiseaseAutoComplete = () => {
         />
       </div>
       {suggestions.length > 0 && (
-        <ul className="absolute max-h-48 overflow-y-auto z-10 w-full bg-white border rounded shadow-lg">
+        <ul className="absolute max-h-48 overflow-y-auto z-10 w-5/12 bg-white border rounded shadow-lg">
           {suggestions.map((symptom) => (
             <li
               key={symptom}
@@ -81,7 +81,7 @@ const DiseaseAutoComplete = () => {
                 e.stopPropagation();
                 handleSelect(symptom);
               }}
-              className="p-2 cursor-pointer hover:bg-gray-200"
+              className="p-2 cursor-pointer w-full hover:bg-gray-200"
             >
               {symptom}
             </li>

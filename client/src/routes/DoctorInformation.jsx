@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -67,7 +67,7 @@ const DoctorInformation = () => {
       const result = await axios.get(`${BASE_URL}/api/doctor/${doctorId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // console.log("res", result);
+      console.log("res", result?.data?.data);
       setDoctorInfo(result?.data?.data);
       setPatientId(result?.data?.patientData?.id);
     } catch (error) {
@@ -158,19 +158,6 @@ const DoctorInformation = () => {
             </p>
             <p className="w-full text-lg text-gray-600 mt-1">
               <strong>Phone:</strong> {doctorInfo?.phone}
-            </p>
-
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Available Days:</strong>{" "}
-              {doctorInfo?.availableDays?.join(", ")}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Available Time:</strong>{" "}
-              {doctorInfo?.availableTime?.start} -{" "}
-              {doctorInfo?.availableTime?.end}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Patients Per Day:</strong> {doctorInfo?.patientsPerDay}
             </p>
             <p className="w-full text-lg text-gray-600 mt-1">
               <strong>Qualifications:</strong>{" "}

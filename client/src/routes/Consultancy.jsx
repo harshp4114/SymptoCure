@@ -3,26 +3,42 @@ import DoctorCard from "../components/doctorCard";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { userLoggedin } from "../redux/slices/signInSlice";
-import useAuth from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { BASE_URL } from "../utils/constants";
 import { Search } from "lucide-react";
+import useAuth from "../hooks/useAuth";
 
 const Consultancy = () => {
-  useAuth(); // Trigger the authentication logic (runs on mount)
+  useAuth(); // Ensure user is authenticated
 
   const navigate = useNavigate();
-  if (localStorage.getItem("role") !== "patient") {
-    navigate("/home");
-  }
-  const [doctors, setDoctors] = useState([]);
-  const [search, setSearch] = useState("");
-  const [filteredDoctors, setFilteredDoctors] = useState([]);
-  const token = Cookies.get("jwt-token");
-  const [loader, setLoader] = useState(true);
+  const location = useLocation();
   const dispatch = useDispatch();
+  const token = Cookies.get("jwt-token");
+
+  // Get authentication state
+  const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
+
+  // Ensure only patients can access
+  useEffect(() => {
+    if (localStorage.getItem("role") !== "patient") {
+      navigate("/home");
+    }
+  }, [navigate]);
+
+  // Retrieve values from location.state (if available)
+  const { specialization } = location.state ;
+
+  console.log("spiepojch",specialization);
+
+  // States
+  const [doctors, setDoctors] = useState([]);
+  const [search, setSearch] = useState(specialization || ""); // Set specialization only once
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [loader, setLoader] = useState(true);
+
+  // Fetch doctors
   const getDoctors = async () => {
     dispatch(showLoader());
     try {
@@ -31,52 +47,54 @@ const Consultancy = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setDoctors(result?.data?.data);
-      setFilteredDoctors(result?.data?.data); // Initialize with full list
+      const allDoctors = result?.data?.data || [];
+      setDoctors(allDoctors);
+
+      // Automatically filter doctors based on specialization (if provided)
+      if (specialization) {
+        const filtered = allDoctors.filter((doctor) =>
+          doctor.specialization.toLowerCase().includes(specialization.toLowerCase())
+        );
+        setFilteredDoctors(filtered);
+      } else {
+        setFilteredDoctors(allDoctors);
+      }
     } catch (error) {
-      //console.error("Error fetching doctors:", error);
+      console.error("Error fetching doctors:", error);
     } finally {
       dispatch(hideLoader());
     }
   };
 
+  // Handle input change for search
   const handleChange = (e) => {
-    const value = e.target.value; // Get the current input value
+    const value = e.target.value;
     setSearch(value);
 
-    if (value === "") {
-      // Reset to the full list if the search input is empty
-      setFilteredDoctors(doctors);
-    } else {
-      // Filter doctors based on the current input
-      setFilteredDoctors(
-        doctors.filter((doctor) =>
-          doctor.specialization.toLowerCase().includes(value.toLowerCase())
-        )
-      );
-    }
+    // Filter doctors dynamically
+    setFilteredDoctors(
+      value
+        ? doctors.filter((doctor) =>
+            doctor.specialization.toLowerCase().includes(value.toLowerCase())
+          )
+        : doctors
+    );
   };
 
-  // dispatch(showLoader()); ADD THIS IN THE TRY OF ANY API CALL MADE TO THE BACKEND
-  // dispatch(hideLoader()); ADD THIS IN THE FINALLY OF ANY API CALL MADE TO THE BACKEND
-
-  const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
-
+  // Ensure the user is authenticated before fetching doctors
   useEffect(() => {
-    if (loader) return;
     if (!isAuthenticated) {
-      navigate("/login"); // Redirect if the patient is not authenticated
+      navigate("/login"); // Redirect to login if not authenticated
+      return;
     }
-    getDoctors();
-  }, [isAuthenticated, loader]); // Add dependencies to avoid unnecessary re-renders
-
-  useEffect(() => {
     setLoader(false);
-  }, []);
+    getDoctors();
+    console.log(filteredDoctors);
+  }, [isAuthenticated, navigate]); // Only runs when authentication state changes
 
   return (
     <div className="absolute w-full h-fit bg-[#403CD5] p-4 pb-16">
-      <div className="w-full h-fit flex flex-wrap items-center justify-start px-10  pb-4 ">
+      <div className="w-full h-fit flex flex-wrap items-center justify-start px-10 pb-4">
         <div className="w-1/2">
           <h2 className="text-4xl mb-6 w-full transition-all duration-700 font-Gilroy font-extrabold mr-4 text-white">
             Find Your Trusted Health Specialist
@@ -88,8 +106,8 @@ const Consultancy = () => {
               value={search}
               onChange={handleChange}
               className="w-96 h-14 pl-12 pr-4 rounded-2xl shadow-lg hover:bg-blue-200 focus:bg-blue-200 focus:outline-none focus:ring-8 focus:ring-blue-900
-            border-none bg-blue-50 text-gray-800 placeholder-gray-600 hover:ring-8 hover:ring-blue-900
-            transition-all duration-700 ease-in-out text-lg"
+              border-none bg-blue-50 text-gray-800 placeholder-gray-600 hover:ring-8 hover:ring-blue-900
+              transition-all duration-700 ease-in-out text-lg"
               placeholder="Pediatrics, Cardiology, Etc."
             />
           </div>
@@ -109,18 +127,20 @@ const Consultancy = () => {
               <div className="text-gray-600">Specializations</div>
             </div>
             <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-700 ease-in-out rounded-2xl shadow-lg p-6 text-center">
-              <div className="text-2xl font-bold text-purple-600 mb-2">
-                24/7
-              </div>
+              <div className="text-2xl font-bold text-purple-600 mb-2">24/7</div>
               <div className="text-gray-600">Support Available</div>
             </div>
           </div>
         </div>
       </div>
       <div className="w-full flex flex-wrap h-full px-9">
-        {filteredDoctors.map((doctor) => (
-          <DoctorCard key={doctor._id} data={doctor} image="./d2.jpeg" />
-        ))}
+        {filteredDoctors.length > 0 ? (
+          filteredDoctors.map((doctor) => (
+            <DoctorCard key={doctor._id} data={doctor} image="./d2.jpeg" />
+          ))
+        ) : (
+          <div className="text-white text-xl mt-6">No doctors found.</div>
+        )}
       </div>
     </div>
   );

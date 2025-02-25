@@ -5,7 +5,7 @@ const DoctorCard = (props) => {
   return (
     <Link to="/doctorInformation" state={{ doctor: props.data._id }}>
       {/* {console.log("hiiii",props.data)} */}
-      <div className="w-64 h-[22rem] justify-center content-start items-start m-4 ring-[5px] ring-blue-300 hover:ring-[10px] bg-white p-0 transition-all duration-500 ease-in-out rounded-lg flex flex-wrap">
+      <div className="w-64 h-[24rem] justify-center content-start items-start m-4 ring-[5px] ring-blue-300 hover:ring-[10px] bg-white p-0 transition-all duration-500 ease-in-out rounded-lg flex flex-wrap">
         <div className="w-full h-52">
           <img
             src={props.image}

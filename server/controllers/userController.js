@@ -242,23 +242,27 @@ const updateUser = async (req, res) => {
         message: "Invalid patient ID",
       });
     }
-    
 
-    const patientInfo=await User.findById(userId);
+    const patientInfo = await User.findById(userId);
     // console.log("patient info",patientInfo);
-    const addressInfo={
-      city:Info.city,
-      state:Info.state,
-      country:Info.country,
-      zipCode:Info.zipCode,
-    }
-    const addressId=patientInfo.address;
+    const addressInfo = {
+      city: Info.city,
+      state: Info.state,
+      country: Info.country,
+      zipCode: Info.zipCode,
+    };
+    const addressId = patientInfo.address;
     // console.log("address id",addressId);
     // console.log("address info",addressInfo);
 
-    const addressUpdated=await Address.findByIdAndUpdate(addressId,addressInfo,{
-      new:true,});
-    
+    const addressUpdated = await Address.findByIdAndUpdate(
+      addressId,
+      addressInfo,
+      {
+        new: true,
+      }
+    );
+
     // console.log("address updated",addressUpdated);
 
     // Handle `fullName` separately
@@ -277,8 +281,10 @@ const updateUser = async (req, res) => {
     delete updatedInfo.zipCode;
     delete updatedInfo.firstName;
     delete updatedInfo.lastName;
+    delete updatedInfo.detectedDisease;
+    delete updatedInfo.symptoms;
 
-    // console.log("info in backend to update", updatedInfo);
+    console.log("info in backend to update", updatedInfo);
 
     const patient = await User.findByIdAndUpdate(userId, updatedInfo, {
       new: true, // Return the updated document
@@ -300,6 +306,70 @@ const updateUser = async (req, res) => {
   } catch (error) {
     // Handle any server errors
     //console.error("Error updating patient:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+const updateSymptoms = async (req, res) => {
+  const Info = req.body;
+  const userId = req.params.id;
+
+  try {
+    let historyData = {};
+    // Check if the provided ID is a valid MongoDB ObjectID
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid patient ID",
+      });
+    }
+    // console.log("info in backend", Info);
+    const currentPatient = await User.findById(userId);
+    // console.log("current patient", currentPatient);
+    if (currentPatient.detectedDisease && currentPatient.symptoms.length > 0) {
+      historyData = {
+        symptoms: currentPatient.symptoms,
+        detectedDisease: currentPatient.detectedDisease,
+      };
+    }
+    // console.log("hiiiiiii");
+
+    let history = [...currentPatient.history, historyData];
+
+    // console.log("history data", history);
+
+    
+
+    const updatedInfo = {
+      ...Info,
+      history,
+    };
+
+    // console.log("updated info in backend", updatedInfo);
+
+    const patient = await User.findByIdAndUpdate(userId, updatedInfo, {
+      new: true, // Return the updated document
+      runValidators: true, // Validate update against schema
+    });
+
+    // console.log("updated symptoms in backend", patient);
+
+    if (patient) {
+      return res.status(200).json({
+        success: true,
+        messages: "User symptoms updated successfully",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "No patient with the given id",
+      });
+    }
+  } catch (error) {
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -357,4 +427,5 @@ module.exports = {
   updateUser,
   getUserByEmail,
   getUserProfile,
+  updateSymptoms,
 };

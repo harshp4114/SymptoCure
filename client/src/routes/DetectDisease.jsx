@@ -11,12 +11,21 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import "react-toastify/dist/ReactToastify.css";
 import DiseaseAutoComplete from "../components/DiseaseAutoComplete";
 import symptomsValidateSchema from "../yupValidators/symptomsValidate";
+import { BASE_URL } from "../utils/constants";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
+import DiseaseDisplayOverlay from "../components/DiseaseDisplayOverlay";
 
 const DetectDisease = () => {
   useAuth();
   const token = Cookies.get("jwt-token");
   const navigate = useNavigate();
   const symptomsValidation = symptomsValidateSchema;
+  const [showDisease, setShowDisease] = useState(false);
+  const [disease, setDisease] = useState("");
+  const [doctorSpecialization,setDoctorSpecialization]=useState("");
+
+  const specialization=["Biomedical Engineering & Regenerative Medicine","Pediatrics","Cardiology"];
 
   if (localStorage.getItem("role") !== "patient") {
     navigate("/home");
@@ -24,22 +33,7 @@ const DetectDisease = () => {
   const [loader, setLoader] = useState(true);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
-  const symptomsAuto = [
-    "Fever",
-    "Cough",
-    "Shortness of breath",
-    "Tiredness",
-    "Aches and pains",
-    "Sore throat",
-    "Diarrhoea",
-    "Conjunctivitis",
-    "Headache",
-    "Loss of taste or smell",
-    "A rash on skin, or discolouration of fingers or toes",
-    "Difficulty breathing or shortness of breath",
-    "Chest pain or pressure",
-    "Loss of speech or movement",
-  ];
+
   useEffect(() => {
     if (loader) return;
     if (!isAuthenticated) {
@@ -82,12 +76,26 @@ const DetectDisease = () => {
       //   (symptom) => symptom.trim() !== ""
       // );
 
+      
+
+      const diseaseDetected="xyz";
+      setDisease(diseaseDetected);
+
+      const specializationIndex=Math.floor(Math.random()*3);
+      const doctorSpecialization=specialization[specializationIndex];
+
+      setDoctorSpecialization(doctorSpecialization);
+
+      const decoded=jwtDecode(token);
+      const patientId=decoded.id;
+      const result=await axios.put(`${BASE_URL}/api/patient/symptoms/${patientId}`,{detectedDisease:diseaseDetected,symptoms:values.symptoms});
+      console.log("result",result);
       // console.log("symptoms", symptoms);
 
       // console.log("Symptoms to submit:", symptoms);
       // Add your API call here
-
-      toast.success("Symptoms submitted successfully!");
+      setShowDisease(true);
+      // toast.success("Symptoms submitted successfully!");
     } catch (error) {
       console.error("Error submitting symptoms:", error);
 
@@ -99,7 +107,7 @@ const DetectDisease = () => {
   };
 
   return (
-    <div className="w-full h-full flex justify-center items-start bg-[#403CD5]">
+    <div className="w-full h-[86vh] flex justify-center items-start bg-[#403CD5]">
       <ToastContainer
         position="top-right"
         autoClose={2000}
@@ -111,6 +119,9 @@ const DetectDisease = () => {
         draggable
         pauseOnHover
       />
+      {showDisease && (
+        <DiseaseDisplayOverlay disease={disease} specialization={doctorSpecialization}/>
+      )}
       <div className="w-9/12 h-fit min-h-[73%] bg-[#16165C] rounded-3xl flex justify-center mt-6 items-start px-10 py-10">
         <div className="w-[40%] h-full flex flex-wrap content-start mr-10 items-start">
           <div className="w-40 flex h-24 item-center ml-3">
@@ -122,7 +133,7 @@ const DetectDisease = () => {
             ></l-cardio>
           </div>
           <div className="basis-full flex flex-wrap">
-            <h1 className="text-[4rem] leading-none font-Gilroy text-left font-bold text-white basis-full">
+            <h1 onClick={()=>setShowDisease(true)} className="text-[4rem] leading-none font-Gilroy text-left font-bold text-white basis-full">
               Don't Guess,
             </h1>
             <h1 className="text-[4rem] leading-none font-Gilroy font-semibold text-left text-white basis-full">

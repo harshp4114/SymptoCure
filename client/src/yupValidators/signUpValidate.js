@@ -35,13 +35,10 @@ const signUpUserValidateSchema = Yup.object({
     .max(50, "City must be 50 characters or less")
     .required("City is required"),
   state: Yup.string()
-    .max(50, "State must be 50 characters or less")
     .required("State is required"),
   country: Yup.string()
-    .max(50, "Country must be 50 characters or less")
     .required("Country is required"),
   zipCode: Yup.string()
-    .matches(/^\d{6}(-\d{4})?$/, "Invalid Zip Code") // Matches US Zip Code format
     .required("Zip Code is required"),
 });
 
