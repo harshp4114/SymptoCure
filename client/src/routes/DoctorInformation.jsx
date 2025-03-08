@@ -26,8 +26,10 @@ const DoctorInformation = () => {
   const [showBooking, setShowBooking] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showFailureToast, setShowFailureToast] = useState(false);
+  const [showPendingToast, setShowPendingToast] = useState(false);
   const [showExistToast, setShowExistToast] = useState(false);
   const [patientData, setPatientData] = useState({});
+  const [addressData, setAddressData] = useState({});
   const token = Cookies.get("jwt-token");
 
   useEffect(() => {
@@ -67,9 +69,14 @@ const DoctorInformation = () => {
       const result = await axios.get(`${BASE_URL}/api/doctor/${doctorId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("res", result?.data?.data);
+      // console.log("res", result?.data?.data);
+      // console.log(result);
       setDoctorInfo(result?.data?.data);
+      // console.log("dhbdsahbjhjasdj",result?.data?.patientData?.id)
       setPatientId(result?.data?.patientData?.id);
+      const result2 = await axios.get(`${BASE_URL}/api/address/${result?.data?.data?.address}`);
+      console.log(result2);
+      setAddressData(result2?.data?.data);
     } catch (error) {
     } finally {
       dispatch(hideLoader());
@@ -97,15 +104,19 @@ const DoctorInformation = () => {
     if (showExistToast) {
       //console.log("hiiiiii from exist",showExistToast);
 
-      toast.error("Appointment already exists.");
+      toast.error("Appointment already exists with this doctor.");
       setShowExistToast(false);
     }
-  }, [showExistToast, showFailureToast, showSuccessToast]);
+    if(showPendingToast){
+      toast.warn("Appointment pending with the doctor. Please wait");
+      setShowPendingToast(false);
+    }
+  }, [showExistToast, showFailureToast, showSuccessToast,showPendingToast]);
 
   return loader ? (
     <Loader />
   ) : (
-    <div className="flex flex-col h-[86vh] items-center bg-gradient-to-r from-blue-600 to-blue-600 ">
+    <div className="flex flex-col h-[86vh] items-center bg-gradient-to-tr from-blue-950 to-blue-600 ">
       {showBooking && (
         <BookAppointment
           doctor={doctorInfo}
@@ -114,11 +125,12 @@ const DoctorInformation = () => {
           toggleSuccess={() => setShowSuccessToast(true)}
           toggleFailure={() => setShowFailureToast(true)}
           toggleExist={() => setShowExistToast(true)}
+          togglePending={() => setShowPendingToast(true)}
         />
       )}
       <ToastContainer
         position="top-right"
-        autoClose={2000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -128,17 +140,21 @@ const DoctorInformation = () => {
         pauseOnHover
       />
       <div className="w-7/12 h-full bg-white shadow-2xl shadow-blue-950">
-        <div className="h-10/12 w-full flex">
+      {}
+        <div className="h-10/12 w-full flex flex-wrap">
           <div className="flex w-1/3 h-full justify-center items-start pt-16">
             {/* Profile Picture Placeholder */}
             <div className="w-36 h-36 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
               <span className="text-4xl font-bold text-white">
-                {doctorInfo?.fullName?.firstName[0]}
-                {doctorInfo?.fullName?.lastName[0]}
+                {doctorInfo?.fullName?.firstName[0].toUpperCase()}
+                {doctorInfo?.fullName?.lastName[0].toUpperCase()}
               </span>
             </div>
           </div>
           <div className="h-full flex flex-wrap content-start pt-16 pl-4 w-2/3">
+          <div className="flex justify-center w-9/12 mb-4 items-center bg-opacity-70 rounded-xl border-red-800 border-opacity-60 border-[2px] bg-red-500 h-10 ">
+            <h2>The selected doctor is in a different city.</h2>
+          </div>
             {/* Doctor's Information */}
             <h1 className="w-full text-3xl font-bold mb-2 text-gray-800">
               Dr. {doctorInfo?.fullName?.firstName}{" "}
@@ -167,8 +183,17 @@ const DoctorInformation = () => {
               <strong>Gender:</strong> {doctorInfo?.gender}
             </p>
             <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Rating:</strong> {doctorInfo?.rating} (No reviews yet)
+              <strong>City:</strong> {addressData?.city}
             </p>
+            <p className="w-full text-lg text-gray-600 mt-1">
+              <strong>State:</strong> {addressData?.state}
+            </p>
+            <p className="w-full text-lg text-gray-600 mt-1">
+              <strong>Counrty:</strong> {addressData?.country}
+            </p>
+            {/* <p className="w-full text-lg text-gray-600 mt-1">
+              <strong>Rating:</strong> {doctorInfo?.rating} (No reviews yet)
+            </p> */}
           </div>
         </div>
         {/* Action Buttons */}

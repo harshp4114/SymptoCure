@@ -170,7 +170,7 @@ const getAppointmentsByDoctorId = async (req, res) => {
       {
         $match: {
           doctorId: new mongoose.Types.ObjectId(doctorId), // Match doctorId
-          status: "confirmed", // Only consider confirmed appointments
+          status: "approved", // Only consider confirmed appointments
         },
       },
       {

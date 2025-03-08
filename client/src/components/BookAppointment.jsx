@@ -18,9 +18,9 @@ const BookAppointment = ({
   toggleSuccess,
   toggleFailure,
   toggleExist,
+  togglePending,
 }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  console.log("patient",patient);
 
   useAuth();
   const [loading, setLoading] = useState(true);
@@ -50,14 +50,17 @@ const BookAppointment = ({
       // console.log("result of fully booked app",result)
       setFullyBooked(result.data.fullyBookedDates);
     } catch (error) {
-      console.log("error",error);
-    }finally{
+      console.log("error", error);
+    } finally {
       dispatch(hideLoader());
     }
   };
 
   const handleBookAppointment = async (values) => {
     dispatch(showLoader());
+    console.log("appoinment", values);
+    console.log("patient", patient);
+
     try {
       await axios.post(
         `${BASE_URL}/api/appointment/${doctor._id}`,
@@ -75,13 +78,19 @@ const BookAppointment = ({
       toggleSuccess();
       onClose();
     } catch (error) {
-      //console.log("error", error);
+      console.log("error", error);
       if (
         error?.response?.data?.message ==
-        "Appointment already exists for this date"
+        "Appointment already exists with the doctor"
       ) {
         //console.log(toggleExist)
         toggleExist();
+      } else if (
+        error?.response?.data?.message ==
+        "Appointment pending with the doctor. Please wait"
+      ) {
+        console.log("indisbabdjas ending");
+        togglePending();
       } else {
         //console.log(toggleFailure)
         toggleFailure();
@@ -97,12 +106,21 @@ const BookAppointment = ({
   }, []);
 
   const validationSchema = Yup.object({
-    fullName: Yup.string().required("Full name is required").default(patient?.fullName?.firstName+" "+patient?.fullName?.lastName),
+    fullName: Yup.string()
+      .required("Full name is required")
+      .default(
+        patient?.fullName?.firstName + " " + patient?.fullName?.lastName
+      ),
     email: Yup.string()
       .email("Invalid email address")
-      .required("Email is required").default(patient?.email),
-      disease: Yup.string().required("Disease is required").default(patient?.disease),
-    phone: Yup.string().required("Phone number is required").default(patient?.phone),
+      .required("Email is required")
+      .default(patient?.email),
+    disease: Yup.string()
+      .required("Disease is required")
+      .default(patient?.detectedDisease),
+    phone: Yup.string()
+      .required("Phone number is required")
+      .default(patient?.phone),
     reason: Yup.string().required("Reason for visit is required"),
   });
 
@@ -135,8 +153,8 @@ const BookAppointment = ({
   return loading ? (
     <Loader />
   ) : (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white h-4/4 rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 w-full h-full flex items-center justify-center p-4 z-50">
+      <div className="bg-white  rounded-lg shadow-xl  max-w-4xl overflow-hidden">
         {/* Header */}
         <div className="bg-blue-600 p-6 text-white">
           <div className="flex justify-between items-center">
@@ -148,7 +166,7 @@ const BookAppointment = ({
               ✕
             </button>
           </div>
-          <p className="mt-2">
+          <p className="">
             with Dr. {doctor?.fullName?.firstName} {doctor?.fullName?.lastName}
           </p>
         </div>
@@ -156,16 +174,19 @@ const BookAppointment = ({
         {/* Content */}
         <Formik
           initialValues={{
-            fullName: "",
-            email: "",
-            phone: "",
+            fullName:
+              patient?.fullName?.firstName +
+                " " +
+                patient?.fullName?.lastName || "",
+            email: patient?.email || "",
+            phone: patient?.phone || "",
             reason: "",
-            disease: "",
+            disease: patient?.detectedDisease || "",
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => handleBookAppointment(values)}
         >
-          <Form className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Form className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 gap-y-0">
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -174,8 +195,13 @@ const BookAppointment = ({
                 <Field
                   type="text"
                   name="fullName"
+                  disabled
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={patient?.fullName?.firstName+" "+patient?.fullName?.lastName}
+                  placeholder={
+                    patient?.fullName?.firstName +
+                    " " +
+                    patient?.fullName?.lastName
+                  }
                 />
                 <ErrorMessage
                   name="fullName"
@@ -190,6 +216,7 @@ const BookAppointment = ({
                 </label>
                 <Field
                   type="email"
+                  disabled
                   name="email"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder={patient?.email}
@@ -207,6 +234,7 @@ const BookAppointment = ({
                 </label>
                 <Field
                   type="tel"
+                  disabled
                   name="phone"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder={patient?.phone}
@@ -224,9 +252,10 @@ const BookAppointment = ({
                 </label>
                 <Field
                   type="text"
+                  disabled
                   name="disease"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={patient?.disease || "Enter your disease"}
+                  placeholder={patient?.detectedDisease || "Enter your disease"}
                 />
                 <ErrorMessage
                   name="disease"
@@ -242,7 +271,7 @@ const BookAppointment = ({
                 <Field
                   as="textarea"
                   name="reason"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-28 max-h-28"
                   placeholder="Please describe your symptoms or reason for visit"
                 />
                 <ErrorMessage
@@ -267,12 +296,9 @@ const BookAppointment = ({
                   selected={selectedDate}
                   onSelect={setSelectedDate}
                   disabled={(date) => {
-                    if (date < new Date() || isDateFullyBooked(date))
-                      return true;
-                    const day = date.toLocaleDateString("en-US", {
-                      weekday: "long",
-                    });
-                    return !doctor?.availableDays?.includes(day);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Remove time part for accurate comparison
+                    return date <= today; // Disable all past dates including today
                   }}
                   className="border rounded-md font-semibold bg-white p-3"
                   modifiers={modifiers}
@@ -282,7 +308,7 @@ const BookAppointment = ({
             </div>
 
             {/* Footer */}
-            <div className="col-span-full flex justify-end gap-4 mt-6">
+            <div className="col-span-full flex justify-end gap-4">
               <button
                 type="button"
                 className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"

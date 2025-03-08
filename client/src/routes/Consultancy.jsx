@@ -28,9 +28,9 @@ const Consultancy = () => {
   }, [navigate]);
 
   // Retrieve values from location.state (if available)
-  const { specialization } = location.state ;
+  const  specialization  = location?.state?.specialization; ;
 
-  console.log("spiepojch",specialization);
+  // console.log("spiepojch",specialization);
 
   // States
   const [doctors, setDoctors] = useState([]);
@@ -89,7 +89,7 @@ const Consultancy = () => {
     }
     setLoader(false);
     getDoctors();
-    console.log(filteredDoctors);
+    // console.log(filteredDoctors);
   }, [isAuthenticated, navigate]); // Only runs when authentication state changes
 
   return (

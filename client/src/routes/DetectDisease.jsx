@@ -11,7 +11,7 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import "react-toastify/dist/ReactToastify.css";
 import DiseaseAutoComplete from "../components/DiseaseAutoComplete";
 import symptomsValidateSchema from "../yupValidators/symptomsValidate";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL, diseaseToSpecialization } from "../utils/constants";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import DiseaseDisplayOverlay from "../components/DiseaseDisplayOverlay";
@@ -25,7 +25,7 @@ const DetectDisease = () => {
   const [disease, setDisease] = useState("");
   const [doctorSpecialization,setDoctorSpecialization]=useState("");
 
-  const specialization=["Biomedical Engineering & Regenerative Medicine","Pediatrics","Cardiology"];
+  // const specialization=["Biomedical Engineering & Regenerative Medicine","Pediatrics","Cardiology"];
 
   if (localStorage.getItem("role") !== "patient") {
     navigate("/home");
@@ -76,19 +76,30 @@ const DetectDisease = () => {
       //   (symptom) => symptom.trim() !== ""
       // );
 
-      
 
-      const diseaseDetected="xyz";
-      setDisease(diseaseDetected);
+        const response = await axios.post("http://localhost:5000/predict", values);
+        console.log("response", response);
 
-      const specializationIndex=Math.floor(Math.random()*3);
-      const doctorSpecialization=specialization[specializationIndex];
+        // const data = await response.json();
+        // setPrediction(response.data.predictions);
 
-      setDoctorSpecialization(doctorSpecialization);
+      // const diseaseDetected="xyz";
+      console.log("disease",response?.data?.predictions[0]?.disease);
+      const d=response?.data?.predictions[0]?.disease;
+      setDisease(d);
+
+      // const specializationIndex=Math.floor(Math.random()*3);
+      // const doctorSpecialization=specialization[specializationIndex];
+
+      setDoctorSpecialization(diseaseToSpecialization[response?.data?.predictions[0]?.disease]);
 
       const decoded=jwtDecode(token);
       const patientId=decoded.id;
-      const result=await axios.put(`${BASE_URL}/api/patient/symptoms/${patientId}`,{detectedDisease:diseaseDetected,symptoms:values.symptoms});
+      console.log("disease",disease)
+      // while(!disease){
+      //   console.log("waiting for disease");
+      // }
+      const result=await axios.put(`${BASE_URL}/api/patient/symptoms/${patientId}`,{detectedDisease:d,symptoms:values.symptoms});
       console.log("result",result);
       // console.log("symptoms", symptoms);
 
@@ -98,7 +109,6 @@ const DetectDisease = () => {
       // toast.success("Symptoms submitted successfully!");
     } catch (error) {
       console.error("Error submitting symptoms:", error);
-
       toast.error("Failed to submit symptoms. Please try again.");
     } finally {
       dispatch(hideLoader());

@@ -83,7 +83,7 @@ const CheckPatients = () => {
           <div className="p-6">
             {appointments.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {appointments.map((appointment) => (
+                {appointments.filter((appointment)=>appointment.status=="approved").map((appointment) => (
                   <div className="transform transition-all duration-300 hover:scale-100 hover:shadow-lg">
                     <AppointmentCard key={appointment._id} appointmentData={appointment} />
                   </div>

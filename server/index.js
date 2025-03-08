@@ -7,6 +7,7 @@ const consultationRoutes = require("./routes/consultationRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const addressRoutes = require("./routes/addressRoutes");
 const cors = require("cors");
+const axios = require("axios");
 
 //console.log("monogo connecting")
 connectMongo();
@@ -18,6 +19,19 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.post("/predict", async (req, res) => {
+  console.log("inside predict",req.body.symptoms);
+  try {
+      const response = await axios.post("http://localhost:8000/predict", {
+          symptoms: req.body.symptoms
+      });
+      res.json(response.data);
+  } catch (error) {
+      console.error("FastAPI error:", error);
+      res.status(500).json({ message: "ML service error" });
+  }
+});
 
 app.use("/api/patient", userRoutes);
 app.use("/api/doctor", doctorRoutes);

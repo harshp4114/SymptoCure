@@ -21,13 +21,12 @@ const getAllAppointments = async (req, res) => {
   }
 };
 
-const getAppointmentsByDoctorId= async (req, res) => {
-
-  const doctor=req.tokenData;
+const getAppointmentsByDoctorId = async (req, res) => {
+  const doctor = req.tokenData;
   try {
     // console.log("doc",doctor)
     const doctorId = doctor.id;
-    const appointments = await Appointment.find({doctorId});
+    const appointments = await Appointment.find({ doctorId });
     // console.log("ustsy sincsakn",appointments)
     if (appointments) {
       return res.status(200).json({
@@ -35,7 +34,7 @@ const getAppointmentsByDoctorId= async (req, res) => {
         message: "All appointments fetched successfully",
         data: appointments,
       });
-    }else{
+    } else {
       return res.status(404).json({
         success: false,
         message: "No appointments found",
@@ -48,14 +47,14 @@ const getAppointmentsByDoctorId= async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
 const createAppointment = async (req, res) => {
   try {
     console.log("appointment body data",req.body)
-    const { selectedDate, reason ,disease} = req.body;
-    // //console.log(req.body);
-    // //console.log(req.patient);
+    const { selectedDate, reason, disease } = req.body;
+    // console.log(req.body);
+    // console.log("req ma pt",req.patient);
     const userId = req.tokenData.id;
     const doctorId = req.params.id;
     //console.log(selectedDate);
@@ -63,12 +62,22 @@ const createAppointment = async (req, res) => {
     const existingAppointment = await Appointment.findOne({
       userId,
       doctorId,
+      status: { $ne: "rejected" },
     });
+
+    console.log("existing appointment", existingAppointment);
     if (existingAppointment) {
-      return res.status(400).json({
-        success: false,
-        message: "Appointment already exists for this date",
-      });
+      if (existingAppointment.status === "pending") {
+        return res.status(400).json({
+          success: false,
+          message: "Appointment pending with the doctor. Please wait"
+        });
+      } else if (existingAppointment.status === "approved") {
+        return res.status(400).json({
+          success: false,
+          message: "Appointment already exists with the doctor",
+        });
+      }
     }
 
     const appointment = new Appointment({
@@ -76,6 +85,7 @@ const createAppointment = async (req, res) => {
       doctorId,
       date: selectedDate,
       reason,
+      disease: disease,
       status: "pending",
     });
     //console.log(appointment);
@@ -97,7 +107,38 @@ const createAppointment = async (req, res) => {
   }
 };
 
+const updateAppointment = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const appointmentId = req.params.id;
+    const appointment = await Appointment.findById(appointmentId);
+    if (appointment) {
+      appointment.status = status;
+      const updatedAppointment = await appointment.save();
+      if (updatedAppointment) {
+        return res.status(200).json({
+          success: true,
+          message: "Appointment updated successfully",
+          data: updatedAppointment,
+        });
+      }
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Appointment not found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update appointment",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
+  updateAppointment,
   getAllAppointments,
   createAppointment,
   getAppointmentsByDoctorId,

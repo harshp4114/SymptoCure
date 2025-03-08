@@ -330,13 +330,15 @@ const updateSymptoms = async (req, res) => {
     // console.log("info in backend", Info);
     const currentPatient = await User.findById(userId);
     // console.log("current patient", currentPatient);
-    if (currentPatient.detectedDisease && currentPatient.symptoms.length > 0) {
+    // if (currentPatient.detectedDisease && currentPatient.symptoms.length > 0) {
       historyData = {
-        symptoms: currentPatient.symptoms,
-        detectedDisease: currentPatient.detectedDisease,
+        symptoms: Info.symptoms,
+        detectedDisease: Info.detectedDisease,
       };
-    }
+    // }
+
     // console.log("hiiiiiii");
+    // console.log("history data", historyData);
 
     let history = [...currentPatient.history, historyData];
 

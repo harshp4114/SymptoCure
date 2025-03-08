@@ -301,7 +301,7 @@ const Profile = () => {
               <button
                 onClick={() => {
                   // console.log("edit clik");
-                  return setEditDoctorProfile(true);
+                  return setEditUserProfile(true);
                 }}
                 className=" flex items-center rounded-lg "
               >
@@ -375,7 +375,7 @@ const Profile = () => {
               </label>
               <p className="text-gray-600">
                 {profileData?.symptoms?.length
-                  ? profileData?.symptoms?.map((symp) => symp + ", ")
+                  ? profileData?.symptoms?.join(", ")
                   : "No Symptoms Declared Yet"}
               </p>
             </div>
