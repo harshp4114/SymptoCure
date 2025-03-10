@@ -196,7 +196,12 @@ const CheckAppointments = () => {
               </div>
             ) : (
               <div className=" w-full grid grid-cols-3 gap-10">
-                {particularAppointment.map((appointment) => (
+                {particularAppointment
+                .sort(
+                  (a, b) =>
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                )
+                .map((appointment) => (
                   <AppointmentPatient
                     key={appointment._id}
                     data={appointment}

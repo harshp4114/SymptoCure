@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import gsap from "gsap";
+import { quantum } from "ldrs";
+import { helix } from "ldrs";
+import ScrollingMarquee from "../components/ScrollingMarquee";
+import { Link, useNavigate } from "react-router-dom";
+
+// Default values shown
 
 const Body = () => {
   const words = ["manageable.", "easy.", "personalized."];
@@ -11,6 +17,10 @@ const Body = () => {
     const nextIndex = (currentIndex + 1) % words.length;
     return words[nextIndex];
   };
+  const navigate = useNavigate();
+  // quantum.register();
+  helix.register();
+
   //manage 640px
   //easy 276px
   // person 628px
@@ -72,26 +82,420 @@ const Body = () => {
   useAuth();
 
   return (
-    <div className="w-full h-full bg-[#403CD5] absolute">
-      <div className="w-full h-full flex">
-        <div className="w-5/12 h-full"></div>
-        <div className="w-7/12 h-full mt-20">
-          <h2 className="text-[#FFFFFF] text-8xl font-Gilroy font-extrabold">
-            Making at home
-          </h2>
-          <h2 className="text-[#FFFFFF] text-8xl font-Gilroy font-extrabold">
-            healthcare
-          </h2>
-          <div className="container w-[640px] h-32 overflow-hidden justify-end border-dotted items-start p-4 pt-2 mt-4  border-[3px] border-opacity-50 rounded-2xl border-white">
-            {/* The animated element */}
-            <h2 className="heroHeading1 text-[#2EE9FF] text-8xl ml-2 font-Gilroy font-extrabold mb-6">
-              {firstWord}
+    <div className="w-full h-[500vh] bg-[#403CD5] absolute">
+      <div className="w-full h-[100vh]">
+        <div className="absolute z-0 top-[13.9rem] left-[6rem]">
+          <l-helix size="380" speed="2.5" color="#16165C"></l-helix>
+        </div>
+        <div className="absolute z-0 top-8 left-[6rem]">
+          <l-helix size="380" speed="2.5" color="#16165C"></l-helix>
+        </div>
+        <div className="absolute z-0 top-[13.9rem] left-[3.5rem]">
+          <l-helix size="380" speed="2.5" color="white"></l-helix>
+        </div>
+        <div className="absolute z-0 top-8 left-[3.5rem]">
+          <l-helix size="380" speed="2.5" color="white"></l-helix>
+        </div>
+
+        <div className="z-50 w-full h-full flex">
+          <div className="w-5/12 h-full"></div>
+          <div className="w-7/12 h-full mt-20">
+            <h2 className="text-[#FFFFFF] text-8xl font-Gilroy font-extrabold">
+              Making at home
             </h2>
-            <h2 className="heroHeading2 text-[#2EE9FF] text-8xl ml-2 font-Gilroy font-extrabold mb-6">
-              {secondWord}
+            <h2 className="text-[#FFFFFF] text-8xl font-Gilroy font-extrabold">
+              healthcare
             </h2>
+            <div className="container w-[640px] h-32 overflow-hidden justify-end border-dotted items-start p-4 pt-2 mt-4  border-[3px] border-opacity-50 rounded-2xl border-white">
+              {/* The animated element */}
+              <h2 className="heroHeading1 text-[#2EE9FF] text-8xl ml-2 font-Gilroy font-extrabold mb-6">
+                {firstWord}
+              </h2>
+              <h2 className="heroHeading2 text-[#2EE9FF] text-8xl ml-2 font-Gilroy font-extrabold mb-6">
+                {secondWord}
+              </h2>
+            </div>
+            <div className="mt-16 font-Gilroy text-3xl text-white font-semibold">
+              <h2>Revolutionizing healthcare with disease detection,</h2>
+              <h2>remote care logistics, and patient support.</h2>
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Second section */}
+      <div className="w-full h-[100vh] bg- flex flex-wrap content-center items-center justify-center">
+        <h2 className="w-full text-center font-Gilroy text-white font-semibold text-8xl ">
+          Focused on health,
+        </h2>
+        <h2 className="w-full text-center font-Gilroy text-white font-semibold text-8xl ">
+          so you can focus on life.
+        </h2>
+        <div className="h-16 w-96 mt-14">
+          <ScrollingMarquee text="KEEP SCROLLING" speed={10} />
+        </div>
+      </div>
+
+      {/* Third section */}
+      {/* <div className="third h-[100vh] px-10 bg-white flex items-center rounded-t-3xl">
+        <div className="flex items-center w-full h-40">
+          <h2 className="font-Gilroy font-bold text-[#232269] text-8xl mr-6">
+            Let's show you{" "}
+          </h2>
+          <div className="relative button-trigger button-move top-2 w-48 h-16 mt-2">
+            <button
+              onClick={() => navigate("/consultancy")}
+              type="submit"
+              className="bg-[#ffffff] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group" */}
+            {/* > */}
+              {/* Default Text */}
+              {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                Consult a Doctor
+              </span> */}
+
+              {/* Hover Text */}
+              {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                Consult a Doctor
+              </span>
+            </button>
+          </div>
+          <h2 className="font-Gilroy font-bold text-[#232269] ml-6 text-8xl">
+            how we do it
+          </h2>
+        </div>
+      </div> */}
+
+      {/* Fourth section */}
+      <div className="bg-indigo-950 h-[100vh] flex">
+        {/* Left side content */}
+        <div className="w-1/2 p-16 flex justify-center flex-col">
+          {/* Top section with user icon */}
+          <div className="mb-6 flex justify-between items-end">
+            <div className="bg-[#16165C] shadow-xl  w-12 h-12 rounded-lg flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-cyan-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 3a3 3 0 00-3 3v1a3 3 0 00-3 3v3a3 3 0 003 3v1a3 3 0 003 3M15 3a3 3 0 013 3v1a3 3 0 013 3v3a3 3 0 01-3 3v1a3 3 0 01-3 3M9 3h6M9 21h6M12 3v18"
+                />
+              </svg>
+            </div>
+            <div className="text-cyan-400 font-Gilroy text-lg">01.</div>
+          </div>
+          <div className="border-b-[1px] border-blue-400 border-opacity-20 mb-12"></div>
+
+          {/* Numbered indicator */}
+
+          {/* Main heading */}
+          <div className="mb-6">
+            <h1 className="text-5xl font-Gilroy font-bold text-white">
+              First, SymptoCure{" "}
+              <span className=" font-Gilroy text-cyan-400">analyzes</span>{" "}
+              user-reported symptoms to <br />
+              <span className="text-cyan-400 font-Gilroy">detect</span>{" "}
+              potential diseases. <br />
+            </h1>
+          </div>
+
+          {/* Description text */}
+          <div className="mt-8 max-w-xl">
+            <p className="text-white font-Gilroy text-lg">
+              SymptoCure leverages its advanced Machine Learning model to
+              analyze symptoms and identify potential diseases, guiding users
+              toward appropriate healthcare solutions.
+            </p>
+          </div>
+        </div>
+
+        {/* Right side content */}
+        <div className="w-1/2 bg-[#232269] p-12 flex flex-col items-end justify-start">
+          {/* Request Demo button */}
+          <div className="relative button-trigger button-move top-2 w-48 h-16 mt-2">
+            <button
+              onClick={() => navigate("/disease-detection")}
+              type="submit"
+              className="bg-[#ffffff] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
+            >
+              {/* Default Text */}
+              <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                Detect Disease
+              </span>
+
+              {/* Hover Text */}
+              <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                Detect Disease
+              </span>
+            </button>
+          </div>
+          <div className="w-full h-8/12 mt-14 rounded-xl">
+            <img src="./images/p1.jpg" className="rounded-3xl shadow-2xl shadow-black/40 w-full h-full">
+            </img>
+          </div>
+        </div>
+      </div>
+
+      {/* Fifth section */}
+      <div className="bg-indigo-950 h-[100vh] flex">
+        {/* Left side content */}
+        <div className="w-1/2 p-16 flex justify-center flex-col">
+          {/* Top section with user icon */}
+          <div className="mb-6 flex justify-between items-end">
+            <div className="bg-[#16165C] shadow-xl  w-12 h-12 rounded-lg flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-[#00FFAA]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <div className="text-[#00FFAA] font-Gilroy text-lg">02.</div>
+          </div>
+          <div className="border-b-[1px] border-blue-400 border-opacity-20 mb-12"></div>
+
+          {/* Numbered indicator */}
+
+          {/* Main heading */}
+          <div className="mb-6">
+            <h1 className="text-5xl font-Gilroy font-bold text-white">
+              SymptoCure{" "}
+              <span className=" font-Gilroy text-[#00FFAA]">
+                connects users
+              </span>{" "}
+              with specialized doctors based on the detected disease for <br />
+              <span className="text-[#00FFAA] font-Gilroy">
+                expert consultation
+              </span>{" "}
+              and treatment guidance. <br />
+            </h1>
+          </div>
+
+          {/* Description text */}
+          <div className="mt-8 max-w-xl">
+            <p className="text-white font-Gilroy text-lg">
+              SymptoCure enables remote doctor consultations, connecting users
+              with specialists for expert diagnosis and tailored treatment
+              plans.
+            </p>
+          </div>
+        </div>
+
+        {/* Right side content */}
+        <div className="w-1/2 bg-[#232269] p-12 flex flex-col items-end justify-start">
+          {/* Request Demo button */}
+          <div className="relative button-trigger button-move top-2 w-48 h-16 mt-2">
+            <button
+              onClick={() => navigate("/consultancy")}
+              type="submit"
+              className="bg-[#ffffff] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
+            >
+              {/* Default Text */}
+              <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                Get Consultancy
+              </span>
+
+              {/* Hover Text */}
+              <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                Get Consultancy
+              </span>
+            </button>
+          </div>
+          <div className="w-full h-8/12 mt-14 rounded-xl">
+            <img src="./images/p2.jpg" className="rounded-3xl shadow-2xl shadow-black/40 w-full h-full">
+            </img>
+          </div>
+        </div>
+      </div>
+
+      {/* {sixth section} */}
+      <div className="w-full h-[100vh] flex justify-center items-center bg-white">
+        <footer className="w-9/12 h-9/12 rounded-3xl flex items-center justify-center bg-[#232269] text-white py-12">
+          <div className="max-w-8xl mx-auto px-4 lg:px-8">
+            {/* Footer top section with main heading */}
+            <div className="text-center mb-10">
+              <h2 className="text-white font-Gilroy text-5xl font-semibold leading-tight">
+                Making at-home healthcare
+                <span className="text-[#2EE9FF]"> accessible</span>
+              </h2>
+              <p className="mt-4 text-white text-xl max-w-2xl mx-auto">
+                Revolutionizing healthcare with disease detection, remote care
+                logistics, and patient support.
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="border-b border-indigo-700 border-opacity-40 mb-10"></div>
+
+            {/* Main footer content */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+              {/* Company info */}
+              <div className="md:col-span-4">
+                <div className="mb-4">
+                  <h3 className="font-Gilroy font-bold text-3xl mb-4">
+                    SymptoCure
+                  </h3>
+                  <p className="text-gray-300">
+                    Focused on health, so you can focus on life. Trusted by
+                    medical professionals nationwide for healthcare solutions.
+                  </p>
+                </div>
+
+                <div className="w-36 h-10 mt-6">
+                  <button
+                    type="button"
+                    className="h-full w-full bg-white p-2 text-[#232269] text-md border-4 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 font-bold py-2 px-6 rounded-full relative overflow-hidden group "
+                  >
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                      Contact Us
+                    </span>
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                      Contact Us
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick links */}
+              <div className="md:col-span-3">
+                <h3 className="font-Gilroy font-bold text-3xl mb-6">
+                  Services
+                </h3>
+                <ul className="space-y-3">
+                  <li className="hover:text-[#2EE9FF] text-md transition-colors duration-300">
+                    <Link to="/disease-detection">Disease Detection</Link>
+                  </li>
+                  <li className="hover:text-[#2EE9FF] text-md transition-colors duration-300">
+                    <Link to="/consultancy">Doctor Consultations</Link>
+                  </li>
+                  <li className="hover:text-[#2EE9FF] text-md transition-colors duration-300">
+                    <Link to="/patient-support">Patient Support</Link>
+                  </li>
+                  <li className="hover:text-[#2EE9FF] text-md transition-colors duration-300">
+                    <Link to="/remote-care">Remote Care Logistics</Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Trusted by section */}
+              <div className="md:col-span-5">
+                <h3 className="font-Gilroy font-bold text-3xl mb-6">
+                  Trusted By
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="border border-indigo-700 rounded-lg flex items-center justify-center p-4 h-16">
+                    <div className="text-white text-lg font-bold">
+                      br
+                      <span className="relative">
+                        oo
+                        <span className="absolute -top-1 left-0 right-0 w-full h-6 border-t-2 border-white"></span>
+                      </span>
+                      k
+                    </div>
+                  </div>
+
+                  <div className="border border-indigo-700 rounded-lg flex items-center justify-center p-4 h-16">
+                    <div className="text-white">
+                      <span className="font-bold">firefly</span>
+                      <span>health</span>
+                    </div>
+                  </div>
+
+                  <div className="border border-indigo-700 rounded-lg flex items-center justify-center p-4 h-16">
+                    <div className="text-white font-serif">
+                      <span>Penn Medicine</span>
+                    </div>
+                  </div>
+
+                  <div className="border border-indigo-700 rounded-lg flex items-center justify-center p-4 h-16">
+                    <div className="text-white">
+                      <span className="font-bold">dreem</span>health
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer bottom section */}
+            <div className="border-t border-indigo-700 border-opacity-40 mt-10 pt-8">
+              <div className="flex flex-col md:flex-row justify-between items-center">
+                <div className="text-md text-gray-400 mb-4 md:mb-0">
+                  © 2025 SymptoCure. All rights reserved.
+                </div>
+
+                <div className="flex space-x-6 mb-4 md:mb-0">
+                  <p className="text-md text-gray-400 hover:text-white transition-colors duration-300">
+                    Privacy Policy
+                  </p>
+                  <p className="text-md text-gray-400 hover:text-white transition-colors duration-300">
+                    Terms of Service
+                  </p>
+                  <p className="text-md text-gray-400 hover:text-white transition-colors duration-300">
+                    FAQ
+                  </p>
+                </div>
+
+                <div className="flex space-x-4">
+                  <a
+                    href="https://x.com/?lang=en"
+                    aria-label="Twitter"
+                    className="text-gray-400 hover:text-white transition-colors duration-300"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                    </svg>
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/harsh-patadia-a677a4289/"
+                    aria-label="LinkedIn"
+                    className="text-gray-400 hover:text-white transition-colors duration-300"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
+                    </svg>
+                  </a>
+                  <a
+                    href="#"
+                    aria-label="Instagram"
+                    className="text-gray-400 hover:text-white transition-colors duration-300"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );

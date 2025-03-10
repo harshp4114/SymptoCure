@@ -1,8 +1,3 @@
-// when user manually tries to book app, check the cities of both doc and patient and give warning if diffeerent
-// add a appointments page in the patient panel which will show all the appointments of the patient, (confirmed, past and pending) 
-// when patient cliccks on a confirmed appoint, it will redirect him to the doctor information page where instead of the book app button, it will 
-// display a chat button option
-
 
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";

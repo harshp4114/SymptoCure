@@ -8,10 +8,9 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { BASE_URL } from "../utils/constants";
 import { Search } from "lucide-react";
 import useAuth from "../hooks/useAuth";
-
 const Consultancy = () => {
   useAuth(); // Ensure user is authenticated
-
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -83,6 +82,8 @@ const Consultancy = () => {
 
   // Ensure the user is authenticated before fetching doctors
   useEffect(() => {
+    if(loading)
+      return;
     if (!isAuthenticated) {
       navigate("/login"); // Redirect to login if not authenticated
       return;
@@ -90,10 +91,13 @@ const Consultancy = () => {
     setLoader(false);
     getDoctors();
     // console.log(filteredDoctors);
-  }, [isAuthenticated, navigate]); // Only runs when authentication state changes
-
+  }, [isAuthenticated, navigate,loading]); // Only runs when authentication state changes
+  useEffect(()=>{
+    setLoading(false);
+  },[])
   return (
-    <div className="absolute w-full h-fit bg-[#403CD5] p-4 pb-16">
+    <div className="absolute w-full h-fit bg-[#403CD5] p-4 pb-16 px-0">
+      
       <div className="w-full h-fit flex flex-wrap items-center justify-start px-10 pb-4">
         <div className="w-1/2">
           <h2 className="text-4xl mb-6 w-full transition-all duration-700 font-Gilroy font-extrabold mr-4 text-white">

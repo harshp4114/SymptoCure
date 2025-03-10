@@ -34,4 +34,18 @@
   }
 }
 
+@keyframes scrollMarquee {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  animation: scrollMarquee linear infinite;
+}
+
 

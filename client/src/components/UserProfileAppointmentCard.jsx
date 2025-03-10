@@ -7,10 +7,8 @@ import Cookies from "js-cookie";
 
 const UserProfileAppointmentCard = ({
   doctor,
-  specialty,
   status,
   date,
-  time,
   reason,
 }) => {
   const dispatch = useDispatch();
@@ -83,7 +81,7 @@ const UserProfileAppointmentCard = ({
           bg: "bg-yellow-100",
           text: "text-yellow-800",
         };
-      case "accepted":
+      case "approved":
         return {
           border: "border-green-400",
           bg: "bg-green-100",

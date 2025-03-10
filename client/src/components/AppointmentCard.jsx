@@ -41,7 +41,7 @@ const AppointmentCard = (props) => {
   return (
     <div
       key={appointment._id}
-      className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-200 transition-transform transform hover:scale-105"
+      className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-200 transition-transform transform "
     >
       <h3 className="text-xl font-semibold text-gray-800 mb-2">
         {userData.fullName?.firstName} {userData.fullName?.lastName}

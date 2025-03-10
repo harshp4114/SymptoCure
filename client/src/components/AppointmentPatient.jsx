@@ -100,8 +100,8 @@ const handleReject=async()=>{
   const statusStyles = getStatusStyles(props.data.status);
 
   return (
-    <div className="max-w-1/3">
-      <div className="bg-white rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border border-gray-100">
+    <div className="max-w-1/3 flex-col flex-1">
+      <div className="bg-white rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border h-full border-gray-100">
         <div className={`h-2 rounded-t-md ${statusStyles.strip}`}></div>
         
         <div className="p-6">
