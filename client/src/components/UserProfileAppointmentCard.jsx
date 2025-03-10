@@ -14,13 +14,13 @@ const UserProfileAppointmentCard = ({
   reason,
 }) => {
   const dispatch = useDispatch();
-  const token=Cookies.get("jwt-token");
+  const token = Cookies.get("jwt-token");
   const [doctorData, setDoctorData] = useState({});
 
   const getdoctorData = async () => {
     dispatch(showLoader());
     try {
-      const result = await axios.get(`${BASE_URL}/api/doctor/${doctor}`,{
+      const result = await axios.get(`${BASE_URL}/api/doctor/${doctor}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("doctor info", result.data.data);
@@ -32,9 +32,9 @@ const UserProfileAppointmentCard = ({
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     getdoctorData();
-  },[])
+  }, []);
 
   function CalendarIcon(props) {
     return (
@@ -55,8 +55,6 @@ const UserProfileAppointmentCard = ({
     );
   }
 
-
-
   function InformationCircleIcon(props) {
     return (
       <svg
@@ -75,7 +73,6 @@ const UserProfileAppointmentCard = ({
       </svg>
     );
   }
-
 
   // Define border and badge colors based on status
   const getStatusColors = (status) => {
@@ -116,26 +113,37 @@ const UserProfileAppointmentCard = ({
       <div className="flex-1">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="font-medium text-gray-800">{doctorData?.fullName?.firstName+" "+doctorData?.fullName?.lastName}</h3>
+            <h3 className="font-medium text-gray-800">
+              {doctorData?.fullName?.firstName +
+                " " +
+                doctorData?.fullName?.lastName}
+            </h3>
             <p className="text-sm text-gray-600">{doctorData.specialization}</p>
           </div>
-          <span className={`px-2 py-1 ${bg} ${text} text-xs rounded-full`}>
+          <span className={`px-2 py-1 ${status=="approved"?"":"mt-1 mr-1"} ${bg} ${text} text-xs rounded-full`}>
             {status}
           </span>
         </div>
         <div className="mt-2 flex items-center text-sm text-gray-600">
           <CalendarIcon className="h-4 w-4 mr-1" />
-          <span>{new Date(date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          <span>
+            {new Date(date).toLocaleDateString("en-GB", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
         </div>
-        {reason && (
           <p className="text-xs text-gray-500 mt-1">Reason: {reason}</p>
-        )}
       </div>
-      <div className="ml-4 flex space-x-2">
-        <button className="p-2 text-blue-500 hover:text-blue-700">
-          <InformationCircleIcon className="h-5 w-5" />
-        </button>
-      </div>
+      {status === "approved" && (
+        <div className="ml-4 flex space-x-2">
+          <button className="p-2 text-blue-500 hover:text-blue-700">
+            <InformationCircleIcon className="h-5 w-5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

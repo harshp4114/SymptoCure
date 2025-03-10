@@ -16,6 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 import editDoctorValidationSchema from "../yupValidators/editDoctorValidationSchema";
 import { Pencil } from "lucide-react";
 import UserProfileAppointmentCard from "../components/UserProfileAppointmentCard";
+import { Calendar, Clock, Plus } from 'lucide-react';
 
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
@@ -125,6 +126,7 @@ const Profile = () => {
       dispatch(hideLoader());
     }
   };
+  
 
   useEffect(() => {
     if (loading) return; //is set to true until the whole page loads and the last useEffect is not called which sets it to false
@@ -293,7 +295,7 @@ const Profile = () => {
       {/* Outer Container */}
       <div className="bg-white w-full h-full shadow-lg flex flex-col md:flex-row overflow-hidden">
         {/* Sidebar/Profile Picture Section */}
-        <div className="w-full md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-600 text-white flex flex-col items-center py-10 px-5">
+        <div className="w-full md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-800 text-white flex flex-col items-center py-10 px-5">
           {/* Profile Picture */}
           <img
             src="./logo.png"
@@ -414,16 +416,44 @@ const Profile = () => {
                 Filter by status:
               </span>
               <div className="flex space-x-2">
-                <button onClick={()=>setFilter("all")} className={`px-3 py-1 ${filter=="all"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} hover:bg-blue-500 hover:text-white transition duration-500  rounded-full text-sm`}>
+                <button
+                  onClick={() => setFilter("all")}
+                  className={`px-3 py-1 ${
+                    filter == "all"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } hover:bg-blue-500 hover:text-white transition duration-500  rounded-full text-sm`}
+                >
                   All
                 </button>
-                <button onClick={()=>setFilter("pending")} className={`px-3 ${filter=="pending"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}>
+                <button
+                  onClick={() => setFilter("pending")}
+                  className={`px-3 ${
+                    filter == "pending"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}
+                >
                   Pending
                 </button>
-                <button onClick={()=>setFilter("approved")} className={`px-3 ${filter=="approved"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}>
-                Approved
+                <button
+                  onClick={() => setFilter("approved")}
+                  className={`px-3 ${
+                    filter == "approved"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}
+                >
+                  Approved
                 </button>
-                <button onClick={()=>setFilter("rejected")} className={`px-3 ${filter=="rejected"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}>
+                <button
+                  onClick={() => setFilter("rejected")}
+                  className={`px-3 ${
+                    filter == "rejected"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}
+                >
                   Rejected
                 </button>
               </div>
@@ -434,34 +464,78 @@ const Profile = () => {
               <div className="overflow-hidden h-[24rem]">
                 {/* Appointments List */}
                 <div className="space-y-3 max-h-[24rem] h-full overflow-y-auto pr-2">
-
-                  {appointments.filter((app)=>app.status==filter).length > 0 ? (
-
-                    appointments.filter((app)=>app.status==filter).map((appointment) => (
-                      <UserProfileAppointmentCard
-                      key={appointment._id}
-                      doctor={appointment.doctorId}
-                      specialty={appointment.specialty}
-                      status={appointment.status}
-                      date={appointment.date}
-                      time={appointment.createdAt}
-                      reason={appointment.reason}
-                    />
-                  ))
-                  ):(
-                    <div>
-                      No Appointments made yet
+                  {filter == "all" ? (
+                    appointments.length > 0 ? (
+                      appointments.map((appointment) => (
+                        <UserProfileAppointmentCard
+                          key={appointment._id}
+                          doctor={appointment.doctorId}
+                          specialty={appointment.specialty}
+                          status={appointment.status}
+                          date={appointment.date}
+                          time={appointment.createdAt}
+                          reason={appointment.reason}
+                        />
+                      ))
+                    ) : (
+                      <div className="w-full h-full p-6 py-3">
+                      <div className="flex flex-col items-center justify-center h-full rounded-lg bg-gradient-to-br from-blue-400/70 to-blue-700 p-8 text-white">
+                        <div className="mb-4 flex justify-center">
+                          <div className="relative">
+                            <Calendar size={64} className="text-white/90" />
+                            <div className="absolute -top-2 -right-2 bg-white rounded-full p-1">
+                              <Plus size={16} className="text-blue-500" />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <h2 className="text-2xl font-bold mb-2 text-center">No Appointments booked Yet</h2>
+                        <p className="text-center text-white/90 mb-6">Time to prioritize your health!</p>
+                        
+                        <button onClick={()=>navigate("/consultancy")} className="flex hover:shadow-lg hover:shadow-black/30 transition duration-500 items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-medium shadow-md">
+                          <Clock size={18} />
+                          Book Your First Consultation
+                        </button>
+                      </div>
+                    </div>
+                    )
+                  ) : appointments.filter((app) => app.status == filter)
+                      .length > 0 ? (
+                    appointments
+                      .filter((app) => app.status == filter)
+                      .map((appointment) => (
+                        <UserProfileAppointmentCard
+                          key={appointment._id}
+                          doctor={appointment.doctorId}
+                          specialty={appointment.specialty}
+                          status={appointment.status}
+                          date={appointment.date}
+                          time={appointment.createdAt}
+                          reason={appointment.reason}
+                        />
+                      ))
+                  ) : (
+                    <div className="w-full h-full p-6 py-3">
+                      <div className="flex flex-col items-center justify-center h-full rounded-lg bg-gradient-to-br from-blue-400/70 to-blue-700  p-8 text-white">
+                        <div className="mb-4 flex justify-center">
+                          <div className="relative">
+                            <Calendar size={64} className="text-white/90" />
+                            <div className="absolute -top-2 -right-2 bg-white rounded-full p-1">
+                              <Plus size={16} className="text-blue-500" />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <h2 className="text-2xl font-bold mb-2 text-center">No {filter} appointments</h2>
+                        <p className="text-center text-white/90 mb-6">Time to prioritize your health!</p>
+                        
+                        <button onClick={()=>navigate("/consultancy")} className="flex hover:shadow-lg hover:shadow-black/30 transition duration-500 items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-medium shadow-md">
+                          <Clock size={18} />
+                          Consult a Doctor
+                        </button>
+                      </div>
                     </div>
                   )}
-                  {/* <UserProfileAppointmentCard
-                    key={1}
-                    doctor={"doc1"}
-                    specialty={"appointment.specialty"}
-                    status={"accepted"}
-                    date={"appointment.date"}
-                    time={"appointment.time"}
-                    reason={"pending"}
-                  /> */}
                 </div>
               </div>
             </div>
