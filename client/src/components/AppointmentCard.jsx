@@ -7,6 +7,7 @@ import { BASE_URL } from "../utils/constants";
 
 const AppointmentCard = (props) => {
   const appointment = props.appointmentData;
+  console.log("apppointment card data",appointment)
   const [userData, setUserData] = useState({});
   const [address, setAddress] = useState({});
   const dispatch = useDispatch();
@@ -51,6 +52,7 @@ const AppointmentCard = (props) => {
       <p className="text-gray-600">Phone: {userData.phone}</p>
       <div className="w-full mt-4 p-4 bg-blue-100 rounded-lg">
         <p className="text-gray-800 font-medium">Appointment Date: {new Date(appointment.date).toLocaleDateString('en-GB')}</p>
+        <p className="text-gray-800 font-medium">Disease: {appointment?.disease || "viral fever"}</p>
         <p className="text-gray-800 font-medium">Reason: {appointment.reason}</p>
       </div>
       <div className="w-full mt-4 p-4 bg-gray-100 rounded-lg">

@@ -49,6 +49,34 @@ const getAppointmentsByDoctorId = async (req, res) => {
   }
 };
 
+const getAppointmentsByUserId = async (req, res) => {
+  const user = req.tokenData;
+  try {
+    console.log("userr",user)
+    const userId = user.id;
+    const appointments = await Appointment.find({ userId });
+    console.log("ustsy sincsakn",appointments)
+    if (appointments) {
+      return res.status(200).json({
+        success: true,
+        message: "All appointments fetched successfully",
+        data: appointments,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "No appointments found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch appointments",
+      error: error.message,
+    });
+  }
+};
+
 const createAppointment = async (req, res) => {
   try {
     console.log("appointment body data",req.body)
@@ -142,4 +170,5 @@ module.exports = {
   getAllAppointments,
   createAppointment,
   getAppointmentsByDoctorId,
+  getAppointmentsByUserId,
 };

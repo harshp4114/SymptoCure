@@ -15,6 +15,7 @@ import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import editDoctorValidationSchema from "../yupValidators/editDoctorValidationSchema";
 import { Pencil } from "lucide-react";
+import UserProfileAppointmentCard from "../components/UserProfileAppointmentCard";
 
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
@@ -22,6 +23,8 @@ const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [editUserProfile, setEditUserProfile] = useState(false);
   const [editDoctorProfile, setEditDoctorProfile] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = Cookies.get("jwt-token");
@@ -106,6 +109,23 @@ const Profile = () => {
   };
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
 
+  const getAppointments = async () => {
+    dispatch(showLoader());
+    try {
+      const result = await axios.get(`${BASE_URL}/api/appointment/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("all user appointments", result);
+      setAppointments(result?.data?.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      dispatch(hideLoader());
+    }
+  };
+
   useEffect(() => {
     if (loading) return; //is set to true until the whole page loads and the last useEffect is not called which sets it to false
     if (!isAuthenticated) {
@@ -113,6 +133,7 @@ const Profile = () => {
       navigate("/login"); // Redirect if the patient is not authenticated
     }
     getUser();
+    getAppointments();
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
   // //console.log(profileData);
 
@@ -125,7 +146,7 @@ const Profile = () => {
       <l-helix size="45" speed="2.5" color="black"></l-helix>
     </div>
   ) : role === "patient" ? (
-    <div className="bg-gray-100 absolute  w-full h-[86vh] flex justify-center items-center">
+    <div className="bg-white absolute  w-full h-[86vh] flex justify-center items-center">
       <ToastContainer
         position="top-right"
         autoClose={2000}
@@ -290,7 +311,7 @@ const Profile = () => {
         </div>
 
         {/* Profile Details Section */}
-        <div className="w-full md:w-3/4 h-full bg-gray-50 p-8 flex flex-col">
+        <div className="w-full md:w-3/4 h-full bg-white p-8 flex flex-col">
           {/* Section Header */}
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-2xl font-semibold text-gray-800 ">
@@ -305,7 +326,10 @@ const Profile = () => {
                 }}
                 className=" flex items-center rounded-lg "
               >
-                <h2 className="mr-3 text-2xl font-semibold text-gray-800">Edit Profile</h2> <Pencil className="" size={20} />
+                <h2 className="mr-3 text-2xl font-semibold text-gray-800">
+                  Edit Profile
+                </h2>{" "}
+                <Pencil className="" size={20} />
               </button>
             </div>
           </div>
@@ -354,10 +378,7 @@ const Profile = () => {
             </div>
           </div>
 
-          
-        </div>
-        <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-8 flex flex-col">
-          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mt-12 mb-6">
             Medical Information
           </h2>
           <div className="space-y-4">
@@ -378,6 +399,71 @@ const Profile = () => {
                   ? profileData?.symptoms?.join(", ")
                   : "No Symptoms Declared Yet"}
               </p>
+            </div>
+          </div>
+        </div>
+        <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-8 flex flex-col">
+          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-6">
+            Appointment Information
+          </h2>
+
+          <div className="space-y-4">
+            {/* Status Filter */}
+            <div className="flex items-center mb-4 space-x-4">
+              <span className="text-gray-700 font-medium">
+                Filter by status:
+              </span>
+              <div className="flex space-x-2">
+                <button onClick={()=>setFilter("all")} className={`px-3 py-1 ${filter=="all"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} hover:bg-blue-500 hover:text-white transition duration-500  rounded-full text-sm`}>
+                  All
+                </button>
+                <button onClick={()=>setFilter("pending")} className={`px-3 ${filter=="pending"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}>
+                  Pending
+                </button>
+                <button onClick={()=>setFilter("approved")} className={`px-3 ${filter=="approved"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}>
+                Approved
+                </button>
+                <button onClick={()=>setFilter("rejected")} className={`px-3 ${filter=="rejected"?"bg-blue-500 text-white":"bg-gray-200 text-gray-700"} py-1 hover:bg-blue-500 hover:text-white transition duration-500 rounded-full text-sm`}>
+                  Rejected
+                </button>
+              </div>
+            </div>
+
+            {/* Appointments Container */}
+            <div className="bg-gray-100 rounded-lg h-full shadow-lg shadow-black/30 px-4 pt-8 pb-0">
+              <div className="overflow-hidden h-[24rem]">
+                {/* Appointments List */}
+                <div className="space-y-3 max-h-[24rem] h-full overflow-y-auto pr-2">
+
+                  {appointments.filter((app)=>app.status==filter).length > 0 ? (
+
+                    appointments.filter((app)=>app.status==filter).map((appointment) => (
+                      <UserProfileAppointmentCard
+                      key={appointment._id}
+                      doctor={appointment.doctorId}
+                      specialty={appointment.specialty}
+                      status={appointment.status}
+                      date={appointment.date}
+                      time={appointment.createdAt}
+                      reason={appointment.reason}
+                    />
+                  ))
+                  ):(
+                    <div>
+                      No Appointments made yet
+                    </div>
+                  )}
+                  {/* <UserProfileAppointmentCard
+                    key={1}
+                    doctor={"doc1"}
+                    specialty={"appointment.specialty"}
+                    status={"accepted"}
+                    date={"appointment.date"}
+                    time={"appointment.time"}
+                    reason={"pending"}
+                  /> */}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -565,7 +651,10 @@ const Profile = () => {
                 }}
                 className=" flex items-center rounded-lg "
               >
-                <h2 className="mr-3 text-2xl font-semibold text-gray-800">Edit Profile</h2> <Pencil className="" size={20} />
+                <h2 className="mr-3 text-2xl font-semibold text-gray-800">
+                  Edit Profile
+                </h2>{" "}
+                <Pencil className="" size={20} />
               </button>
             </div>
           </div>

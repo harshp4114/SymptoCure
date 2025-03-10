@@ -61,20 +61,20 @@ const CheckPatients = () => {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white">
               <div className="text-center p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm">
-                <p className="text-lg font-semibold">{appointments.length}</p>
-                <p className="text-sm opacity-90">Total Appointments</p>
+                <p className="text-lg font-semibold">{appointments.filter((appointment)=>appointment.status=="approved").length}</p>
+                <p className="text-sm opacity-90">Total Patients</p>
               </div>
               <div className="text-center p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm">
                 <p className="text-lg font-semibold">
-                  {appointments.filter(apt => new Date(apt.date) > new Date()).length}
+                  {appointments.filter((appointment)=>appointment.status=="approved").filter(apt => new Date(apt.date) > new Date()).length}
                 </p>
-                <p className="text-sm opacity-90">Upcoming</p>
+                <p className="text-sm opacity-90">Upcoming Appointments</p>
               </div>
               <div className="text-center p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm">
                 <p className="text-lg font-semibold">
-                  {appointments.filter(apt => new Date(apt.date) < new Date()).length}
+                  {appointments.filter((appointment)=>appointment.status=="approved").filter(apt => new Date(apt.date) < new Date()).length}
                 </p>
-                <p className="text-sm opacity-90">Past</p>
+                <p className="text-sm opacity-90">Past Appointments</p>
               </div>
             </div>
           </div>
