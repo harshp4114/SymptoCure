@@ -4,8 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { BASE_URL } from "../utils/constants";
-
+import { io } from "socket.io-client";
+import socket from "../socket";
 const AppointmentCard = (props) => {
+
   const appointment = props.appointmentData;
   console.log("apppointment card data",appointment)
   const [userData, setUserData] = useState({});
@@ -31,11 +33,27 @@ const AppointmentCard = (props) => {
     }
   };
 
+  socket.on("userDataNeedChange",()=>{
+    getUserData();
+  })
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login"); // Redirect if the patient is not authenticated
     }
+    socket.on("connect", () => {
+      console.log("user connected");
+    });
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
+    });
+
     getUserData();
+
+    return ()=>{
+      socket.off("connect");
+      socket.off("disconnect");
+    }
   }, [isAuthenticated]);
 
   return (

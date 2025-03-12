@@ -11,6 +11,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { BASE_URL } from "../utils/constants";
+import { jwtDecode } from "jwt-decode";
+import socket from "../socket";
+
 const BookAppointment = ({
   patient,
   doctor,
@@ -21,7 +24,7 @@ const BookAppointment = ({
   togglePending,
 }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const [patientData, setPatientData] = useState({});
   useAuth();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -29,37 +32,45 @@ const BookAppointment = ({
   const [fullyBooked, setFullyBooked] = useState([]);
   const token = Cookies.get("jwt-token");
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
+  const decoded = jwtDecode(token);
+  const patientId = decoded.id;
+  // const getPatient = async () => {
+  //   dispatch(showLoader());
+  //   try {
+  //     const result = await axios.get(`${BASE_URL}/api/patient/${patientId}`);
+  //     console.log("patient data fetched when we press book app", result);
+  //     setPatientData(result?.data?.data);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   } finally {
+  //     dispatch(hideLoader());
+  //   }
+  // };
 
   useEffect(() => {
     if (loading) return;
     if (!isAuthenticated) {
       navigate("/login");
     }
+    // getPatient();
+    // console.log("patient", patient);
   }, [isAuthenticated, loading]);
 
   useEffect(() => {
-    updateCalendarAppointments();
-  }, []);
-
-  const updateCalendarAppointments = async () => {
-    dispatch(showLoader());
-    try {
-      const result = await axios.get(
-        `${BASE_URL}/api/doctor/${doctor._id}/appointments`
-      );
-      // console.log("result of fully booked app",result)
-      setFullyBooked(result.data.fullyBookedDates);
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      dispatch(hideLoader());
-    }
-  };
+    socket.on("connect", () => {
+      console.log("connected to socket");
+    });
+    socket.on("disconnect", () => {
+      console.log("disconnected from socket");
+    });
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+    };
+  });
 
   const handleBookAppointment = async (values) => {
     dispatch(showLoader());
-    console.log("appoinment", values);
-    console.log("patient", patient);
 
     try {
       await axios.post(
@@ -75,6 +86,7 @@ const BookAppointment = ({
         }
       );
       // //console.log(toggleSuccess);
+      socket.emit("newAppointment");
       toggleSuccess();
       onClose();
     } catch (error) {
@@ -103,6 +115,7 @@ const BookAppointment = ({
 
   useEffect(() => {
     setLoading(false);
+    console.log("patient data name", patient, patientData);
   }, []);
 
   const validationSchema = Yup.object({
@@ -140,14 +153,6 @@ const BookAppointment = ({
         return bookedDay === currentDay;
       });
     },
-  };
-
-  const isDateFullyBooked = (date) => {
-    return fullyBooked.some((bookedDate) => {
-      const bookedDay = new Date(bookedDate).toISOString().split("T")[0];
-      const currentDay = date.toISOString().split("T")[0];
-      return bookedDay === currentDay;
-    });
   };
 
   return loading ? (
@@ -252,7 +257,7 @@ const BookAppointment = ({
                 </label>
                 <Field
                   type="text"
-                  disabled
+                  disabled={!!patient?.detectedDisease}
                   name="disease"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder={patient?.detectedDisease || "Enter your disease"}
@@ -287,10 +292,7 @@ const BookAppointment = ({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Date
                 </label>
-                <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
-                  <div className="w-8 h-8 rounded-full border-2 border-red-400 bg-red-400"></div>
-                  <span>Fully booked slots</span>
-                </div>
+
                 <DayPicker
                   mode="single"
                   selected={selectedDate}

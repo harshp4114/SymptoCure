@@ -33,10 +33,9 @@ const DoctorInformation = () => {
   const token = Cookies.get("jwt-token");
 
   useEffect(() => {
-    if (showBooking) {
       getPatientData();
-    }
-  }, [showBooking]);
+      // console.log("from get patientData",patientData)
+  }, []);
 
   const getPatientData = async () => {
     dispatch(showLoader());
@@ -45,7 +44,7 @@ const DoctorInformation = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       // console.log("patient data fetched when we press book app",result)
-      setPatientData(result?.data?.data);
+      setPatientData(result?.data?.data[0]);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -75,7 +74,7 @@ const DoctorInformation = () => {
       // console.log("dhbdsahbjhjasdj",result?.data?.patientData?.id)
       setPatientId(result?.data?.patientData?.id);
       const result2 = await axios.get(`${BASE_URL}/api/address/${result?.data?.data?.address}`);
-      console.log(result2);
+      // console.log(result2);
       setAddressData(result2?.data?.data);
     } catch (error) {
     } finally {
@@ -144,7 +143,7 @@ const DoctorInformation = () => {
         <div className="h-10/12 w-full flex flex-wrap">
           <div className="flex w-1/3 h-full justify-center items-start pt-16">
             {/* Profile Picture Placeholder */}
-            <div className="w-36 h-36 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-36 h-36 bg-[#072965] rounded-full flex items-center justify-center shadow-xl">
               <span className="text-4xl font-bold text-white">
                 {doctorInfo?.fullName?.firstName[0].toUpperCase()}
                 {doctorInfo?.fullName?.lastName[0].toUpperCase()}
@@ -152,9 +151,9 @@ const DoctorInformation = () => {
             </div>
           </div>
           <div className="h-full flex flex-wrap content-start pt-16 pl-4 w-2/3">
-          <div className="flex justify-center w-9/12 mb-4 items-center bg-opacity-70 rounded-xl border-red-800 border-opacity-60 border-[2px] bg-red-500 h-10 ">
+          {/* <div className="flex justify-center w-9/12 mb-4 items-center bg-opacity-70 rounded-xl border-red-800 border-opacity-60 border-[2px] bg-red-500 h-10 ">
             <h2>The selected doctor is in a different city.</h2>
-          </div>
+          </div> */}
             {/* Doctor's Information */}
             <h1 className="w-full text-3xl font-bold mb-2 text-gray-800">
               Dr. {doctorInfo?.fullName?.firstName}{" "}

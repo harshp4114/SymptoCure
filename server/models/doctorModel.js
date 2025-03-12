@@ -55,21 +55,6 @@ const doctorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // // Availability
-    // availableDays: {
-    //   type: [String], // e.g., ["Monday", "Wednesday", "Friday"]
-    //   required: true,
-    // },
-    // availableTime: {
-    //   start: { type: String, required: true }, // e.g., "09:00 AM"
-    //   end: { type: String, required: true }, // e.g., "05:00 PM"
-    // },
-
-    // patientsPerDay: {
-    //   type: Number,
-    //   required: true,
-    // },
-
     // Ratings and reviews
     rating: {
       type: Number, // Average rating (1-5)

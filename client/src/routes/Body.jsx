@@ -5,8 +5,7 @@ import { quantum } from "ldrs";
 import { helix } from "ldrs";
 import ScrollingMarquee from "../components/ScrollingMarquee";
 import { Link, useNavigate } from "react-router-dom";
-
-// Default values shown
+import { ScrollTrigger } from "gsap/all";
 
 const Body = () => {
   const words = ["manageable.", "easy.", "personalized."];
@@ -18,8 +17,8 @@ const Body = () => {
     return words[nextIndex];
   };
   const navigate = useNavigate();
-  // quantum.register();
   helix.register();
+  gsap.registerPlugin(ScrollTrigger);
 
   //manage 640px
   //easy 276px
@@ -77,6 +76,57 @@ const Body = () => {
       tl1.to(".heroHeading1", { duration: 2 });
       tl2.set(".heroHeading2", { y: 0 });
     }, 1000);
+    gsap.from(".detect-img", {
+      scrollTrigger: {
+        trigger: ".f-trigger",
+        start: "top 50%", // Start animating earlier
+        end: "top 20%", // Smoothly stop animation
+        // scrub: 1, // Smooth scrolling effect
+        // markers: true, // Keep for debugging, remove later
+      },
+      x: 200, // Start from right and move to default position
+      opacity: 0, // Start hidden and fade in
+      duration: 2, // Needed if scrub is removed
+      display: "none", // Needed if scrub is removed
+    });
+
+    gsap.from(".consult", {
+      scrollTrigger: {
+        trigger: ".c-trigger",
+        start: "top 50%", // Start animating earlier
+        end: "top 20%", // Smoothly stop animation
+        // scrub: 1, // Smooth scrolling effect
+        // markers: true, // Keep for debugging, remove later
+      },
+      x: 200, // Start from right and move to default position
+      opacity: 0, // Start hidden and fade in
+      duration: 2, // Needed if scrub is removed
+      display: "none", // Needed if scrub is removed
+    });
+
+    gsap.to(".second-1", {
+      scrollTrigger: {
+        trigger: ".second-trigger",
+        start: "top 70%",
+        end: "top 0%",
+        scrub: 1,
+        // markers: true,
+      },
+      duration: 1,
+      color: "#1E1B4B",
+    });
+
+    gsap.to(".second-2", {
+      scrollTrigger: {
+        trigger: ".second-trigger",
+        start: "top 70%",
+        end: "top 0%",
+        scrub: 1,
+        // markers: true,
+      },
+      duration: 1,
+      color: "#1E1B4B",
+    });
   }, []);
 
   useAuth();
@@ -124,11 +174,11 @@ const Body = () => {
       </div>
 
       {/* Second section */}
-      <div className="w-full h-[100vh] bg- flex flex-wrap content-center items-center justify-center">
-        <h2 className="w-full text-center font-Gilroy text-white font-semibold text-8xl ">
+      <div className="second-trigger w-full h-[100vh] bg- flex flex-wrap content-center items-center justify-center">
+        <h2 className="second-1 w-full text-center font-Gilroy text-white font-semibold text-8xl ">
           Focused on health,
         </h2>
-        <h2 className="w-full text-center font-Gilroy text-white font-semibold text-8xl ">
+        <h2 className="second-2 w-full text-center font-Gilroy text-white font-semibold text-8xl ">
           so you can focus on life.
         </h2>
         <div className="h-16 w-96 mt-14">
@@ -147,14 +197,14 @@ const Body = () => {
               onClick={() => navigate("/consultancy")}
               type="submit"
               className="bg-[#ffffff] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group" */}
-            {/* > */}
-              {/* Default Text */}
-              {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+      {/* > */}
+      {/* Default Text */}
+      {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
                 Consult a Doctor
               </span> */}
 
-              {/* Hover Text */}
-              {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+      {/* Hover Text */}
+      {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
                 Consult a Doctor
               </span>
             </button>
@@ -166,9 +216,9 @@ const Body = () => {
       </div> */}
 
       {/* Fourth section */}
-      <div className="bg-indigo-950 h-[100vh] flex">
+      <div className="f-trigger bg-indigo-950 h-[100vh] flex">
         {/* Left side content */}
-        <div className="w-1/2 p-16 flex justify-center flex-col">
+        <div className="w-1/2 p-16 pt-0 flex justify-center flex-col">
           {/* Top section with user icon */}
           <div className="mb-6 flex justify-between items-end">
             <div className="bg-[#16165C] shadow-xl  w-12 h-12 rounded-lg flex items-center justify-center">
@@ -205,23 +255,18 @@ const Body = () => {
           </div>
 
           {/* Description text */}
-          <div className="mt-8 max-w-xl">
+          <div className="mt-4 max-w-xl">
             <p className="text-white font-Gilroy text-lg">
               SymptoCure leverages its advanced Machine Learning model to
               analyze symptoms and identify potential diseases, guiding users
               toward appropriate healthcare solutions.
             </p>
           </div>
-        </div>
-
-        {/* Right side content */}
-        <div className="w-1/2 bg-[#232269] p-12 flex flex-col items-end justify-start">
-          {/* Request Demo button */}
-          <div className="relative button-trigger button-move top-2 w-48 h-16 mt-2">
+          <div className="relative button-trigger button-move top-2 w-40 h-12 mt-4">
             <button
               onClick={() => navigate("/disease-detection")}
               type="submit"
-              className="bg-[#ffffff] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
+              className="bg-[#ffffff] p-2 text-[#232269] text-sm border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
             >
               {/* Default Text */}
               <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
@@ -234,17 +279,25 @@ const Body = () => {
               </span>
             </button>
           </div>
-          <div className="w-full h-8/12 mt-14 rounded-xl">
-            <img src="./images/p1.jpg" className="rounded-3xl shadow-2xl shadow-black/40 w-full h-full">
-            </img>
+        </div>
+
+        {/* Right side content */}
+        <div className="w-1/2 bg-[#232269] p-12 flex flex-col items-end justify-center">
+          {/* Request Demo button */}
+
+          <div className="detect-img w-full h-8/12 mt-14 rounded-xl">
+            <img
+              src="./images/p1.jpg"
+              className="rounded-3xl shadow-2xl shadow-black/40 w-full h-full"
+            ></img>
           </div>
         </div>
       </div>
 
       {/* Fifth section */}
-      <div className="bg-indigo-950 h-[100vh] flex">
+      <div className="c-trigger bg-indigo-950 h-[100vh] flex">
         {/* Left side content */}
-        <div className="w-1/2 p-16 flex justify-center flex-col">
+        <div className="w-1/2 p-16 pt-0 flex justify-center flex-col">
           {/* Top section with user icon */}
           <div className="mb-6 flex justify-between items-end">
             <div className="bg-[#16165C] shadow-xl  w-12 h-12 rounded-lg flex items-center justify-center">
@@ -285,23 +338,18 @@ const Body = () => {
           </div>
 
           {/* Description text */}
-          <div className="mt-8 max-w-xl">
+          <div className="mt-2 max-w-xl">
             <p className="text-white font-Gilroy text-lg">
               SymptoCure enables remote doctor consultations, connecting users
               with specialists for expert diagnosis and tailored treatment
               plans.
             </p>
           </div>
-        </div>
-
-        {/* Right side content */}
-        <div className="w-1/2 bg-[#232269] p-12 flex flex-col items-end justify-start">
-          {/* Request Demo button */}
-          <div className="relative button-trigger button-move top-2 w-48 h-16 mt-2">
+          <div className="relative button-trigger button-move top-2 w-40 h-14 mt-4">
             <button
               onClick={() => navigate("/consultancy")}
               type="submit"
-              className="bg-[#ffffff] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
+              className="bg-[#ffffff] p-2 text-[#232269] text-sm border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
             >
               {/* Default Text */}
               <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
@@ -314,16 +362,24 @@ const Body = () => {
               </span>
             </button>
           </div>
+        </div>
+
+        {/* Right side content */}
+        <div className="w-1/2 bg-[#232269] p-12 flex flex-col items-end justify-start">
+          {/* Request Demo button */}
+
           <div className="w-full h-8/12 mt-14 rounded-xl">
-            <img src="./images/p2.jpg" className="rounded-3xl shadow-2xl shadow-black/40 w-full h-full">
-            </img>
+            <img
+              src="./images/p2.jpg"
+              className="consult rounded-3xl shadow-2xl shadow-black/40 w-full h-full"
+            ></img>
           </div>
         </div>
       </div>
 
       {/* {sixth section} */}
       <div className="w-full h-[100vh] flex justify-center items-center bg-white">
-        <footer className="w-9/12 h-9/12 rounded-3xl flex items-center justify-center bg-[#232269] text-white py-12">
+        <footer className="w-9/12 h-9/12 rounded-3xl flex items-center justify-center bg-[#232269] text-white px-6 py-12">
           <div className="max-w-8xl mx-auto px-4 lg:px-8">
             {/* Footer top section with main heading */}
             <div className="text-center mb-10">
@@ -354,18 +410,26 @@ const Body = () => {
                   </p>
                 </div>
 
-                <div className="w-36 h-10 mt-6">
-                  <button
-                    type="button"
-                    className="h-full w-full bg-white p-2 text-[#232269] text-md border-4 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 font-bold py-2 px-6 rounded-full relative overflow-hidden group "
+                <div className="relative button-trigger button-move top-2 w-36 h-12 mt-2">
+                  <a
+                    href="mailto:harshpatadia4114@gmail.com"
+                    className="w-full h-full"
                   >
-                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
-                      Contact Us
-                    </span>
-                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                      Contact Us
-                    </span>
-                  </button>
+                    <button
+                      type="submit"
+                      className="bg-[#ffffff] p-2 text-[#232269] text-sm border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group"
+                    >
+                      {/* Default Text */}
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                        Contact Us
+                      </span>
+
+                      {/* Hover Text */}
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                        Contact Us
+                      </span>
+                    </button>
+                  </a>
                 </div>
               </div>
 

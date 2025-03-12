@@ -43,7 +43,7 @@ const ScrollingMarquee = ({ text = "Keep Scrolling", logoSrc, speed = 100 }) => 
 
   return (
     <div
-      className="overflow-hidden rounded-l-full rounded-r-full w-full flex items-center pb-2 h-full bg-indigo-50 border-t border-b border-indigo-100"
+      className="overflow-hidden rounded-l-full shadow-xl shadow-black/20 rounded-r-full w-full flex items-center pb-2 h-full bg-indigo-50 border-t border-b border-indigo-100"
       ref={containerRef}
     >
       <div

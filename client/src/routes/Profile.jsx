@@ -17,9 +17,11 @@ import editDoctorValidationSchema from "../yupValidators/editDoctorValidationSch
 import { Pencil } from "lucide-react";
 import UserProfileAppointmentCard from "../components/UserProfileAppointmentCard";
 import { Calendar, Clock, Plus } from "lucide-react";
+import { io } from "socket.io-client";
 
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
+  const socket = io(BASE_URL);
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const [editUserProfile, setEditUserProfile] = useState(false);
@@ -32,6 +34,9 @@ const Profile = () => {
   const role = localStorage.getItem("role");
   // console.log(role);
 
+  socket.on("changeAppointmentStatus", () => {
+    getAppointments();
+  });
   const handleUserProfileUpdate = async (values) => {
     // console.log("func claelldd")
     console.log("values", values);
@@ -47,6 +52,7 @@ const Profile = () => {
       // console.log("result",result);
       getUser();
       setEditUserProfile(false);
+      socket.emit("userProfileUpdate");
       toast.success("Profile updated successfully!!");
     } catch (error) {
       console.log(error);
@@ -133,8 +139,15 @@ const Profile = () => {
       //console.log(isAuthenticated);
       navigate("/login"); // Redirect if the patient is not authenticated
     }
+    socket.on("connect", () => {
+      console.log("connected");
+    });
     getUser();
     getAppointments();
+
+    return () => {
+      socket.disconnect();
+    };
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
   // //console.log(profileData);
 
@@ -148,7 +161,6 @@ const Profile = () => {
     </div>
   ) : role === "patient" ? (
     <div className="bg-white absolute  w-full h-[86vh] flex justify-center items-center">
-      
       <ToastContainer
         position="top-right"
         autoClose={2000}
@@ -297,11 +309,12 @@ const Profile = () => {
         {/* Sidebar/Profile Picture Section */}
         <div className="w-full md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-800 text-white flex flex-col items-center py-10 px-5">
           {/* Profile Picture */}
-          <img
-            src="./logo.png"
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
-          />
+          <div className="w-36 h-36 rounded-full flex justify-center items-center border-4 bg-[#072965] border-white shadow-lg">
+            <h2 className="text-5xl font-bold">
+              {profileData?.fullName?.firstName.slice(0, 1).toUpperCase() +
+                profileData?.fullName?.lastName.slice(0, 1).toUpperCase()}
+            </h2>
+          </div>
           {/* Name */}
           <h1 className="mt-4 text-xl font-bold">
             {capitalizeFirstLetter(profileData?.fullName?.firstName) +

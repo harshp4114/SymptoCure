@@ -189,3 +189,4 @@ export const doctorQualifications = [
     'blackheads', 'scurring', 'skin peeling', 'silver like dusting', 'small dents in nails', 
     'inflammatory nails', 'blister', 'red sore around nose', 'yellow crust ooze', 'prognosis'
 ]
+
