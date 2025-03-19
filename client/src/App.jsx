@@ -1,4 +1,4 @@
-
+import "ldrs/helix"
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import Header from "./components/Header";
@@ -20,6 +20,8 @@ import LoadingPage from "./routes/LoadingPage";
 import Loader from "./components/Loader";
 import CheckPatients from "./routes/CheckPatients";
 import CheckAppointments from "./routes/CheckAppointments";
+
+
 const App = () => {
   const location = useLocation();
   const isLoading = useSelector((state) => state.loading.isLoading); // Access global loading state
