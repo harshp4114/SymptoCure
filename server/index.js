@@ -69,6 +69,7 @@ app.use("/api/appointment", appointmentRoutes);
 app.use("/api/address", addressRoutes);
 
 app.use((req, res) => {
+  // connectMongo();
   res.end("hello from server");
 });
 
