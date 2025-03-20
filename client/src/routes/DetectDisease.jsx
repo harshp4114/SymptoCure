@@ -77,7 +77,7 @@ const DetectDisease = () => {
       // );
 
 
-        const response = await axios.post("http://localhost:5000/predict", values);
+        const response = await axios.post(`${BASE_URL}/predict`, values);
         console.log("response", response);
 
         // const data = await response.json();

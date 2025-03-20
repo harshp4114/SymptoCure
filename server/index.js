@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
 app.post("/predict", async (req, res) => {
   console.log("inside predict",req.body.symptoms);
   try {
-      const response = await axios.post("http://localhost:8000/predict", {
+      const response = await axios.post(`https://symptocure-ml.onrender.com/predict`, {
           symptoms: req.body.symptoms
       });
       res.json(response.data);
