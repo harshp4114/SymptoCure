@@ -51,6 +51,7 @@ io.on("connection", (socket) => {
 
 app.post("/predict", async (req, res) => {
   console.log("inside predict",req.body.symptoms);
+  res.end("hello from predict");
   try {
       const response = await axios.post(`https://symptocure-ml.onrender.com/predict`, {
           symptoms: req.body.symptoms
@@ -58,7 +59,7 @@ app.post("/predict", async (req, res) => {
       res.json(response.data);
   } catch (error) {
       console.error("FastAPI error:", error);
-      res.status(500).json({ message: "ML service error" });
+      res.status(500).json({error:error, message: "ML service error" });
   }
 });
 
