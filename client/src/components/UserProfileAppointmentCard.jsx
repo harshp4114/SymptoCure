@@ -137,9 +137,9 @@ const UserProfileAppointmentCard = ({
       </div>
       {status === "approved" && (
         <div className="ml-4 flex space-x-2">
-          <button className="p-2 text-blue-500 hover:text-blue-700">
+          {/* <button className="p-2 text-blue-500 hover:text-blue-700">
             <InformationCircleIcon className="h-5 w-5" />
-          </button>
+          </button> */}
         </div>
       )}
     </div>
