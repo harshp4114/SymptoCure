@@ -4,6 +4,7 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import Cookies from "js-cookie";
+import { getSocket } from "../socket";
 
 
 const AppointmentCard = (props) => {
@@ -12,9 +13,14 @@ const AppointmentCard = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(props.data);
+    // console.log(props.data);
     getUserData();
-    
+    const socket=getSocket();
+    if(socket){
+      socket.on("change-patient-data",()=>{
+        getUserData();
+      })
+    }
   }, []);
 
   const getUserData = async () => {
@@ -46,9 +52,13 @@ const AppointmentCard = (props) => {
           },
         }
       );
-      console.log("result in approve", result);
+      // console.log("result in approve", result);
       if (result?.data?.success) {
         props?.change();
+        const socket=getSocket();
+        if(socket){
+          socket.emit("appointment-status-updated")
+        }
       }
     } catch (err) {
       console.log("error in approve", err);
@@ -71,9 +81,13 @@ const AppointmentCard = (props) => {
           },
         }
       );
-      console.log("result in reject", result);
+      // console.log("result in reject", result);
       if (result?.data?.success) {
         props?.change();
+        const socket=getSocket();
+        if(socket){
+          socket.emit("appointment-status-updated")
+        }
       }
     } catch (err) {
       console.log("error in reject", err);

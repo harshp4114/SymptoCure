@@ -16,7 +16,7 @@ const getAddressById = async (req, res) => {
       //console.log("hiiii");
       const address = await Address.findById(addressId);
   
-      console.log(address);
+      // console.log(address);
       if (address) {
         res.status(200).json({
           success: true,

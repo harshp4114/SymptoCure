@@ -18,6 +18,7 @@ import { Pencil } from "lucide-react";
 import UserProfileAppointmentCard from "../components/UserProfileAppointmentCard";
 import { Calendar, Clock, Plus } from "lucide-react";
 import { io } from "socket.io-client";
+import { getSocket } from "../socket";
 
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
@@ -49,6 +50,10 @@ const Profile = () => {
       // console.log("result",result);
       getUser();
       setEditUserProfile(false);
+      const socket=getSocket();
+      if(socket){
+        socket.emit("patient-profile-updated");
+      }
       toast.success("Profile updated successfully!!");
     } catch (error) {
       console.log(error);
@@ -74,6 +79,10 @@ const Profile = () => {
       getUser();
       setEditDoctorProfile(false);
       toast.success("Profile updated successfully!!");
+      const socket=getSocket();
+      if(socket){
+        socket.emit("doctor-profile-updated");
+      }
     } catch (error) {
       console.log(error);
       setEditUserProfile(false);
@@ -139,6 +148,13 @@ const Profile = () => {
     getUser();
     getAppointments();
 
+    const socket=getSocket();
+    if(socket){
+      socket.on("appointment-reload-info",()=>{
+        getAppointments();
+      })
+    }
+
     
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
   // //console.log(profileData);
@@ -189,8 +205,9 @@ const Profile = () => {
                   <label className="block font-medium">First Name</label>
                   <Field
                     name="firstName"
+                    disabled
                     type="text"
-                    className="w-full hover:border-black transition-all duration-500 p-2 border rounded"
+                    className="w-full bg-gray-100 duration-500 p-2 border rounded"
                   />
                   <ErrorMessage
                     name="firstName"
@@ -204,7 +221,8 @@ const Profile = () => {
                   <Field
                     name="lastName"
                     type="text"
-                    className="w-full p-2 hover:border-black transition-all duration-500 border rounded"
+                    disabled
+                    className="w-full bg-gray-100 p-2 duration-500 border rounded"
                   />
                   <ErrorMessage
                     name="lastName"
@@ -604,7 +622,8 @@ const Profile = () => {
                   <Field
                     name="firstName"
                     type="text"
-                    className="w-full hover:border-black transition-all duration-500 p-2 border rounded"
+                    disabled
+                    className="w-full bg-gray-100 duration-500 p-2 border rounded"
                   />
                   <ErrorMessage
                     name="firstName"
@@ -618,7 +637,8 @@ const Profile = () => {
                   <Field
                     name="lastName"
                     type="text"
-                    className="w-full p-2 hover:border-black transition-all duration-500 border rounded"
+                    disabled
+                    className="w-full bg-gray-100 p-2 duration-500 border rounded"
                   />
                   <ErrorMessage
                     name="lastName"
@@ -821,14 +841,6 @@ const Profile = () => {
               </label>
               <p className="text-gray-600">
                 {profileData?.qualifications?.join(", ")}
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <label className="text-gray-700 font-medium w-40">Rating:</label>
-              <p className="text-gray-600">
-                {profileData?.rating === 0
-                  ? "No reviews yet"
-                  : `${profileData?.rating} stars`}
               </p>
             </div>
           </div>

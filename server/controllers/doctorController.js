@@ -45,7 +45,7 @@ const getDoctorById = async (req, res) => {
     //console.log("hiiii");
     const doctor = await Doctor.findById(doctorId);
 
-    console.log(doctor);
+    // console.log(doctor);
     if (doctor) {
       res.status(200).json({
         success: true,
@@ -106,12 +106,12 @@ const getDoctorProfile = async (req, res) => {
 };
 
 const getDoctorByEmail = async (req, res) => {
-  console.log("correct cntroller");
+  // console.log("correct cntroller");
   const { email, password, role } = req.body;
   //console.log("request body", req.body);
   try {
     const doctor = await Doctor.findOne({ email });
-    console.log("doc with the same email", doctor);
+    // console.log("doc with the same email", doctor);
     if (doctor) {
       const isPasswordValid = await bcrypt.compare(password, doctor.password);
       if (!isPasswordValid) {
@@ -121,7 +121,7 @@ const getDoctorByEmail = async (req, res) => {
           message: "Invalid Email or Password",
         });
       }
-      console.log(doctor);
+      // console.log(doctor);
       const roleLower = role.toLowerCase();
       const token = jwt.sign(
         { id: doctor._id, email: doctor.email, role: roleLower },
@@ -279,7 +279,7 @@ const createDoctor = async (req, res) => {
     });
 
     //console.log("hello");
-    console.log("new doctor that is created ", newDoctor);
+    // console.log("new doctor that is created ", newDoctor);
     if (newDoctor) {
       const token = jwt.sign(
         { id: newDoctor._id, email: newDoctor.email, role: "doctor" },
@@ -304,9 +304,9 @@ const updateDoctor = async (req, res) => {
   try {
     const doctorId = req.params.id;
     const Info = req.body;
-    console.log("hiii from backend");
+    // console.log("hiii from backend");
 
-    console.log("info", Info);
+    // console.log("info", Info);
 
     // Check if the provided ID is a valid MongoDB ObjectID
     if (!mongoose.Types.ObjectId.isValid(doctorId)) {
@@ -318,7 +318,7 @@ const updateDoctor = async (req, res) => {
 
     const doctorInfo = await Doctor.findById(doctorId);
 
-    console.log("doctor fecth info ",doctorInfo);
+    // console.log("doctor fecth info ",doctorInfo);
     const addressInfo = {
       city: Info.city,
       state: Info.state,
@@ -326,10 +326,10 @@ const updateDoctor = async (req, res) => {
       zipCode: Info.zipCode,
     };
 
-    console.log("address info", addressInfo);
+    // console.log("address info", addressInfo);
 
     const addressId = doctorInfo.address;
-    console.log("address id", addressId);
+    // console.log("address id", addressId);
     const addressUpdated = await Address.findByIdAndUpdate(
       addressId,
       addressInfo,
@@ -338,7 +338,7 @@ const updateDoctor = async (req, res) => {
       }
     );
 
-    console.log("address updated", addressUpdated);
+    // console.log("address updated", addressUpdated);
     const updatedInfo = {
       ...Info,
       fullName: {
@@ -354,9 +354,9 @@ const updateDoctor = async (req, res) => {
     delete updatedInfo.firstName;
     delete updatedInfo.lastName;
     
-    console.log("updated info", updatedInfo);
+    // console.log("updated info", updatedInfo);
     const doctor = await Doctor.findByIdAndUpdate(doctorId, updatedInfo,{new:true});
-    console.log("doctor updated", doctor);
+    // console.log("doctor updated", doctor);
     if (doctor) {
       return res.status(200).json({
         success: true,

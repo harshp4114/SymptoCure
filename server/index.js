@@ -19,7 +19,7 @@ const app = express();
 const httpServer = createServer(app);
 const io=new Server(httpServer,{
   cors: {
-    origin: "https://symptocure.netlify.app/", 
+    origin: "*", 
     methods: ["GET", "POST","PUT","DELETE"],
     credentials: true,
   },
@@ -28,7 +28,7 @@ const PORT = 5000;
 
 app.use(cors(
   {
-    origin: "https://localhost:5173/",
+    origin: "*",
     methods: ["GET", "POST","PUT","DELETE"],
     credentials: true,
   }
@@ -40,10 +40,28 @@ app.use(express.urlencoded({ extended: true }));
 io.on("connection", (socket) => {
   console.log("a user connected",socket.id);
   
-  
+
   socket.on("landing",()=>{
     console.log("landing");
   })
+
+  socket.on("user-book-appointment",()=>{
+    console.log("user-book-appointment");  // this is to show appointment request in doctor when a patient makes an request
+    io.emit("appointment-reload");
+  })
+
+  socket.on("patient-profile-updated",()=>{
+    io.emit("change-patient-data"); //this is to reload details in appointment when patient updates his profile
+  })
+
+  socket.on("doctor-profile-updated",()=>{
+    console.log("doctor-profile-updated");
+    io.emit("change-doctor-data")  //this is to reload details in appointment when doctor updates his profile
+  })
+
+  socket.on("appointment-status-updated",()=>{
+    io.emit("appointment-reload-info")  //this is to fetch status on patient profile when doctor accepts/rejects the request
+  });
 
   socket.on("disconnect", () => {
     console.log("user disconnected",socket.id);
@@ -51,7 +69,7 @@ io.on("connection", (socket) => {
 });
 
 app.post("/predict", async (req, res) => {
-  console.log("inside predict",req.body.symptoms);
+  // console.log("inside predict",req.body.symptoms);
   // res.end("hello from predict");
   try {
       const response = await axios.post(`http://127.0.0.1:8000/predict`, {

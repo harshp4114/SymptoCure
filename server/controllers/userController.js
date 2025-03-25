@@ -113,7 +113,7 @@ const getUserProfile = async (req, res) => {
     const { email, id } = req.tokenData;
 
     const patient = await User.findOne({ email });
-    console.log("patient data backend", patient);
+    // console.log("patient data backend", patient);
 
     const address = await Address.findById(patient.address);
     patient.address = address;
@@ -206,7 +206,7 @@ const createUser = async (req, res) => {
       isActive: true, // Default value
     });
 
-    console.log("patient data", newUser);
+    // console.log("patient data", newUser);
     // Return success response
     if (newUser) {
       const token = jwt.sign(

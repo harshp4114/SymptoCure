@@ -8,6 +8,7 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { BASE_URL } from "../utils/constants";
 import { Search } from "lucide-react";
 import useAuth from "../hooks/useAuth";
+import { getSocket } from "../socket";
 const Consultancy = () => {
   useAuth(); // Ensure user is authenticated
   const [loading, setLoading] = useState(true);
@@ -90,6 +91,13 @@ const Consultancy = () => {
     }
     setLoader(false);
     getDoctors();
+
+    const socket=getSocket();
+    if(socket){
+      socket.on("change-doctor-data",()=>{
+        getDoctors();
+      })
+    }
     // console.log(filteredDoctors);
   }, [isAuthenticated, navigate,loading]); // Only runs when authentication state changes
   useEffect(()=>{

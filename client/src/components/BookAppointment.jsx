@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { BASE_URL } from "../utils/constants";
 import { jwtDecode } from "jwt-decode";
+import { getSocket } from "../socket";
 
 const BookAppointment = ({
   patient,
@@ -55,9 +56,7 @@ const BookAppointment = ({
     // console.log("patient", patient);
   }, [isAuthenticated, loading]);
 
-  useEffect(() => {
-    
-  });
+  useEffect(() => {});
 
   const handleBookAppointment = async (values) => {
     dispatch(showLoader());
@@ -75,8 +74,15 @@ const BookAppointment = ({
           },
         }
       );
-      // //console.log(toggleSuccess);
+      //console.log(toggleSuccess);
       toggleSuccess();
+
+      const socket = getSocket();
+      // console.log("socket in book appointments", socket);
+      if (socket) {
+        // console.log("inside socket if")
+        socket.emit("user-book-appointment");
+      }
       onClose();
     } catch (error) {
       console.log("error", error);

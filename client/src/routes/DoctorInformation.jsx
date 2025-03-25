@@ -11,6 +11,7 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import { getSocket } from "../socket";
 
 const DoctorInformation = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
@@ -33,8 +34,8 @@ const DoctorInformation = () => {
   const token = Cookies.get("jwt-token");
 
   useEffect(() => {
-      getPatientData();
-      // console.log("from get patientData",patientData)
+    getPatientData();
+    // console.log("from get patientData",patientData)
   }, []);
 
   const getPatientData = async () => {
@@ -59,6 +60,12 @@ const DoctorInformation = () => {
     }
     // console.log("func claling");
     getDoctor();
+    const socket = getSocket();
+    if (socket) {
+      socket.on("change-doctor-data", () => {
+        getDoctor();
+      });
+    }
   }, [isAuthenticated, loader]);
 
   const getDoctor = async () => {
@@ -73,10 +80,13 @@ const DoctorInformation = () => {
       setDoctorInfo(result?.data?.data);
       // console.log("dhbdsahbjhjasdj",result?.data?.patientData?.id)
       setPatientId(result?.data?.patientData?.id);
-      const result2 = await axios.get(`${BASE_URL}/api/address/${result?.data?.data?.address}`);
+      const result2 = await axios.get(
+        `${BASE_URL}/api/address/${result?.data?.data?.address}`
+      );
       // console.log(result2);
       setAddressData(result2?.data?.data);
     } catch (error) {
+      console.log("error", error);
     } finally {
       dispatch(hideLoader());
     }
@@ -106,11 +116,11 @@ const DoctorInformation = () => {
       toast.error("Appointment already exists with this doctor.");
       setShowExistToast(false);
     }
-    if(showPendingToast){
+    if (showPendingToast) {
       toast.warn("Appointment pending with the doctor. Please wait");
       setShowPendingToast(false);
     }
-  }, [showExistToast, showFailureToast, showSuccessToast,showPendingToast]);
+  }, [showExistToast, showFailureToast, showSuccessToast, showPendingToast]);
 
   return loader ? (
     <Loader />
@@ -139,7 +149,7 @@ const DoctorInformation = () => {
         pauseOnHover
       />
       <div className="w-7/12 h-full bg-white shadow-2xl shadow-blue-950">
-      {}
+        {}
         <div className="h-10/12 w-full flex flex-wrap">
           <div className="flex w-1/3 h-full justify-center items-start pt-16">
             {/* Profile Picture Placeholder */}
@@ -151,7 +161,7 @@ const DoctorInformation = () => {
             </div>
           </div>
           <div className="h-full flex flex-wrap content-start pt-16 pl-4 w-2/3">
-          {/* <div className="flex justify-center w-9/12 mb-4 items-center bg-opacity-70 rounded-xl border-red-800 border-opacity-60 border-[2px] bg-red-500 h-10 ">
+            {/* <div className="flex justify-center w-9/12 mb-4 items-center bg-opacity-70 rounded-xl border-red-800 border-opacity-60 border-[2px] bg-red-500 h-10 ">
             <h2>The selected doctor is in a different city.</h2>
           </div> */}
             {/* Doctor's Information */}

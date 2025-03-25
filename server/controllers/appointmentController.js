@@ -52,10 +52,10 @@ const getAppointmentsByDoctorId = async (req, res) => {
 const getAppointmentsByUserId = async (req, res) => {
   const user = req.tokenData;
   try {
-    console.log("userr",user)
+    // console.log("userr",user)
     const userId = user.id;
     const appointments = await Appointment.find({ userId });
-    console.log("ustsy sincsakn",appointments)
+    // console.log("ustsy sincsakn",appointments)
     if (appointments) {
       return res.status(200).json({
         success: true,
@@ -79,7 +79,7 @@ const getAppointmentsByUserId = async (req, res) => {
 
 const createAppointment = async (req, res) => {
   try {
-    console.log("appointment body data",req.body)
+    // console.log("appointment body data",req.body)
     const { selectedDate, reason, disease } = req.body;
     // console.log(req.body);
     // console.log("req ma pt",req.patient);
@@ -93,7 +93,7 @@ const createAppointment = async (req, res) => {
       status: { $ne: "rejected" },
     });
 
-    console.log("existing appointment", existingAppointment);
+    // console.log("existing appointment", existingAppointment);
     if (existingAppointment) {
       if (existingAppointment.status === "pending") {
         return res.status(400).json({

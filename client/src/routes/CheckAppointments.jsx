@@ -8,6 +8,7 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import Cookies from "js-cookie";
 import useAuth from "../hooks/useAuth";
+import { getSocket } from "../socket";
 
 const CheckAppointments = () => {
   useAuth();
@@ -22,12 +23,12 @@ const CheckAppointments = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // Empty appointments array for the skeleton UI
-  const appointmentRequests = [];
+  // const appointmentRequests = [];
 
-  const filteredAppointments = () => {
-    if (filter === "all") return appointmentRequests;
-    return appointmentRequests.filter((apt) => apt.status === filter);
-  };
+  // const filteredAppointments = () => {
+  //   if (filter === "all") return appointmentRequests;
+  //   return appointmentRequests.filter((apt) => apt.status === filter);
+  // };
 
   const getAllAppointments = async () => {
     dispatch(showLoader());
@@ -46,6 +47,17 @@ const CheckAppointments = () => {
       dispatch(hideLoader());
     }
   };
+
+  useEffect(()=>{
+    const socket=getSocket();
+    // console.log("socket in check apppieowi",socket);
+    if(socket){
+      socket.on("appointment-reload",()=>{
+        // console.log("appointment-reload socket called on doctor");
+        getAllAppointments();
+      })
+    }
+  },[])
 
   useEffect(() => {
     setPendingCount(
@@ -80,16 +92,7 @@ const CheckAppointments = () => {
   ) : (
     <div className="bg-gradient-to-br h-fit from-blue-50 to-indigo-50 min-h-[86.8vh] py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Appointment Requests
-          </h1>
-          <p className="text-gray-600">
-            Review and manage incoming appointment requests from patients
-          </p>
-        </div> */}
-
+       
         {/* Main Content */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Stats Bar */}

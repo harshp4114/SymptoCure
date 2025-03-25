@@ -4,13 +4,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import Cookies from "js-cookie";
+import { getSocket } from "../socket";
 
-const UserProfileAppointmentCard = ({
-  doctor,
-  status,
-  date,
-  reason,
-}) => {
+const UserProfileAppointmentCard = ({ doctor, status, date, reason }) => {
   const dispatch = useDispatch();
   const token = Cookies.get("jwt-token");
   const [doctorData, setDoctorData] = useState({});
@@ -32,6 +28,13 @@ const UserProfileAppointmentCard = ({
 
   useEffect(() => {
     getdoctorData();
+
+    const socket = getSocket();
+    if (socket) {
+      socket.on("change-doctor-data", () => {
+        getdoctorData();
+      });
+    }
   }, []);
 
   function CalendarIcon(props) {
@@ -118,7 +121,11 @@ const UserProfileAppointmentCard = ({
             </h3>
             <p className="text-sm text-gray-600">{doctorData.specialization}</p>
           </div>
-          <span className={`px-2 py-1 ${status=="approved"?"":"mt-1 mr-1"} ${bg} ${text} text-xs rounded-full`}>
+          <span
+            className={`px-2 py-1 ${
+              status == "approved" ? "" : "mt-1 mr-1"
+            } ${bg} ${text} text-xs rounded-full`}
+          >
             {status}
           </span>
         </div>
@@ -133,7 +140,7 @@ const UserProfileAppointmentCard = ({
             })}
           </span>
         </div>
-          <p className="text-xs text-gray-500 mt-1">Reason: {reason}</p>
+        <p className="text-xs text-gray-500 mt-1">Reason: {reason}</p>
       </div>
       {status === "approved" && (
         <div className="ml-4 flex space-x-2">
