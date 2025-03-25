@@ -21,7 +21,6 @@ import { io } from "socket.io-client";
 
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
-  const socket = io(BASE_URL);
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const [editUserProfile, setEditUserProfile] = useState(false);
@@ -34,9 +33,7 @@ const Profile = () => {
   const role = localStorage.getItem("role");
   // console.log(role);
 
-  socket.on("changeAppointmentStatus", () => {
-    getAppointments();
-  });
+ 
   const handleUserProfileUpdate = async (values) => {
     // console.log("func claelldd")
     console.log("values", values);
@@ -52,7 +49,6 @@ const Profile = () => {
       // console.log("result",result);
       getUser();
       setEditUserProfile(false);
-      socket.emit("userProfileUpdate");
       toast.success("Profile updated successfully!!");
     } catch (error) {
       console.log(error);
@@ -139,15 +135,11 @@ const Profile = () => {
       //console.log(isAuthenticated);
       navigate("/login"); // Redirect if the patient is not authenticated
     }
-    socket.on("connect", () => {
-      console.log("connected");
-    });
+    
     getUser();
     getAppointments();
 
-    return () => {
-      socket.disconnect();
-    };
+    
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
   // //console.log(profileData);
 

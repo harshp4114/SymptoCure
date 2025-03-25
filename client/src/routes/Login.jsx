@@ -18,6 +18,8 @@ import { Stethoscope } from "lucide-react";
 import CityAutocomplete from "../components/CityAutoComplete";
 import SpecializationAutoComplete from "../components/SpecializationAutoComplete";
 import QualificationAutoComplete from "../components/QualificationAutoComplete";
+import { socketConnected } from "../redux/slices/socketSlice";
+import { connectSocket } from "../socket";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,7 +32,6 @@ const Login = () => {
   cardio.register(); //for the health loader shown at the side
   const dispatch = useDispatch(); //used to dispatch actions to the redux store
   const isLoading = useSelector((state) => state.loading.isLoading); //checks if the page is loading
-
   useAuth(); //hook that sets the patient as logged in if the jwt token is present in the cookies
 
   // login initial values for login is same as role is defined separately
@@ -74,6 +75,7 @@ const Login = () => {
     zipCode: "",
   };
 
+
   // on click functions for the patient/doctor toggle buttons
   const handlePatientToggle = () => {
     setRole("patient");
@@ -116,6 +118,10 @@ const Login = () => {
         // //console.log(Cookies.get('jwt-token'));
         //console.log("User created successfully", result);
         dispatch(setRoleAsUser());
+        console.log("creating socket");
+        dispatch(socketConnected());
+        connectSocket();
+
         navigate("/home");
       } catch (error) {
         console.log("last", error);

@@ -13,18 +13,31 @@ import DetectDisease from "./routes/DetectDisease";
 import Consultancy from "./routes/Consultancy";
 import Profile from "./routes/Profile";
 import Login from "./routes/Login";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./redux/store/store";
 import DoctorInformation from "./routes/DoctorInformation";
 import LoadingPage from "./routes/LoadingPage";
 import Loader from "./components/Loader";
 import CheckPatients from "./routes/CheckPatients";
 import CheckAppointments from "./routes/CheckAppointments";
-
+import { connectSocket } from "./socket";
+import Cookies from "js-cookie";
+import { socketConnected } from "./redux/slices/socketSlice";
 
 const App = () => {
   const location = useLocation();
+  const dispatch=useDispatch();
   const isLoading = useSelector((state) => state.loading.isLoading); // Access global loading state
+  const isSocketConnected=useSelector((state)=>state.socketio.isSocketConnected);
+
+  useEffect(()=>{
+    const token=Cookies.get("jwt-token");
+    console.log("refrresh occurecd",isSocketConnected);
+    if(token && !isSocketConnected){
+      connectSocket();
+      dispatch(socketConnected());
+    }
+  },[isSocketConnected,dispatch])
   return (
       <div className="h-[100vh] w-full">
         {isLoading && <Loader />} {/* Show loader if isLoading is true */}

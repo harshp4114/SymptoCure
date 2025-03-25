@@ -4,7 +4,6 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import Cookies from "js-cookie";
-import socket from "../socket";
 
 
 const AppointmentCard = (props) => {
@@ -15,16 +14,7 @@ const AppointmentCard = (props) => {
   useEffect(() => {
     console.log(props.data);
     getUserData();
-    socket.on("connect", () => {
-      console.log("user connected");
-    });
-    socket.on("disconnect", () => {
-      console.log("user disconnected");
-    });
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-    };
+    
   }, []);
 
   const getUserData = async () => {
@@ -58,7 +48,6 @@ const AppointmentCard = (props) => {
       );
       console.log("result in approve", result);
       if (result?.data?.success) {
-        socket.emit("appointmentRequestUpdate");
         props?.change();
       }
     } catch (err) {
@@ -84,7 +73,6 @@ const AppointmentCard = (props) => {
       );
       console.log("result in reject", result);
       if (result?.data?.success) {
-        socket.emit("appointmentRequestUpdate");
         props?.change();
       }
     } catch (err) {

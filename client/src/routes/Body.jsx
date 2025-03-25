@@ -1,24 +1,37 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import gsap from "gsap";
-import { quantum } from "ldrs";
 import { helix } from "ldrs";
 import ScrollingMarquee from "../components/ScrollingMarquee";
 import { Link, useNavigate } from "react-router-dom";
 import { ScrollTrigger } from "gsap/all";
+import { io } from "socket.io-client";
+import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { getSocket } from "../socket";
+import { windowRefresh } from "../utils/constants";
+import { is } from "date-fns/locale";
 
 const Body = () => {
   const words = ["manageable.", "easy.", "personalized."];
   const [firstWord, setFirstWord] = useState(words[0]);
   const [secondWord, setSecondWord] = useState(words[1]);
-  const setNewWord = (Word) => {
-    const currentIndex = words.indexOf(Word);
-    const nextIndex = (currentIndex + 1) % words.length;
-    return words[nextIndex];
-  };
   const navigate = useNavigate();
   helix.register();
+  useAuth();
+  windowRefresh();
   gsap.registerPlugin(ScrollTrigger);
+
+  const isSocketConnected=useSelector((state)=>state.socketio.isSocketConnected);
+
+
+  useEffect(() => {
+      const socket = getSocket();
+      console.log(socket,"in body")
+      if (socket) {
+        socket.emit("landing");
+      }
+  }, [isSocketConnected]);
 
   //manage 640px
   //easy 276px
@@ -128,8 +141,6 @@ const Body = () => {
       color: "#1E1B4B",
     });
   }, []);
-
-  useAuth();
 
   return (
     <div className="w-full h-[500vh] bg-[#403CD5] absolute">

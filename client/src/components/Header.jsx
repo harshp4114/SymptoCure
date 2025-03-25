@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userLoggedout } from "../redux/slices/signInSlice";
 import { useEffect } from "react";
 import { setRoleAsUser,setRoleAsDoctor } from "../redux/slices/roleSlice";
+import { disconnectSocket } from "../socket";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const Header = () => {
       Cookies.remove("jwt-token");
       dispatch(userLoggedout());
       localStorage.removeItem("role");
+      disconnectSocket();
     }
     dispatch(setRoleAsUser());
   };

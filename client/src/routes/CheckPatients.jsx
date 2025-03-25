@@ -10,16 +10,12 @@ import { io } from "socket.io-client";
 
 const CheckPatients = () => {
   useAuth();
-  const socket=io(BASE_URL);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
   const token = Cookies.get("jwt-token");
   const [appointments, setAppointments] = useState([]);
 
-  socket.on("changeAppointmentStatus",()=>{
-    getAppointments();
-  })
 
   const getAppointments = async () => {
     dispatch(showLoader());
@@ -46,12 +42,7 @@ const CheckPatients = () => {
 
   useEffect(() => {
     setLoading(false);
-    socket.on("connect", () => {
-      console.log("user connected");
-    });
-    return () => {
-      socket.disconnect();
-    }
+    
   }, []);
 
   return loading ? (

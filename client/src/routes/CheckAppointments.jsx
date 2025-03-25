@@ -8,7 +8,6 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import Cookies from "js-cookie";
 import useAuth from "../hooks/useAuth";
-import socket from "../socket";
 
 const CheckAppointments = () => {
   useAuth();
@@ -71,19 +70,7 @@ const CheckAppointments = () => {
 
   useEffect(() => {
     setLoading(false);
-    socket.on("connect",()=>{
-      console.log("connected")
-      socket.on("appointmentUpdate",()=>{
-        // console.log("appointment",appointment);
-        // setAppointments();
-        setHandleChange(!handleChange);
-      })
-
-      return ()=>{
-        socket.off("appointmentUpdate");
-        socket.disconnect();
-      }
-    })
+    
   }, []);
 
   return loading ? (

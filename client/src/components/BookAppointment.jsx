@@ -12,7 +12,6 @@ import Cookies from "js-cookie";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { BASE_URL } from "../utils/constants";
 import { jwtDecode } from "jwt-decode";
-import socket from "../socket";
 
 const BookAppointment = ({
   patient,
@@ -57,16 +56,7 @@ const BookAppointment = ({
   }, [isAuthenticated, loading]);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("connected to socket");
-    });
-    socket.on("disconnect", () => {
-      console.log("disconnected from socket");
-    });
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-    };
+    
   });
 
   const handleBookAppointment = async (values) => {
@@ -86,7 +76,6 @@ const BookAppointment = ({
         }
       );
       // //console.log(toggleSuccess);
-      socket.emit("newAppointment");
       toggleSuccess();
       onClose();
     } catch (error) {
