@@ -50,9 +50,9 @@ const CheckPatients = () => {
       <l-helix size="45" speed="2.5" color="black"></l-helix>
     </div>
   ) : (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen py-8 px-4">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-[86.8vh]  pt-8 pb-6 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
+        {/* Header Section
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             Patient Appointments
@@ -60,7 +60,7 @@ const CheckPatients = () => {
           <p className="text-gray-600">
             Manage and view your upcoming appointments
           </p>
-        </div>
+        </div> */}
 
         {/* Main Content */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">

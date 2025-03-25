@@ -19,6 +19,7 @@ import UserProfileAppointmentCard from "../components/UserProfileAppointmentCard
 import { Calendar, Clock, Plus } from "lucide-react";
 import { io } from "socket.io-client";
 import { getSocket } from "../socket";
+import ChatInterface from "../components/ChatInterface";
 
 const Profile = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
@@ -34,7 +35,6 @@ const Profile = () => {
   const role = localStorage.getItem("role");
   // console.log(role);
 
- 
   const handleUserProfileUpdate = async (values) => {
     // console.log("func claelldd")
     console.log("values", values);
@@ -50,8 +50,8 @@ const Profile = () => {
       // console.log("result",result);
       getUser();
       setEditUserProfile(false);
-      const socket=getSocket();
-      if(socket){
+      const socket = getSocket();
+      if (socket) {
         socket.emit("patient-profile-updated");
       }
       toast.success("Profile updated successfully!!");
@@ -79,8 +79,8 @@ const Profile = () => {
       getUser();
       setEditDoctorProfile(false);
       toast.success("Profile updated successfully!!");
-      const socket=getSocket();
-      if(socket){
+      const socket = getSocket();
+      if (socket) {
         socket.emit("doctor-profile-updated");
       }
     } catch (error) {
@@ -103,7 +103,7 @@ const Profile = () => {
         });
         setProfileData(result.data.userData);
       } else if (role == "doctor") {
-        console.log("hiihiihihi");
+        // console.log("hiihiihihi");
         const result = await axios.get(`${BASE_URL}/api/doctor/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -129,7 +129,7 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("all user appointments", result);
+      // console.log("all user appointments", result);
       setAppointments(result?.data?.data);
     } catch (error) {
       console.log("error", error);
@@ -144,18 +144,16 @@ const Profile = () => {
       //console.log(isAuthenticated);
       navigate("/login"); // Redirect if the patient is not authenticated
     }
-    
+
     getUser();
     getAppointments();
 
-    const socket=getSocket();
-    if(socket){
-      socket.on("appointment-reload-info",()=>{
+    const socket = getSocket();
+    if (socket) {
+      socket.on("appointment-reload-info", () => {
         getAppointments();
-      })
+      });
     }
-
-    
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
   // //console.log(profileData);
 
@@ -751,7 +749,7 @@ const Profile = () => {
         </div>
 
         {/* Profile Details Section */}
-        <div className="w-full md:w-3/4 h-full bg-gray-50 p-8 flex flex-col">
+        <div className="w-full md:w-3/4 h-full p-8 flex flex-col">
           {/* Section Header */}
 
           <div className="flex items-center justify-between mb-3">
@@ -821,11 +819,9 @@ const Profile = () => {
               <p className="text-gray-600">{profileData?.experience} years</p>
             </div>
           </div>
-        </div>
 
-        {/* Medical Information Section */}
-        <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-8 flex flex-col">
-          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-6">
+          {/* Medical Information Section */}
+          <h2 className="text-2xl font-semibold text-gray-800 border-b mt-8 pb-3 mb-6">
             Medical Information
           </h2>
           <div className="space-y-4">
@@ -844,6 +840,10 @@ const Profile = () => {
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-2 px-4 pt-4 flex flex-col">
+          <ChatInterface />
         </div>
       </div>
     </div>

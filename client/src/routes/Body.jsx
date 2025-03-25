@@ -120,7 +120,7 @@ const Body = () => {
     gsap.to(".second-1", {
       scrollTrigger: {
         trigger: ".second-trigger",
-        start: "top 70%",
+        start: "top 40%",
         end: "top 0%",
         scrub: 1,
         // markers: true,
@@ -132,7 +132,7 @@ const Body = () => {
     gsap.to(".second-2", {
       scrollTrigger: {
         trigger: ".second-trigger",
-        start: "top 70%",
+        start: "top 40%",
         end: "top 0%",
         scrub: 1,
         // markers: true,

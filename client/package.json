@@ -20,6 +20,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "emoji-picker-react": "^4.12.2",
     "formik": "^2.4.6",
     "gsap": "^3.12.5",
     "jquery": "npm:jQuery@^1.7.4",

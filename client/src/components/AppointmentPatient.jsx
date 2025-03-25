@@ -6,7 +6,6 @@ import { BASE_URL } from "../utils/constants";
 import Cookies from "js-cookie";
 import { getSocket } from "../socket";
 
-
 const AppointmentCard = (props) => {
   // console.log("appointment",props.data)
   const [data, setData] = useState({});
@@ -15,11 +14,11 @@ const AppointmentCard = (props) => {
   useEffect(() => {
     // console.log(props.data);
     getUserData();
-    const socket=getSocket();
-    if(socket){
-      socket.on("change-patient-data",()=>{
+    const socket = getSocket();
+    if (socket) {
+      socket.on("change-patient-data", () => {
         getUserData();
-      })
+      });
     }
   }, []);
 
@@ -55,10 +54,23 @@ const AppointmentCard = (props) => {
       // console.log("result in approve", result);
       if (result?.data?.success) {
         props?.change();
-        const socket=getSocket();
-        if(socket){
-          socket.emit("appointment-status-updated")
+        const socket = getSocket();
+        if (socket) {
+          socket.emit("appointment-status-updated");
         }
+        const response = await axios.post(
+          `${BASE_URL}/api/chat`,
+          {
+            patientId: props.data.userId,
+            doctorId: Cookies.get("userId"),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("jwt-token")}`,
+            },
+          }
+        );
+        console.log("chat response", response);
       }
     } catch (err) {
       console.log("error in approve", err);
@@ -84,9 +96,9 @@ const AppointmentCard = (props) => {
       // console.log("result in reject", result);
       if (result?.data?.success) {
         props?.change();
-        const socket=getSocket();
-        if(socket){
-          socket.emit("appointment-status-updated")
+        const socket = getSocket();
+        if (socket) {
+          socket.emit("appointment-status-updated");
         }
       }
     } catch (err) {

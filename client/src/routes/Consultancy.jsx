@@ -28,7 +28,7 @@ const Consultancy = () => {
   }, [navigate]);
 
   // Retrieve values from location.state (if available)
-  const  specialization  = location?.state?.specialization; ;
+  const specialization = location?.state?.specialization;
 
   // console.log("spiepojch",specialization);
 
@@ -53,7 +53,9 @@ const Consultancy = () => {
       // Automatically filter doctors based on specialization (if provided)
       if (specialization) {
         const filtered = allDoctors.filter((doctor) =>
-          doctor.specialization.toLowerCase().includes(specialization.toLowerCase())
+          doctor.specialization
+            .toLowerCase()
+            .includes(specialization.toLowerCase())
         );
         setFilteredDoctors(filtered);
       } else {
@@ -83,8 +85,7 @@ const Consultancy = () => {
 
   // Ensure the user is authenticated before fetching doctors
   useEffect(() => {
-    if(loading)
-      return;
+    if (loading) return;
     if (!isAuthenticated) {
       navigate("/login"); // Redirect to login if not authenticated
       return;
@@ -92,21 +93,20 @@ const Consultancy = () => {
     setLoader(false);
     getDoctors();
 
-    const socket=getSocket();
-    if(socket){
-      socket.on("change-doctor-data",()=>{
+    const socket = getSocket();
+    if (socket) {
+      socket.on("change-doctor-data", () => {
         getDoctors();
-      })
+      });
     }
     // console.log(filteredDoctors);
-  }, [isAuthenticated, navigate,loading]); // Only runs when authentication state changes
-  useEffect(()=>{
+  }, [isAuthenticated, navigate, loading]); // Only runs when authentication state changes
+  useEffect(() => {
     setLoading(false);
-  },[])
+  }, []);
   return (
-    <div className="absolute w-full h-fit bg-[#403CD5] p-4 pb-16 px-0">
-      
-      <div className="w-full h-fit flex flex-wrap items-center justify-start px-10 pb-4">
+    <div className="absolute w-full  min-h-[86vh] bg-[#403CD5] p-4 pt-0 pb-0  px-0">
+      <div className="w-full h-fit flex flex-wrap items-center justify-start px-10">
         <div className="w-1/2">
           <h2 className="text-4xl mb-6 w-full transition-all duration-700 font-Gilroy font-extrabold mr-4 text-white">
             Find Your Trusted Health Specialist
@@ -139,7 +139,9 @@ const Consultancy = () => {
               <div className="text-gray-600">Specializations</div>
             </div>
             <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-700 ease-in-out rounded-2xl shadow-lg p-6 text-center">
-              <div className="text-2xl font-bold text-purple-600 mb-2">24/7</div>
+              <div className="text-2xl font-bold text-purple-600 mb-2">
+                24/7
+              </div>
               <div className="text-gray-600">Support Available</div>
             </div>
           </div>
@@ -151,7 +153,9 @@ const Consultancy = () => {
             <DoctorCard key={doctor._id} data={doctor} image="./d2.jpeg" />
           ))
         ) : (
-          <div className="text-white text-xl mt-6">No doctors found.</div>
+          <div className="text-white flex justify-center items-center h-full w-full text-xl mt-32">
+            <h1 className="text-4xl font-Gilroy font-semibold">No doctors found with specialization "{search}".</h1>
+          </div>
         )}
       </div>
     </div>
