@@ -104,12 +104,6 @@ The disease prediction model is trained on curated medical datasets from Kaggle,
 2. JWT Token Generation
 3. Secure Route Protection
 
-
-### 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-
 ### 🙏 Acknowledgements
 - Kaggle Datasets
 - Open-source libraries
