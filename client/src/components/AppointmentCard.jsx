@@ -6,8 +6,10 @@ import Cookies from "js-cookie";
 import { BASE_URL } from "../utils/constants";
 import { io } from "socket.io-client";
 import { getSocket } from "../socket";
+import { Link } from "react-router-dom";
 const AppointmentCard = (props) => {
   const appointment = props.appointmentData;
+  const [chat, setChat] = useState(null);
   // console.log("apppointment card data", appointment);
   const [userData, setUserData] = useState({});
   const [address, setAddress] = useState({});
@@ -37,12 +39,38 @@ const AppointmentCard = (props) => {
     }
   };
 
+  const getChatIdBySenderReceiverId = async () => {
+    dispatch(showLoader());
+    // console.log("appointment", appointment, token,appointment.userId,appointment.doctorId);
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/chat/chatId`,
+        {
+          patientId: appointment.userId,
+          doctorId: appointment.doctorId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // console.log("chat ID response", response);
+      setChat(response?.data?.data);
+    } catch (err) {
+      console.log("error in create chat", err);
+    } finally {
+      dispatch(hideLoader());
+    }
+  }
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login"); // Redirect if the patient is not authenticated
     }
 
     getUserData();
+    getChatIdBySenderReceiverId();
     const socket = getSocket();
     if (socket) {
       socket.on("change-patient-data", () => {
@@ -52,7 +80,9 @@ const AppointmentCard = (props) => {
   }, [isAuthenticated]);
 
   return (
-    <div
+    <Link
+      to="/profile"
+      state={{userData:userData,chat:chat}}
       key={appointment._id}
       className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-200 transition-transform transform "
     >
@@ -81,7 +111,7 @@ const AppointmentCard = (props) => {
           {address.country}, {address.zipCode}
         </p>
       </div>
-    </div>
+    </Link>
   );
 };
 

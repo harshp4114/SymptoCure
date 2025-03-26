@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Send,
   Paperclip,
@@ -14,10 +14,13 @@ import Cookies from "js-cookie";
 import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
 import ChatListItem from "./ChatListItem";
 import { jwtDecode } from "jwt-decode";
+import { useLocation } from "react-router-dom";
 
 const ChatInterface = () => {
-  const [selectedPatient, setSelectedPatient] = useState(null);
-  const [selectedChat, setSelectedChat] = useState(null);
+  const location =useLocation();
+  const chatContainerRef = useRef(null);
+  const [selectedPatient, setSelectedPatient] = useState(location?.state?.userData || null);
+  const [selectedChat, setSelectedChat] = useState(location?.state?.chat || null);
   const [searchQuery, setSearchQuery] = useState("");
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -31,13 +34,19 @@ const ChatInterface = () => {
 
   useEffect(() => {
     getChats();
-  }, []);
+  }, [selectedPatient,selectedChat]);
 
   useEffect(() => {
     if (selectedChat) {
       getMessages();
     }
   }, [selectedChat]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const getMessages = async () => {
     dispatch(showLoader());
@@ -95,7 +104,20 @@ const ChatInterface = () => {
         receiverModel: "Patient",
         text: newMessage.trim(),
       });
-      // console.log("response in send message",response);
+      console.log("response in send message",response);
+      if(response?.data?.success){
+        const response2 =await axios.put(`${BASE_URL}/api/chat/updateLastMessage`,{
+          chatId:selectedChat._id,
+          lastMessage:response?.data?.data?.text,
+          lastMessageTime:response?.data?.data?.createdAt,
+        },{
+          headers:{
+            Authorization:`Bearer ${token}`,
+          }
+        })
+
+        console.log("chat lastmessage update",response2);
+      }
       setNewMessage("");
       getMessages();
     } catch (err) {
@@ -172,7 +194,7 @@ const ChatInterface = () => {
               <p className="text-sm text-gray-500">Online</p>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
               <div
                 key={message._id}
@@ -205,6 +227,11 @@ const ChatInterface = () => {
                 </div>
               </div>
             ))}
+            {messages.length === 0 && (
+              <div className="h-full w-full flex justify-center items-center">
+                <h1 className="text-2xl text-gray-500 font-TTHoves font-medium">No messages yet</h1>
+                </div>
+            )}
           </div>
           <form
             onSubmit={handleSendMessage}

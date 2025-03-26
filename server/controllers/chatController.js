@@ -5,7 +5,7 @@ const createChat = async (req, res) => {
   console.log("conrgyeg called");
   try {
     const { patientId } = req.body;
-    const doctorId=req.tokenData.id;
+    const doctorId = req.tokenData.id;
     console.log("doctorId", doctorId);
     console.log("patientId", patientId);
     const chat = await Chat.create({ patientId, doctorId });
@@ -25,26 +25,77 @@ const createChat = async (req, res) => {
   }
 };
 
-const getChatsbyDoctorId=async(req,res)=>{
-  try{
-    const doctorId=req.tokenData.id;
-    const chats=await Chat.find({doctorId}).populate("patientId");
-    return res.status(200).json({
-      success:true,
-      message:"Chats fetched successfully",
-      data:chats
-    })
-  }catch(error){
+const getChatIdBySenderReceiverId = async (req, res) => {
+  try {
+    const { patientId, doctorId } = req.body;
+    // console.log("reqbody", req.body);
+    // console.log("patientId", patientId);
+    // console.log("doctorId", doctorId);
+    const chat = await Chat.findOne({
+      patientId: patientId,
+      doctorId: doctorId,
+    });
+    if (chat) {
+      return res.status(200).json({
+        success: true,
+        message: "Chat fetched successfully",
+        data: chat,
+      });
+    } else {
+      return res.status(404).json({
+        success: true,
+        message: "No chat found with following Sender and Receiver",
+        data: null,
+      });
+    }
+  } catch (error) {
     return res.status(500).json({
-      success:false,
-      message:"Failed to fetch chats",
-      error:error.message
-    })
+      success: false,
+      message: "Failed to fetch chat",
+      error: error.message,
+    });
   }
-}
+};
 
+const getChatsbyDoctorId = async (req, res) => {
+  try {
+    const doctorId = req.tokenData.id;
+    const chats = await Chat.find({ doctorId }).populate("patientId");
+    return res.status(200).json({
+      success: true,
+      message: "Chats fetched successfully",
+      data: chats,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch chats",
+      error: error.message,
+    });
+  }
+};
+
+const updateChatLastMessage =async (req,res)=>{
+    try{
+        const {chatId,lastMessage,lastMessageTime}=req.body;
+        const chat=await Chat.findByIdAndUpdate(chatId,{lastMessage,lastMessageTime});
+        return res.status(200).json({
+        success:true,
+        message:"Last message updated successfully",
+        data:chat
+        })
+    }catch(error){
+        return res.status(500).json({
+        success:false,
+        message:"Failed to update last message",
+        error:error.message
+        })
+    }
+    }
 
 module.exports = {
   createChat,
   getChatsbyDoctorId,
+  getChatIdBySenderReceiverId,
+  updateChatLastMessage,
 };
