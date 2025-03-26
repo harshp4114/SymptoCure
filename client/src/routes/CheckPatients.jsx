@@ -32,11 +32,21 @@ const CheckPatients = () => {
     }
   };
 
+  // const testingChat=async()=>{
+  //   try{
+  //     const result = await axios.get(`${BASE_URL}/api/chat/testing`);
+  //     console.log("result in chat",result);
+  //   }catch(err){
+  //     console.log("error in create chat",err);
+  //   }
+  // }
+
   useEffect(() => {
     if (loading) return;
     if (!isAuthenticated) {
       navigate("/login");
     }
+    // testingChat();
     getAppointments();
   }, [isAuthenticated, loading]);
 
@@ -108,7 +118,7 @@ const CheckPatients = () => {
                   .filter((appointment) => appointment.status == "approved")
                   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                   .map((appointment) => (
-                    <div className="transform transition-all duration-300 border hover:shadow-black/40 hover:shadow-xl cursor-pointer rounded-xl">
+                    <div key={appointment._id} className="transform transition-all duration-300 border hover:shadow-black/40 hover:shadow-xl cursor-pointer rounded-xl">
                       <AppointmentCard
                         key={appointment._id}
                         appointmentData={appointment}

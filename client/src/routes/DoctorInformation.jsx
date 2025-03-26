@@ -12,13 +12,16 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { getSocket } from "../socket";
+import { jwtDecode } from "jwt-decode";
 
 const DoctorInformation = () => {
   useAuth(); // Trigger the authentication logic (runs on mount)
   const dispatch = useDispatch();
   // dispatch(showLoader());
+  const token = Cookies.get("jwt-token");
+  const decode=jwtDecode(token);
   const [doctorInfo, setDoctorInfo] = useState({});
-  const [patientId, setPatientId] = useState("");
+  const [patientId, setPatientId] = useState(decode.id);
   const [loader, setLoader] = useState(true); // Synchronize the authentication check
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
@@ -31,7 +34,6 @@ const DoctorInformation = () => {
   const [showExistToast, setShowExistToast] = useState(false);
   const [patientData, setPatientData] = useState({});
   const [addressData, setAddressData] = useState({});
-  const token = Cookies.get("jwt-token");
 
   useEffect(() => {
     getPatientData();
@@ -44,8 +46,8 @@ const DoctorInformation = () => {
       const result = await axios.get(`${BASE_URL}/api/patient/${patientId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // console.log("patient data fetched when we press book app",result)
-      setPatientData(result?.data?.data[0]);
+      console.log("patient data fetched when we press book app",result)
+      setPatientData(result?.data?.data);
     } catch (error) {
       console.log("error", error);
     } finally {

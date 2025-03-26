@@ -6,6 +6,8 @@ const doctorRoutes = require("./routes/doctorRoutes");
 const consultationRoutes = require("./routes/consultationRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const addressRoutes = require("./routes/addressRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 const cors = require("cors");
 const axios = require("axios");
 const { createServer } = require("http");
@@ -81,15 +83,20 @@ app.post("/predict", async (req, res) => {
       res.status(500).json({error:error, message: "ML service error" });
   }
 });
+// console.log("chat routes",chatRoutes);
+// console.log("docotr routes",doctorRoutes);
 
 app.use("/api/patient", userRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/consultation", consultationRoutes);
 app.use("/api/appointment", appointmentRoutes);
 app.use("/api/address", addressRoutes);
+app.use("/api/chat",chatRoutes);
+app.use("/api/message",messageRoutes);
 
 app.use((req, res) => {
   // connectMongo();
+  console.log("no one matched")
   res.end("hello from server");
 });
 

@@ -98,7 +98,7 @@ const createAppointment = async (req, res) => {
       if (existingAppointment.status === "pending") {
         return res.status(400).json({
           success: false,
-          message: "Appointment pending with the doctor. Please wait"
+          message: "Appointment pending with the doctor. Please wait",
         });
       } else if (existingAppointment.status === "approved") {
         return res.status(400).json({
@@ -130,6 +130,36 @@ const createAppointment = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to create appointment",
+      error: error.message,
+    });
+  }
+};
+
+const getAllAcceptedPateints = async (req, res) => {
+  try {
+    const doctor = req.tokenData;
+    const doctorId = doctor.id;
+    const appointments = await Appointment.find({
+      doctorId: doctorId,
+      status: "approved",
+    });
+    // console.log("ustsy sincsakn", appointments);
+    if (appointments) {
+      return res.status(200).json({
+        success: true,
+        message: "All appointments fetched successfully",
+        data: appointments,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "No appointments found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch appointments",
       error: error.message,
     });
   }
@@ -171,4 +201,5 @@ module.exports = {
   createAppointment,
   getAppointmentsByDoctorId,
   getAppointmentsByUserId,
+  getAllAcceptedPateints,
 };

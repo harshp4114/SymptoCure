@@ -32,12 +32,15 @@ const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = Cookies.get("jwt-token");
+  const decoded=jwtDecode(token);
+  // console.log("token",token)
+  // console.log("decoded",decoded)
   const role = localStorage.getItem("role");
   // console.log(role);
 
   const handleUserProfileUpdate = async (values) => {
     // console.log("func claelldd")
-    console.log("values", values);
+    // console.log("values", values);
     dispatch(showLoader());
     try {
       // const token = Cookies.get("jwt-token");

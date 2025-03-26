@@ -23,6 +23,7 @@ const BookAppointment = ({
   toggleExist,
   togglePending,
 }) => {
+  console.log("patient", patient);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [patientData, setPatientData] = useState({});
   useAuth();

@@ -28,7 +28,7 @@ const AppointmentCard = (props) => {
       const result = await axios.get(
         `${BASE_URL}/api/patient/${props.data.userId}`
       );
-      console.log("result in card", result);
+      // console.log("result in card", result);
       setData(result?.data?.data);
     } catch (err) {
       console.log("error n card", err);
@@ -36,6 +36,28 @@ const AppointmentCard = (props) => {
       dispatch(hideLoader());
     }
   };
+
+  const createChat=async()=>{
+    dispatch(showLoader());
+    try{
+      const response = await axios.post(
+        `${BASE_URL}/api/chat/create`,
+        {
+          patientId: props.data.userId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("jwt-token")}`,
+          },
+        }
+      );
+      console.log("chat response", response);
+    }catch(err){
+      console.log("error in create chat",err);
+    }finally{
+      dispatch(hideLoader());
+    }
+  }
 
   const handleApprove = async () => {
     dispatch(showLoader());
@@ -58,19 +80,8 @@ const AppointmentCard = (props) => {
         if (socket) {
           socket.emit("appointment-status-updated");
         }
-        const response = await axios.post(
-          `${BASE_URL}/api/chat`,
-          {
-            patientId: props.data.userId,
-            doctorId: Cookies.get("userId"),
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${Cookies.get("jwt-token")}`,
-            },
-          }
-        );
-        console.log("chat response", response);
+        console.log("create chat");
+        createChat();
       }
     } catch (err) {
       console.log("error in approve", err);

@@ -226,8 +226,6 @@ const createUser = async (req, res) => {
       error: error.message,
     });
   }
-  // } else if (req.body.role == "doctor") {
-  // }
 };
 
 const updateUser = async (req, res) => {

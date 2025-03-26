@@ -8,7 +8,7 @@ import { io } from "socket.io-client";
 import { getSocket } from "../socket";
 const AppointmentCard = (props) => {
   const appointment = props.appointmentData;
-  console.log("apppointment card data", appointment);
+  // console.log("apppointment card data", appointment);
   const [userData, setUserData] = useState({});
   const [address, setAddress] = useState({});
   const dispatch = useDispatch();
