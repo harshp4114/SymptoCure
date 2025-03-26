@@ -93,9 +93,28 @@ const updateChatLastMessage =async (req,res)=>{
     }
     }
 
+    const getChatsbyPatientId = async (req, res) => {
+        try {
+          const patientId = req.tokenData.id;
+          const chats = await Chat.find({ patientId }).populate("doctorId");
+          return res.status(200).json({
+            success: true,
+            message: "Chats fetched successfully",
+            data: chats,
+          });
+        } catch (error) {
+          return res.status(500).json({
+            success: false,
+            message: "Failed to fetch chats",
+            error: error.message,
+          });
+        }
+      };
+
 module.exports = {
   createChat,
   getChatsbyDoctorId,
   getChatIdBySenderReceiverId,
   updateChatLastMessage,
+  getChatsbyPatientId,
 };

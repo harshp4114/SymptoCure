@@ -5,7 +5,7 @@ import axios from "axios";
 import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
 import Cookies from "js-cookie";
 
-const DoctorChatListItme = ({
+const PatientChatListItem = ({
   patient,
   unread,
   lastMessage,
@@ -60,4 +60,4 @@ const DoctorChatListItme = ({
   );
 };
 
-export default DoctorChatListItme;
+export default PatientChatListItem;
