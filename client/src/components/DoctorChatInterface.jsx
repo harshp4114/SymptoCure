@@ -12,13 +12,15 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
-import DoctorChatListItme from "./DoctorChatListItme";
+import DoctorChatListItem from "./DoctorChatListItem";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
+import { getSocket } from "../socket";
 
 const DoctorChatInterface = () => {
   const location = useLocation();
   const chatContainerRef = useRef(null);
+  const socket = getSocket();
   const [selectedPatient, setSelectedPatient] = useState(
     location?.state?.userData || null
   );
@@ -29,6 +31,7 @@ const DoctorChatInterface = () => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const dispatch = useDispatch();
+  const [changeCount,setChangeCount]=useState(true);
   const token = Cookies.get("jwt-token");
   const decoded = jwtDecode(token);
   // console.log("decoded",decoded);
@@ -36,8 +39,29 @@ const DoctorChatInterface = () => {
   const [filteredChats, setFilteredChats] = useState([]);
   //   const [filteredPatients,setFilteredPatients]=useState([]);
 
+  useEffect(()=>{
+    return ()=>{
+      socket.emit("chat-closed-by-doctor",selectedChat);
+    }
+  },[])
+        
+
   useEffect(() => {
     getChats();
+    socket.on("chat-opened-by-patient-from-server",(chatId)=>{
+      console.log("socket opened by pateitn screen on")
+        setChangeCount(false);
+        console.log("changecount in frontend",changeCount)
+    })
+    socket.on("chat-closed-by-patient-from-server",(chatId)=>{
+      console.log("socket closed by pateitn screen off")
+        setChangeCount(true);
+    });
+
+    return ()=>{
+      socket.off("chat-opened-by-patient-from-server");
+      socket.off("chat-closed-by-patient-from-server");
+    }
   }, [selectedPatient, selectedChat]);
 
   useEffect(() => {
@@ -84,6 +108,44 @@ const DoctorChatInterface = () => {
     }
   };
 
+  const getChatToUpdate = async (chatId) => {
+    try {
+      const result = await axios.get(`${BASE_URL}/api/chat/${chatId}`);
+      // console.log("chat to update", result);
+      return result?.data?.data;
+    } catch (err) {
+      console.log("error in get chat to update", err);
+    }
+  };
+
+  useEffect(() => {
+    socket.on("new-message-updatefrom-patient", async (message) => {
+      // console.log("socket vada ni andar", messages);
+      // console.log("spread messages", [...messages, message]);
+
+      setMessages((prevMessages) => [...prevMessages, message]);
+
+      const chatId = message.chatId;
+      const updatedChat = await getChatToUpdate(chatId); // Await the updated chat data
+      if (updatedChat) {
+        // Remove the old chat entry and add the updated chat
+        setChats((prevChats) => {
+          const filteredChats = prevChats.filter((chat) => chat._id !== chatId);
+          return [...filteredChats, updatedChat];
+        });
+
+        setFilteredChats((prevChats) => {
+          const filteredChats = prevChats.filter((chat) => chat._id !== chatId);
+          return [...filteredChats, updatedChat];
+        });
+      }
+    });
+
+    return () => {
+      socket.off("new-message-updatefrom-patient");
+    }
+  }, []);
+
   useEffect(() => {
     setFilteredChats(
       filteredChats.filter((chat) => {
@@ -109,14 +171,21 @@ const DoctorChatInterface = () => {
         receiverModel: "Patient",
         text: newMessage.trim(),
       });
-      console.log("response in send message", response);
+      // console.log("response in send message", response);
+      socket.emit("new-message-from-doctor", {
+        message: response?.data?.data,
+        patientId: selectedPatient._id,
+      });
       if (response?.data?.success) {
+        
         const response2 = await axios.put(
           `${BASE_URL}/api/chat/updateLastMessage`,
           {
             chatId: selectedChat._id,
             lastMessage: response?.data?.data?.text,
             lastMessageTime: response?.data?.data?.createdAt,
+            receiverModel: "Patient",
+            changeCount:changeCount,
           },
           {
             headers: {
@@ -128,7 +197,8 @@ const DoctorChatInterface = () => {
         console.log("chat lastmessage update", response2);
       }
       setNewMessage("");
-      getMessages();
+      // getMessages();
+      setMessages([...messages, response?.data?.data]);
     } catch (err) {
       console.log("error in sending message", err);
     }
@@ -159,11 +229,11 @@ const DoctorChatInterface = () => {
         </div>
         <div className="flex-1 overflow-y-auto">
           {filteredChats.map((chat) => (
-            <DoctorChatListItme
+            <DoctorChatListItem
               key={chat._id}
               patient={chat.patientId}
               chat={chat}
-              unread={chat.unreadCount}
+              unread={chat.doctorUnreadCount}
               lastMessage={chat.lastMessage}
               lastMessageTime={chat.lastMessageTime}
               setSelectedPatient={setSelectedPatient}
@@ -174,106 +244,135 @@ const DoctorChatInterface = () => {
       </div>
       {selectedPatient && (
         <div className="w-full h-full flex flex-col">
-          <div className="p-4 border-b border-gray-200 flex items-center">
-            <button
-              onClick={() => {
-                setSelectedPatient(null);
-                setSelectedChat(null);
-              }}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
-            >
-              <ArrowLeft className="w-6 h-6 text-gray-600" />
-            </button>
-            <div className="w-12 h-12 bg-[#16165C] flex justify-center items-center rounded-full object-cover">
-              <h1 className="text-white font-TTHoves font-medium text-lg">
-                {capitalizeFirstLetter(
-                  selectedPatient?.fullName?.firstName
-                ).slice(0, 1) +
-                  capitalizeFirstLetter(
-                    selectedPatient?.fullName?.lastName
-                  ).slice(0, 1)}
-              </h1>
-            </div>
-            <div className="ml-4">
-              <h2 className="font-semibold text-gray-800">
-                {capitalizeFirstLetter(selectedPatient.fullName.firstName) +
-                  " " +
-                  capitalizeFirstLetter(selectedPatient.fullName.lastName)}
-              </h2>
-              <p className="text-sm text-gray-500">Online</p>
-            </div>
-          </div>
-          <div
-            ref={chatContainerRef}
-            className="flex-1 overflow-y-auto p-4 space-y-4"
+        {/* Header */}
+        <div className="p-4 border-b border-gray-200 flex items-center">
+          <button
+            onClick={async () => {
+              console.log("chat data in frontend from where we emit", selectedChat);
+              await socket.emit("chat-closed-by-patient", selectedChat);
+              setSelectedPatient(null);
+              setSelectedChat(null);
+            }}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
           >
-            {messages.map((message) => (
-              <div
-                key={message._id}
-                className={`flex ${
-                  message.senderModel === "Doctor"
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
+            <ArrowLeft className="w-6 h-6 text-gray-600" />
+          </button>
+          <div className="w-12 h-12 bg-[#16165C] flex justify-center items-center rounded-full object-cover">
+            <h1 className="text-white font-TTHoves font-medium text-lg">
+              {capitalizeFirstLetter(selectedPatient?.fullName?.firstName).slice(0, 1) +
+                capitalizeFirstLetter(selectedPatient?.fullName?.lastName).slice(0, 1)}
+            </h1>
+          </div>
+          <div className="ml-4">
+            <h2 className="font-semibold text-gray-800">
+              {capitalizeFirstLetter(selectedPatient.fullName.firstName) +
+                " " +
+                capitalizeFirstLetter(selectedPatient.fullName.lastName)}
+            </h2>
+            <p className="text-sm text-gray-500">Online</p>
+          </div>
+        </div>
+      
+        {/* Chat Messages */}
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((message, index) => {
+            const messageDate = new Date(message.createdAt).toLocaleDateString(
+              "en-US",
+              {
+                weekday: "long",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              }
+            );
+      
+            const prevMessageDate =
+              index > 0
+                ? new Date(messages[index - 1].createdAt).toLocaleDateString(
+                    "en-US",
+                    {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }
+                  )
+                : null;
+      
+            const showDateSeparator = messageDate !== prevMessageDate;
+      
+            return (
+              <React.Fragment key={message._id}>
+                {showDateSeparator && (
+                  <div className="text-center my-4">
+                    <span className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-600">
+                      {messageDate}
+                    </span>
+                  </div>
+                )}
+      
                 <div
-                  className={`max-w-[70%] rounded-lg p-3 ${
+                  className={`flex ${
                     message.senderModel === "Doctor"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 text-gray-800"
+                      ? "justify-end"
+                      : "justify-start"
                   }`}
                 >
-                  <p className="text-sm">{message.text}</p>
-                  <div className="flex items-center justify-end mt-1 space-x-1">
-                    <span className="text-xs opacity-75">
-                      {new Date(message.createdAt).toLocaleTimeString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
-                    </span>
-                    {message.senderModel === "Doctor" && (
-                      <CheckCheck className="w-4 h-4 opacity-75" />
-                    )}
+                  <div
+                    className={`max-w-[70%] rounded-lg p-3 ${
+                      message.senderModel === "Doctor"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    <p className="text-sm">{message.text}</p>
+                    <div className="flex items-center justify-end mt-1 space-x-1">
+                      <span className="text-xs opacity-75">
+                        {new Date(message.createdAt).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </span>
+                      {message.senderModel === "Doctor" && (
+                        <CheckCheck className="w-4 h-4 opacity-75" />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            {messages.length === 0 && (
-              <div className="h-full w-full flex justify-center items-center">
-                <h1 className="text-2xl text-gray-500 font-TTHoves font-medium">
-                  No messages yet
-                </h1>
-              </div>
-            )}
-          </div>
-          <form
-            onSubmit={handleSendMessage}
-            className="p-4 border-t border-gray-200"
-          >
-            <div className="flex items-center space-x-2 h-16 bg-gray-100  rounded-lg p-2 pr-4">
-              {/* <button
-                type="button"
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-              >
-                <Paperclip className="w-5 h-5 text-gray-500" />
-              </button> */}
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 bg-transparent border-none focus:outline-none p-2"
-              />
-              <button
-                type="submit"
-                className="p-2  bg-blue-500 h-10 w-10 text-white flex justify-center items-center rounded-full hover:bg-blue-600 transition-colors"
-              >
-                <Send className="w-5 h-5" />
-              </button>
+              </React.Fragment>
+            );
+          })}
+      
+          {messages.length === 0 && (
+            <div className="h-full w-full flex justify-center items-center">
+              <h1 className="text-2xl text-gray-500 font-TTHoves font-medium">
+                No messages yet
+              </h1>
             </div>
-          </form>
+          )}
         </div>
+      
+        {/* Message Input Form */}
+        <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
+          <div className="flex items-center space-x-2 h-16 bg-gray-100 rounded-lg p-2 pr-4">
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 bg-transparent border-none focus:outline-none p-2"
+            />
+            <button
+              type="submit"
+              className="p-2 bg-blue-500 h-10 w-10 text-white flex justify-center items-center rounded-full hover:bg-blue-600 transition-colors"
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </div>
+        </form>
+      </div>
+      
       )}
     </div>
   );

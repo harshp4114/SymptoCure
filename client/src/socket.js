@@ -2,9 +2,16 @@ import { io } from "socket.io-client";
 
 let socket = null;
 
-export const connectSocket = () => {
+export const connectSocket = (userId) => {
     if (!socket) {
-        socket = io("http://localhost:5000"); // Change to your backend URL
+        socket = io("http://localhost:5000",{
+            transports: ["websocket"],
+        }); // Change to your backend URL
+
+        socket.on("connect", () => {
+            // console.log("Socket connected");
+            socket.emit("join", userId);
+        });
     }
 };
 

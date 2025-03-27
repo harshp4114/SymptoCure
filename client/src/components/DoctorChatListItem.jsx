@@ -4,8 +4,9 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
 import Cookies from "js-cookie";
+import { getSocket } from "../socket";
 
-const DoctorChatListItme = ({
+const DoctorChatListItem = ({
   patient,
   unread,
   lastMessage,
@@ -18,9 +19,23 @@ const DoctorChatListItme = ({
 
   return (
     <div
-      onClick={() => {
+      onClick={async () => {
         setSelectedPatient(patient);
         setSelectedChat(chat);
+        if(chat.doctorUnreadCount>0){
+          try{
+            const response= await axios.put(`${BASE_URL}/api/chat/resetDoctorUnreadCount`,{chatId:chat._id},{
+              headers:{
+                Authorization:`Bearer ${Cookies.get("jwt-token")}`
+              }
+            })
+            // console.log("response of doctor unreade count reset",response);
+          }catch(err){
+            console.log("error in update chat",err);
+          }
+        }
+        const socket=getSocket();
+        socket.emit("chat-opened-by-doctor",chat);
       }}
       className="flex items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100"
     >
@@ -60,4 +75,4 @@ const DoctorChatListItme = ({
   );
 };
 
-export default DoctorChatListItme;
+export default DoctorChatListItem;

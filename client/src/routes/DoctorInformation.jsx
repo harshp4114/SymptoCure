@@ -155,8 +155,8 @@ const DoctorInformation = () => {
         <div className="h-10/12 w-full flex flex-wrap">
           <div className="flex w-1/3 h-full justify-center items-start pt-16">
             {/* Profile Picture Placeholder */}
-            <div className="w-36 h-36 bg-[#072965] rounded-full flex items-center justify-center shadow-xl">
-              <span className="text-4xl font-bold text-white">
+            <div className="w-36 h-36 bg-[#072965] rounded-full flex items-center justify-center shadow-xl shadow-black/70 ring-8 ring-blue-300">
+              <span className="text-5xl font-bold text-white">
                 {doctorInfo?.fullName?.firstName[0].toUpperCase()}
                 {doctorInfo?.fullName?.lastName[0].toUpperCase()}
               </span>

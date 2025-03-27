@@ -25,13 +25,7 @@ const Body = () => {
   const isSocketConnected=useSelector((state)=>state.socketio.isSocketConnected);
 
 
-  useEffect(() => {
-      const socket = getSocket();
-      console.log(socket,"in body")
-      if (socket) {
-        socket.emit("landing");
-      }
-  }, [isSocketConnected]);
+  
 
   //manage 640px
   //easy 276px

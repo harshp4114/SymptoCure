@@ -3,7 +3,6 @@ const { connectMongo } = require("./config");
 require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
-const consultationRoutes = require("./routes/consultationRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const addressRoutes = require("./routes/addressRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -39,12 +38,72 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-io.on("connection", (socket) => {
-  console.log("a user connected",socket.id);
-  
+let onlineUsers={};
 
-  socket.on("landing",()=>{
-    console.log("landing");
+io.on("connection", (socket) => {
+  // console.log("a user connected",socket.id);
+  
+  // const
+
+  socket.on("join",(userId)=>{
+      onlineUsers[userId]=socket.id;
+      console.log(`User ${userId} connected with socket ID: ${socket.id}`)
+  })
+
+  socket.on("new-message-from-patient",(data)=>{
+    if(onlineUsers[data.doctorId]){
+      // console.log("new message from patient called socket")
+      io.to(onlineUsers[data.doctorId]).emit("new-message-updatefrom-patient",data.message);
+    }
+  })
+
+  socket.on("new-message-from-doctor",(data)=>{
+    if(onlineUsers[data.patientId]){
+      // console.log("new message from doc called socket")
+      io.to(onlineUsers[data.patientId]).emit("new-message-updatefrom-doctor",data.message);
+    }
+  })
+
+  //count not updated when message seen directly by patient
+  socket.on("chat-opened-by-patient",(chat)=>{
+    // console.log("chat-opened-by-patient socket");
+    // console.log("user id",chat.doctorId);
+    // console.log("online users",onlineUsers);
+    if(onlineUsers[chat.doctorId._id]){
+      // console.log("chat-opened-by-patient socket if",onlineUsers[chat?.doctorId?._id]);
+      io.to(onlineUsers[chat?.doctorId?._id]).emit("chat-opened-by-patient-from-server",chat);
+    }
+  })
+
+  socket.on("chat-closed-by-patient",(chat)=>{
+    // console.log("chat-closed-by-patient socket",chat);
+    // console.log("user id",chat?.doctorId);
+    // console.log("online users",onlineUsers[chat?.doctorId?._id]);
+    if(onlineUsers[chat?.doctorId?._id]){
+      // console.log("inside if cond")
+      io.to(onlineUsers[chat.doctorId._id]).emit("chat-closed-by-patient-from-server",chat);
+    }
+  })
+
+  //count not updated when message seen directly by doctor
+  socket.on("chat-opened-by-doctor",(chat)=>{
+    console.log("chat-opened-by-doctor socket",chat);
+    console.log("user id",chat.patientId);
+    console.log("online users",onlineUsers);
+    if(onlineUsers[chat.patientId._id]){
+      console.log("chat-opened-by-doctor socket if",onlineUsers[chat?.patientId?._id]);
+      io.to(onlineUsers[chat?.patientId?._id]).emit("chat-opened-by-doctor-from-server",chat);
+    }
+  })
+
+  socket.on("chat-closed-by-doctor",(chat)=>{
+    console.log("chat-closed-by-doctor socket",chat);
+    console.log("user id",chat?.patientId);
+    console.log("online users",onlineUsers[chat?.patientId?._id]);
+    if(onlineUsers[chat?.patientId?._id]){
+      console.log("inside if cond")
+      io.to(onlineUsers[chat.patientId._id]).emit("chat-closed-by-doctor-from-server",chat);
+    }
   })
 
   socket.on("user-book-appointment",()=>{
@@ -68,7 +127,9 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected",socket.id);
   });
+  // console.log("online users ",onlineUsers);
 });
+
 
 app.post("/predict", async (req, res) => {
   // console.log("inside predict",req.body.symptoms);
@@ -88,7 +149,6 @@ app.post("/predict", async (req, res) => {
 
 app.use("/api/patient", userRoutes);
 app.use("/api/doctor", doctorRoutes);
-app.use("/api/consultation", consultationRoutes);
 app.use("/api/appointment", appointmentRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/chat",chatRoutes);

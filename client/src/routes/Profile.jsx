@@ -34,7 +34,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = Cookies.get("jwt-token");
-  const decoded = jwtDecode(token);
+  // const decoded = jwtDecode(token);
   // console.log("token",token)
   // console.log("decoded",decoded)
   const role = localStorage.getItem("role");
@@ -154,11 +154,13 @@ const Profile = () => {
     getAppointments();
 
     const socket = getSocket();
-    if (socket) {
       socket.on("appointment-reload-info", () => {
         getAppointments();
       });
-    }
+
+      return ()=>{
+        socket.off("appointment-reload-info");
+      }
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
   // //console.log(profileData);
 
@@ -431,7 +433,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-8 flex flex-col">
-          <div className="border-b h-fit w-full flex justify-between items-center pb-3 mb-6 ">
+          <div className="border-b h-fit w-full flex justify-between items-center pb-3 mb-0 ">
             <h2 className="text-2xl float-right font-semibold text-gray-800 ">
               {selectedAppointmentInfo ? "Appointment Information" : "Chats"}
             </h2>
@@ -446,7 +448,7 @@ const Profile = () => {
           </div>
 
           {selectedAppointmentInfo ? (
-            <div className="space-y-4">
+            <div className="space-y-4 mt-5">
               {/* Status Filter */}
               <div className="flex items-center mb-4 space-x-4">
                 <span className="text-gray-700 font-medium">
@@ -750,12 +752,12 @@ const Profile = () => {
       {/* Outer Container */}
       <div className="bg-white w-full h-full shadow-lg flex flex-col md:flex-row overflow-hidden">
         {/* Sidebar/Profile Picture Section */}
-        <div className="w-fit md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-600 text-white flex flex-col items-center py-10 px-5">
+        <div className="w-fit md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-800 text-white flex flex-col items-center py-10 px-5">
           {/* Profile Picture */}
           <img
             src="./logo.png"
             alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
+            className="w-36 h-36 rounded-full border-4 border-white shadow-lg"
           />
           {/* Name */}
           <h1 className="mt-4 text-xl font-bold">

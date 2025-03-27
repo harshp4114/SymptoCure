@@ -20,9 +20,10 @@ import LoadingPage from "./routes/LoadingPage";
 import Loader from "./components/Loader";
 import CheckPatients from "./routes/CheckPatients";
 import CheckAppointments from "./routes/CheckAppointments";
-import { connectSocket } from "./socket";
+import { connectSocket, getSocket } from "./socket";
 import Cookies from "js-cookie";
 import { socketConnected } from "./redux/slices/socketSlice";
+import { jwtDecode } from "jwt-decode";
 
 const App = () => {
   const location = useLocation();
@@ -32,9 +33,12 @@ const App = () => {
 
   useEffect(()=>{
     const token=Cookies.get("jwt-token");
-    console.log("refrresh occurecd",isSocketConnected);
+    // console.log("refrresh occurecd",isSocketConnected);
     if(token && !isSocketConnected){
       connectSocket();
+      const socket=getSocket();
+      const decoded=jwtDecode(token);
+      socket.emit("join",decoded.id);
       dispatch(socketConnected());
     }
   },[isSocketConnected,dispatch])

@@ -25,6 +25,33 @@ const createChat = async (req, res) => {
   }
 };
 
+const getChatByChatId = async (req, res) => {
+  try {
+    const chatId = req.params.id;
+    const chat = await Chat.findById(chatId)
+      .populate("doctorId")
+      .populate("patientId");
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "No chat found with following id",
+        data: null,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Chat fetched successfully",
+      data: chat,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch chat",
+      error: error.message,
+    });
+  }
+};
+
 const getChatIdBySenderReceiverId = async (req, res) => {
   try {
     const { patientId, doctorId } = req.body;
@@ -75,41 +102,93 @@ const getChatsbyDoctorId = async (req, res) => {
   }
 };
 
-const updateChatLastMessage =async (req,res)=>{
-    try{
-        const {chatId,lastMessage,lastMessageTime}=req.body;
-        const chat=await Chat.findByIdAndUpdate(chatId,{lastMessage,lastMessageTime});
-        return res.status(200).json({
-        success:true,
-        message:"Last message updated successfully",
-        data:chat
-        })
-    }catch(error){
-        return res.status(500).json({
-        success:false,
-        message:"Failed to update last message",
-        error:error.message
-        })
-    }
+const updateChatLastMessage = async (req, res) => {
+  try {
+    const { chatId, lastMessage, lastMessageTime, receiverModel, changeCount } =
+      req.body;
+    console.log("chang count", changeCount);
+    const numChat = await Chat.findById(chatId);
+    let updateFields = { lastMessage, lastMessageTime };
+
+    if (changeCount) {
+      if (receiverModel === "Doctor") {
+        updateFields.doctorUnreadCount = (numChat.doctorUnreadCount || 0) + 1;
+      } else if (receiverModel === "Patient") {
+        updateFields.patientUnreadCount = (numChat.patientUnreadCount || 0) + 1;
+      }
     }
 
-    const getChatsbyPatientId = async (req, res) => {
-        try {
-          const patientId = req.tokenData.id;
-          const chats = await Chat.find({ patientId }).populate("doctorId");
-          return res.status(200).json({
-            success: true,
-            message: "Chats fetched successfully",
-            data: chats,
-          });
-        } catch (error) {
-          return res.status(500).json({
-            success: false,
-            message: "Failed to fetch chats",
-            error: error.message,
-          });
-        }
-      };
+    const chat = await Chat.findByIdAndUpdate(chatId, updateFields);
+
+    return res.status(200).json({
+      success: true,
+      message: "Last message updated successfully",
+      data: chat,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update last message",
+      error: error.message,
+    });
+  }
+};
+
+const getChatsbyPatientId = async (req, res) => {
+  try {
+    const patientId = req.tokenData.id;
+    const chats = await Chat.find({ patientId }).populate("doctorId");
+    return res.status(200).json({
+      success: true,
+      message: "Chats fetched successfully",
+      data: chats,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch chats",
+      error: error.message,
+    });
+  }
+};
+
+const resetDoctorUnreadCount = async (req, res) => {
+  try {
+    const { chatId } = req.body;
+    const chat = await Chat.findByIdAndUpdate(chatId, { doctorUnreadCount: 0 });
+    return res.status(200).json({
+      success: true,
+      message: "Doctor Unread count reset successfully",
+      data: chat,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to reset unread count",
+      error: error.message,
+    });
+  }
+};
+
+const resetPatientUnreadCount = async (req, res) => {
+  try {
+    const { chatId } = req.body;
+    const chat = await Chat.findByIdAndUpdate(chatId, {
+      patientUnreadCount: 0,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Patient Unread count reset successfully",
+      data: chat,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to reset unread count",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   createChat,
@@ -117,4 +196,7 @@ module.exports = {
   getChatIdBySenderReceiverId,
   updateChatLastMessage,
   getChatsbyPatientId,
+  resetDoctorUnreadCount,
+  resetPatientUnreadCount,
+  getChatByChatId,
 };

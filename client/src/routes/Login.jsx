@@ -19,7 +19,8 @@ import CityAutocomplete from "../components/CityAutoComplete";
 import SpecializationAutoComplete from "../components/SpecializationAutoComplete";
 import QualificationAutoComplete from "../components/QualificationAutoComplete";
 import { socketConnected } from "../redux/slices/socketSlice";
-import { connectSocket } from "../socket";
+import { connectSocket, getSocket } from "../socket";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -75,7 +76,6 @@ const Login = () => {
     zipCode: "",
   };
 
-
   // on click functions for the patient/doctor toggle buttons
   const handlePatientToggle = () => {
     setRole("patient");
@@ -120,8 +120,10 @@ const Login = () => {
         dispatch(setRoleAsUser());
         console.log("creating socket");
         dispatch(socketConnected());
-        connectSocket();
-
+        const decoded = jwtDecode(token);
+        // const socket = getSocket();
+        connectSocket(decoded.id);
+        // socket.emit("join", decoded.id);
         navigate("/home");
       } catch (error) {
         console.log("last", error);
@@ -133,7 +135,7 @@ const Login = () => {
       try {
         // console.log("inside doctor login");
         dispatch(showLoader());
-        console.log("Form Data:", values);
+        // console.log("Form Data:", values);
 
         const result = await axios.post(
           `${BASE_URL}/api/doctor/login/`,
@@ -160,6 +162,11 @@ const Login = () => {
         // //console.log(useSelector((state)=>state?.signin?.isSignedIn));
         // //console.log(Cookies.get('jwt-token'));
         //console.log("User created successfully", result);
+        dispatch(socketConnected());
+        // const socket = getSocket();
+        const decoded = jwtDecode(token);
+        connectSocket(decoded.id);
+        // socket.emit("join", decoded.id);
         dispatch(setRoleAsDoctor());
         navigate("/home");
       } catch (error) {
@@ -194,6 +201,11 @@ const Login = () => {
       dispatch(userLoggedin());
       // //console.log(Cookies.get('jwt-token'));
       // //console.log("User created successfully", result);
+      dispatch(socketConnected());
+      const decoded = jwtDecode(token);
+      connectSocket(decoded.id);
+      // const socket = getSocket();
+      // socket.emit("join", decoded.id);
       dispatch(setRoleAsUser());
       navigate("/home");
     } catch (error) {
@@ -225,6 +237,11 @@ const Login = () => {
       dispatch(userLoggedin());
       // //console.log(Cookies.get('jwt-token'));
       // //console.log("User created successfully", result);
+      dispatch(socketConnected());
+      const decoded = jwtDecode(token);
+      // const socket = getSocket();
+      connectSocket(decoded.id);
+      // socket.emit("join", decoded.id);
       dispatch(setRoleAsDoctor());
       navigate("/home");
     } catch (error) {
@@ -669,7 +686,7 @@ const Login = () => {
 
                   <SpecializationAutoComplete />
 
-                  <QualificationAutoComplete/>
+                  <QualificationAutoComplete />
 
                   <Field
                     type="number"

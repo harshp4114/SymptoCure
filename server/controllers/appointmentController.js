@@ -1,6 +1,5 @@
 const Appointment = require("../models/appointmentModel"); // Import the User model
 const mongoose = require("mongoose");
-// const { create } = require("../models/consultationModel");
 
 const getAllAppointments = async (req, res) => {
   try {
