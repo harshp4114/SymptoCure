@@ -10,21 +10,33 @@ import "react-toastify/dist/ReactToastify.css";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
 import { getSocket } from "../socket";
 import { jwtDecode } from "jwt-decode";
+import {
+  Stethoscope,
+  MapPin,
+  Phone,
+  Mail,
+  Award,
+  Calendar,
+  ChevronLeft,
+  User,
+  Building,
+  GraduationCap,
+} from "lucide-react";
+import InfoCard from "../components/InfoCard";
 
 const DoctorInformation = () => {
-  useAuth(); // Trigger the authentication logic (runs on mount)
+  useAuth();
   const dispatch = useDispatch();
-  // dispatch(showLoader());
   const token = Cookies.get("jwt-token");
-  const decode=jwtDecode(token);
+  const decode = jwtDecode(token);
   const [doctorInfo, setDoctorInfo] = useState({});
   const [patientId, setPatientId] = useState(decode.id);
-  const [loader, setLoader] = useState(true); // Synchronize the authentication check
+  const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
-  const isAuthenticated = useSelector((state) => state.signin.isSignedIn); // Get auth state from Redux
+  const isAuthenticated = useSelector((state) => state.signin.isSignedIn);
   const location = useLocation();
   const doctorId = location.state.doctor;
   const [showBooking, setShowBooking] = useState(false);
@@ -34,11 +46,15 @@ const DoctorInformation = () => {
   const [showExistToast, setShowExistToast] = useState(false);
   const [patientData, setPatientData] = useState({});
   const [addressData, setAddressData] = useState({});
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     getPatientData();
-    // console.log("from get patientData",patientData)
   }, []);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, [doctorInfo]);
 
   const getPatientData = async () => {
     dispatch(showLoader());
@@ -46,7 +62,6 @@ const DoctorInformation = () => {
       const result = await axios.get(`${BASE_URL}/api/patient/${patientId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("patient data fetched when we press book app",result)
       setPatientData(result?.data?.data);
     } catch (error) {
       console.log("error", error);
@@ -58,9 +73,8 @@ const DoctorInformation = () => {
   useEffect(() => {
     if (loader) return;
     if (!isAuthenticated) {
-      navigate("/login"); // Redirect if the patient is not authenticated
+      navigate("/login");
     }
-    // console.log("func claling");
     getDoctor();
     const socket = getSocket();
     if (socket) {
@@ -72,20 +86,16 @@ const DoctorInformation = () => {
 
   const getDoctor = async () => {
     dispatch(showLoader());
-    // console.log("workding");
     try {
       const result = await axios.get(`${BASE_URL}/api/doctor/${doctorId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // console.log("res", result?.data?.data);
-      // console.log(result);
       setDoctorInfo(result?.data?.data);
-      // console.log("dhbdsahbjhjasdj",result?.data?.patientData?.id)
       setPatientId(result?.data?.patientData?.id);
       const result2 = await axios.get(
         `${BASE_URL}/api/address/${result?.data?.data?.address}`
       );
-      // console.log(result2);
+      console.log("result2", result2);
       setAddressData(result2?.data?.data);
     } catch (error) {
       console.log("error", error);
@@ -96,25 +106,15 @@ const DoctorInformation = () => {
 
   useEffect(() => {
     setLoader(false);
-    // console.log(doctorInfo);
-    //console.log("hiiiiii");
-    // toast.success("Appointment Booked Successfully!");
-
     if (showSuccessToast) {
-      //console.log("hiiiiii from success",showSuccessToast);
-
       toast.success("Appointment Booked Successfully!");
       setShowSuccessToast(false);
     }
     if (showFailureToast) {
-      //console.log("hiiiiii fsail",showFailureToast);
-
       toast.error("Failed to book the appointment. Please try again.");
       setShowFailureToast(false);
     }
     if (showExistToast) {
-      //console.log("hiiiiii from exist",showExistToast);
-
       toast.error("Appointment already exists with this doctor.");
       setShowExistToast(false);
     }
@@ -124,10 +124,12 @@ const DoctorInformation = () => {
     }
   }, [showExistToast, showFailureToast, showSuccessToast, showPendingToast]);
 
+  
+
   return loader ? (
     <Loader />
   ) : (
-    <div className="flex flex-col h-[86vh] items-center bg-gradient-to-tr from-blue-950 to-blue-600 ">
+    <div className="min-h-[85.5vh] ">
       {showBooking && (
         <BookAppointment
           doctor={doctorInfo}
@@ -150,96 +152,98 @@ const DoctorInformation = () => {
         draggable
         pauseOnHover
       />
-      <div className="w-7/12 h-full bg-white shadow-2xl shadow-blue-950">
-        {}
-        <div className="h-10/12 w-full flex flex-wrap">
-          <div className="flex w-1/3 h-full justify-center items-start pt-16">
-            {/* Profile Picture Placeholder */}
-            <div className="w-36 h-36 bg-[#072965] rounded-full flex items-center justify-center shadow-xl shadow-black/70 ring-8 ring-blue-300">
+
+      <div
+        className={`w-full h-full bg-white overflow-hidden transition-all duration-1000 transform ${
+          isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+        }`}
+      >
+        <div className="relative h-[7.8rem] bg-gradient-to-r from-blue-600 to-blue-800">
+          <div className="absolute -bottom-20 left-10">
+            <div className="w-40 h-40 shadow-black/0 bg-gradient-to-r from-blue-700 to-blue-950 rounded-full flex items-center justify-center ring-8 ring-white shadow-2xl">
               <span className="text-5xl font-bold text-white">
-                {doctorInfo?.fullName?.firstName[0].toUpperCase()}
-                {doctorInfo?.fullName?.lastName[0].toUpperCase()}
+                {doctorInfo?.fullName?.firstName?.[0]?.toUpperCase()}
+                {doctorInfo?.fullName?.lastName?.[0]?.toUpperCase()}
               </span>
             </div>
           </div>
-          <div className="h-full flex flex-wrap content-start pt-16 pl-4 w-2/3">
-            {/* <div className="flex justify-center w-9/12 mb-4 items-center bg-opacity-70 rounded-xl border-red-800 border-opacity-60 border-[2px] bg-red-500 h-10 ">
-            <h2>The selected doctor is in a different city.</h2>
-          </div> */}
-            {/* Doctor's Information */}
-            <h1 className="w-full text-3xl font-bold mb-2 text-gray-800">
-              Dr. {doctorInfo?.fullName?.firstName}{" "}
-              {doctorInfo?.fullName?.lastName}
-            </h1>
-            <p className="w-full text-lg mb- text-gray-600 mt-2">
-              <strong>Specialization:</strong> {doctorInfo?.specialization}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Experience:</strong> {doctorInfo?.experience} years
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Hospital:</strong> {doctorInfo?.hospital}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Email:</strong> {doctorInfo?.email}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Phone:</strong> {doctorInfo?.phone}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Qualifications:</strong>{" "}
-              {doctorInfo?.qualifications?.join(", ")}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Gender:</strong> {doctorInfo?.gender}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>City:</strong> {addressData?.city}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>State:</strong> {addressData?.state}
-            </p>
-            <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Counrty:</strong> {addressData?.country}
-            </p>
-            {/* <p className="w-full text-lg text-gray-600 mt-1">
-              <strong>Rating:</strong> {doctorInfo?.rating} (No reviews yet)
-            </p> */}
-          </div>
         </div>
-        {/* Action Buttons */}
 
-        <div className="flex justify-center mt-12">
-          <div className="mr-8 flex justify-center items-center rounded-lg ring-2 hover:bg-blue-300  ring-blue-300 hover:ring-[6px] transition-all duration-700 hover:ring-blue-900 bg-blue-200 w-56 h-10">
-            <Link
-              to="/consultancy"
-              className="flex items-center text-blue-900 font-medium transition duration-300"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-6 h-6 mr-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 19.5L8.25 12l7.5-7.5"
-                />
-              </svg>
-              <h2 className="mr-2 font-Gilroy">Back to Consultancy</h2>
-            </Link>
+        <div className="pt-24 px-10 pb-6">
+          <div className="flex justify-between items-end">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">
+                Dr. {doctorInfo?.fullName?.firstName}{" "}
+                {doctorInfo?.fullName?.lastName}
+              </h1>
+              <p className="text-xl text-blue-700 font-medium">
+                {doctorInfo?.specialization}
+              </p>
+            </div>
+            <div className="flex space-x-4">
+              <div className=" button-trigger button-move  w-36 h-12">
+                <button
+                  onClick={() => navigate("/consultancy")}
+                  type="submit"
+                  className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[7px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                >
+                  {/* Default Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                    Back
+                  </span>
+
+                  {/* Hover Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                    Back
+                  </span>
+                </button>
+              </div>
+              <div className=" button-trigger button-move  w-56 h-12">
+                <button
+                  onClick={() => setShowBooking(true)}
+                  type="submit"
+                  className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[7px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                >
+                  {/* Default Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                  <Calendar className="w-5 h-5 mr-2" /> Book Appointment
+                  </span>
+
+                  {/* Hover Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                  <Calendar className="w-5 h-5 mr-2" /> Book Appointment
+                  </span>
+                </button>
+              </div>
+              
+            </div>
           </div>
-          <button
-            onClick={() => {
-              setShowBooking(true);
-            }}
-            className="font-Gilroy text-blue-900 flex justify-center items-center rounded-lg ring-2 hover:bg-blue-300  ring-blue-300 hover:ring-[6px] transition-all duration-700 hover:ring-blue-900 bg-blue-200 w-56 h-10"
-          >
-            Book Appointment
-          </button>
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <InfoCard
+              icon={Building}
+              title="Hospital"
+              value={capitalizeFirstLetter(doctorInfo?.hospital)}
+            />
+            <InfoCard
+              icon={Calendar}
+              title="Experience"
+              value={`${doctorInfo?.experience} years`}
+            />
+            <InfoCard
+              icon={GraduationCap}
+              title="Qualifications"
+              value={doctorInfo?.qualifications?.join(", ")}
+            />
+            <InfoCard icon={Mail} title="Email" value={doctorInfo?.email} />
+            <InfoCard icon={Phone} title="Phone" value={doctorInfo?.phone} />
+            <InfoCard icon={User} title="Gender" value={capitalizeFirstLetter(doctorInfo?.gender)} />
+            <InfoCard
+              icon={MapPin}
+              title="Location"
+              value={`${addressData?.city}, ${addressData?.state} - ${addressData?.zipCode}`}
+            />
+          </div>
         </div>
       </div>
     </div>

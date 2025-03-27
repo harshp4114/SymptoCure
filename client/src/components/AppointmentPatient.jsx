@@ -37,9 +37,9 @@ const AppointmentCard = (props) => {
     }
   };
 
-  const createChat=async()=>{
+  const createChat = async () => {
     dispatch(showLoader());
-    try{
+    try {
       const response = await axios.post(
         `${BASE_URL}/api/chat/create`,
         {
@@ -52,12 +52,12 @@ const AppointmentCard = (props) => {
         }
       );
       console.log("chat response", response);
-    }catch(err){
-      console.log("error in create chat",err);
-    }finally{
+    } catch (err) {
+      console.log("error in create chat", err);
+    } finally {
       dispatch(hideLoader());
     }
-  }
+  };
 
   const handleApprove = async () => {
     dispatch(showLoader());
@@ -124,19 +124,19 @@ const AppointmentCard = (props) => {
     switch (status) {
       case "approved":
         return {
-          strip: "bg-green-500",
+          strip: "bg-gradient-to-r from-green-500 to-green-700",
           badge: "bg-green-100 text-green-800",
           badgeText: "Approved",
         };
       case "rejected":
         return {
-          strip: "bg-red-500",
+          strip: "bg-gradient-to-r from-red-500 to-red-700",
           badge: "bg-red-100 text-red-800",
           badgeText: "Rejected",
         };
       default:
         return {
-          strip: "bg-yellow-500",
+          strip: "bg-gradient-to-r from-yellow-400 to-yellow-600",
           badge: "bg-yellow-100 text-yellow-800",
           badgeText: "Pending",
         };
@@ -147,7 +147,7 @@ const AppointmentCard = (props) => {
 
   return (
     <div className="max-w-1/3 flex-col flex-1">
-      <div className="bg-white rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border h-full border-gray-100">
+      <div className="bg-white rounded-xl shadow-lg shadow-black/20 transition-all duration-300 hover:shadow-lg hover:shadow-black/30 border h-full border-gray-100">
         <div className={`h-2 rounded-t-md ${statusStyles.strip}`}></div>
 
         <div className="p-6">
@@ -228,9 +228,9 @@ const AppointmentCard = (props) => {
           {/* Actions - only show for pending appointments */}
           {props?.data.status === "pending" && (
             <div className="flex space-x-2 mt-4">
-              <button
+              {/* <button
                 onClick={() => handleApprove()}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md text-sm font-medium transition-colors duration-300 flex items-center justify-center"
+                className="flex-1 bg-green-600  hover:bg-green-700 text-white py-2 px-4 rounded-md text-sm font-medium mr-2 transition-all duration-500 flex items-center justify-center"
               >
                 <svg
                   className="w-4 h-4 mr-1"
@@ -247,10 +247,27 @@ const AppointmentCard = (props) => {
                   />
                 </svg>
                 Approve
-              </button>
-              <button
+              </button> */}
+              <div className="button-trigger button-move  w-40 h-12">
+                <button
+                  onClick={() => navigate("/consultancy")}
+                  type="submit"
+                  className="bg-green-100 p-2 text-green-900 text-sm border-[7px] border-green-500 font-Gilroy hover:border-green-700 transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                >
+                  {/* Default Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                    Approve
+                  </span>
+
+                  {/* Hover Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                    Approve
+                  </span>
+                </button>
+              </div>
+              {/* <button
                 onClick={() => handleReject()}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md text-sm font-medium transition-colors duration-300 flex items-center justify-center"
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md text-sm font-medium transition-colors duration-500 flex items-center justify-center"
               >
                 <svg
                   className="w-4 h-4 mr-1"
@@ -267,7 +284,24 @@ const AppointmentCard = (props) => {
                   />
                 </svg>
                 Reject
-              </button>
+              </button> */}
+              <div className="button-trigger button-move  w-40 h-12">
+                <button
+                  onClick={() => navigate("/consultancy")}
+                  type="submit"
+                  className="bg-red-100 p-2 text-red-950 text-sm border-[7px] border-red-500 font-Gilroy hover:border-red-700 transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                >
+                  {/* Default Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                    Reject
+                  </span>
+
+                  {/* Hover Text */}
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                    Reject
+                  </span>
+                </button>
+              </div>
             </div>
           )}
         </div>

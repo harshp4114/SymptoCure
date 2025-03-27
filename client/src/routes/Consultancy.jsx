@@ -126,19 +126,19 @@ const Consultancy = () => {
         </div>
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-700 ease-in-out rounded-2xl shadow-lg p-6 text-center">
+            <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-500 ease-in-out rounded-2xl shadow-lg p-6 text-center">
               <div className="text-2xl font-bold text-blue-600 mb-2">
                 {doctors.length}
               </div>
               <div className="text-gray-600">Available Doctors</div>
             </div>
-            <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-700 ease-in-out rounded-2xl shadow-lg p-6 text-center">
+            <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-500 ease-in-out rounded-2xl shadow-lg p-6 text-center">
               <div className="text-2xl font-bold text-indigo-600 mb-2">
                 {new Set(doctors.map((d) => d.specialization)).size}
               </div>
               <div className="text-gray-600">Specializations</div>
             </div>
-            <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-700 ease-in-out rounded-2xl shadow-lg p-6 text-center">
+            <div className="bg-blue-50 hover:ring-8 cursor-default ring-blue-900 transition-all duration-500 ease-in-out rounded-2xl shadow-lg p-6 text-center">
               <div className="text-2xl font-bold text-purple-600 mb-2">
                 24/7
               </div>

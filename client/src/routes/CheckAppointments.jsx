@@ -90,7 +90,7 @@ const CheckAppointments = () => {
       <Loader />
     </div>
   ) : (
-    <div className="bg-gradient-to-br h-fit from-blue-50 to-indigo-50 min-h-[86.8vh] py-8 px-4">
+    <div className="bg-gradient-to-br h- from-blue-50 to-indigo-50 min-h-[86.8vh] max-h-fit py-8 px-4">
       <div className="max-w-7xl mx-auto">
        
         {/* Main Content */}
@@ -99,7 +99,7 @@ const CheckAppointments = () => {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-white">
               <div
-                className={`text-center p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
+                className={`text-center p-4 bg-white hover:ring-2 hover:ring-white transition-all duration-300 bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
                   filter === "all" ? "ring-2 ring-white" : ""
                 }`}
                 onClick={() => {
@@ -111,7 +111,7 @@ const CheckAppointments = () => {
                 <p className="text-sm opacity-90">All Requests</p>
               </div>
               <div
-                className={`text-center p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
+                className={`text-center p-4 bg-white hover:ring-2 hover:ring-white transition-all duration-300 bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
                   filter === "pending" ? "ring-2 ring-white" : ""
                 }`}
                 onClick={() => {
@@ -125,7 +125,7 @@ const CheckAppointments = () => {
                 <p className="text-sm opacity-90">Pending</p>
               </div>
               <div
-                className={`text-center p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
+                className={`text-center p-4 bg-white hover:ring-2 hover:ring-white transition-all duration-300 bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
                   filter === "approved" ? "ring-2 ring-white" : ""
                 }`}
                 onClick={() => {
@@ -139,7 +139,7 @@ const CheckAppointments = () => {
                 <p className="text-sm opacity-90">Approved</p>
               </div>
               <div
-                className={`text-center p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
+                className={`text-center p-4 bg-white hover:ring-2 hover:ring-white transition-all duration-300 bg-opacity-10 rounded-lg backdrop-blur-sm cursor-pointer ${
                   filter === "rejected" ? "ring-2 ring-white" : ""
                 }`}
                 onClick={() => {
@@ -156,9 +156,9 @@ const CheckAppointments = () => {
           </div>
 
           {/* Filter Indicator */}
-          <div className="px-6 pt-6 pb-2">
+          <div className="px-6 pt-6">
             <div className="flex items-center">
-              <h3 className="font-medium text-gray-700">
+              <h3 className="font-medium text-lg text-gray-700">
                 Showing:{" "}
                 {filter === "all"
                   ? "All Requests"

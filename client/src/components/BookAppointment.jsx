@@ -114,7 +114,8 @@ const BookAppointment = ({
     console.log("patient data name", patient, patientData);
   }, []);
 
-  const validationSchema = Yup.object({
+
+  const bookAppointmentValidationSchema = Yup.object({
     fullName: Yup.string()
       .required("Full name is required")
       .default(
@@ -131,25 +132,27 @@ const BookAppointment = ({
       .required("Phone number is required")
       .default(patient?.phone),
     reason: Yup.string().required("Reason for visit is required"),
+    date: Yup.date().required("Date is required"),
   });
 
-  const modifiersStyles = {
-    fullyBooked: {
-      borderRadius: "50%",
-      backgroundColor: "rgba(255, 0, 0, 1)",
-      color: "white",
-    },
-  };
 
-  const modifiers = {
-    fullyBooked: (date) => {
-      return fullyBooked.some((bookedDate) => {
-        const bookedDay = new Date(bookedDate).toISOString().split("T")[0];
-        const currentDay = date.toISOString().split("T")[0];
-        return bookedDay === currentDay;
-      });
-    },
-  };
+  // const modifiersStyles = {
+  //   fullyBooked: {
+  //     borderRadius: "50%",
+  //     backgroundColor: "rgba(255, 0, 0, 1)",
+  //     color: "white",
+  //   },
+  // };
+
+  // const modifiers = {
+  //   fullyBooked: (date) => {
+  //     return fullyBooked.some((bookedDate) => {
+  //       const bookedDay = new Date(bookedDate).toISOString().split("T")[0];
+  //       const currentDay = date.toISOString().split("T")[0];
+  //       return bookedDay === currentDay;
+  //     });
+  //   },
+  // };
 
   return loading ? (
     <Loader />
@@ -157,7 +160,7 @@ const BookAppointment = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 w-full h-full flex items-center justify-center p-4 z-50">
       <div className="bg-white  rounded-lg shadow-xl  max-w-4xl overflow-hidden">
         {/* Header */}
-        <div className="bg-blue-600 p-6 text-white">
+        <div className="bg-[#204cbc] p-6 pt-4 text-white">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">Book Appointment</h2>
             <button
@@ -183,12 +186,14 @@ const BookAppointment = ({
             phone: patient?.phone || "",
             reason: "",
             disease: patient?.detectedDisease || "",
+            date: null,
           }}
-          validationSchema={validationSchema}
+          validationSchema={bookAppointmentValidationSchema}
           onSubmit={(values) => handleBookAppointment(values)}
         >
-          <Form className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 gap-y-0">
-            <div className="space-y-6">
+          {({ setFieldValue, values }) => (
+          <Form className="p-6 pt-5 grid grid-cols-1 md:grid-cols-2 gap-6 gap-y-0">
+            <div className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name*
@@ -255,13 +260,13 @@ const BookAppointment = ({
                   type="text"
                   disabled={!!patient?.detectedDisease}
                   name="disease"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border  ${!!patient?.detectedDisease?"":" hover:ring-[1px] transition-all duration-500 hover:ring-black"} border-gray-300 rounded-md focus:outline-none focus:ring-[1px] focus:ring-black`}
                   placeholder={patient?.detectedDisease || "Enter your disease"}
                 />
                 <ErrorMessage
                   name="disease"
                   component="div"
-                  className="text-red-600 text-sm"
+                  className="text-red-600 ml-2 text-sm"
                 />
               </div>
 
@@ -272,13 +277,13 @@ const BookAppointment = ({
                 <Field
                   as="textarea"
                   name="reason"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-28 max-h-28"
+                  className="w-full px-3 py-2 border hover:ring-[1px] transition-all duration-500 hover:ring-black border-gray-300 rounded-md focus:outline-none focus:ring-[1px] focus:ring-black h-28 max-h-28"
                   placeholder="Please describe your symptoms or reason for visit"
                 />
                 <ErrorMessage
                   name="reason"
                   component="div"
-                  className="text-red-600 text-sm"
+                  className="text-red-600 ml-2 text-sm"
                 />
               </div>
             </div>
@@ -291,37 +296,54 @@ const BookAppointment = ({
 
                 <DayPicker
                   mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  disabled={(date) => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0); // Remove time part for accurate comparison
-                    return date <= today; // Disable all past dates including today
-                  }}
+                  selected={values.date} // Bind selected date to Formik
+                  onSelect={(date) => setFieldValue("date", date)} // Update Formik's state
+                  disabled={(date) => date <= new Date()} // Disable past dates
                   className="border rounded-md font-semibold bg-white p-3"
-                  modifiers={modifiers}
-                  modifiersStyles={modifiersStyles}
                 />
+              <ErrorMessage
+                name="date"
+                component="div"
+                className="text-red-600 ml-2 mt-2 text-sm"
+              />
               </div>
             </div>
 
             {/* Footer */}
             <div className="col-span-full flex justify-end gap-4">
-              <button
-                type="button"
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-                onClick={onClose}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Confirm Booking
-              </button>
+              
+              <div className=" button-trigger button-move  w-36 h-11">
+                <button
+                  onClick={onClose}
+                  className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                    Cancel
+                  </span>
+
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                    Cancel
+                  </span>
+                </button>
+              </div>
+              
+              <div className=" button-trigger button-move  w-44 h-11">
+                <button
+                  type="submit"
+                  className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                    Confirm Booking
+                  </span>
+
+                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                    Confirm Booking
+                  </span>
+                </button>
+              </div>
             </div>
           </Form>
+          )}
         </Formik>
       </div>
     </div>
