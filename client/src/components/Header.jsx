@@ -5,6 +5,7 @@ import { userLoggedout } from "../redux/slices/signInSlice";
 import { useEffect } from "react";
 import { setRoleAsUser,setRoleAsDoctor } from "../redux/slices/roleSlice";
 import { disconnectSocket } from "../socket";
+import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -27,13 +28,16 @@ const Header = () => {
   //used to decide whether to display login or logout button
   const isSignedIn = useSelector((state) => state.signin.isSignedIn);
   // //console.log(isSignedIn,"from header");
-  const handleLogout = () => {
+  const handleLogout = async() => {
     //console.log(Cookies.get("jwt-token"));
     if (Cookies.get("jwt-token")) {
+      const token = Cookies.get("jwt-token");
+      const decoded=jwtDecode(token);
+      await disconnectSocket(decoded.id);
       Cookies.remove("jwt-token");
       dispatch(userLoggedout());
       localStorage.removeItem("role");
-      disconnectSocket();
+      
     }
     dispatch(setRoleAsUser());
   };

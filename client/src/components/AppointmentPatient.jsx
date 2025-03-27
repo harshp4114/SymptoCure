@@ -250,7 +250,7 @@ const AppointmentCard = (props) => {
               </button> */}
               <div className="button-trigger button-move  w-40 h-12">
                 <button
-                  onClick={() => navigate("/consultancy")}
+                  onClick={() => handleApprove()}
                   type="submit"
                   className="bg-green-100 p-2 text-green-900 text-sm border-[7px] border-green-500 font-Gilroy hover:border-green-700 transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
                 >
@@ -287,7 +287,7 @@ const AppointmentCard = (props) => {
               </button> */}
               <div className="button-trigger button-move  w-40 h-12">
                 <button
-                  onClick={() => navigate("/consultancy")}
+                  onClick={() => handleReject()}
                   type="submit"
                   className="bg-red-100 p-2 text-red-950 text-sm border-[7px] border-red-500 font-Gilroy hover:border-red-700 transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
                 >

@@ -36,6 +36,7 @@ const PatientChatListItem = ({
         }
         const socket=getSocket();
         socket.emit("chat-opened-by-patient",chat);
+        socket.emit("is-user-online",doctor._id);
       }}
       className="flex items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100"
     >

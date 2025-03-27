@@ -122,7 +122,10 @@ const Login = () => {
         dispatch(socketConnected());
         const decoded = jwtDecode(token);
         // const socket = getSocket();
-        connectSocket(decoded.id);
+        await connectSocket(decoded.id);
+
+        // const socket=getSocket();
+        // socket.emit("is-user-online",decoded.id);
         // socket.emit("join", decoded.id);
         navigate("/home");
       } catch (error) {
@@ -165,7 +168,10 @@ const Login = () => {
         dispatch(socketConnected());
         // const socket = getSocket();
         const decoded = jwtDecode(token);
-        connectSocket(decoded.id);
+        await connectSocket(decoded.id);
+
+        // const socket=getSocket();
+        // socket.emit("is-user-online",decoded.id);
         // socket.emit("join", decoded.id);
         dispatch(setRoleAsDoctor());
         navigate("/home");
@@ -203,7 +209,9 @@ const Login = () => {
       // //console.log("User created successfully", result);
       dispatch(socketConnected());
       const decoded = jwtDecode(token);
-      connectSocket(decoded.id);
+      await connectSocket(decoded.id);
+      // const socket=getSocket();
+      // socket.emit("is-user-online",decoded.id);
       // const socket = getSocket();
       // socket.emit("join", decoded.id);
       dispatch(setRoleAsUser());
@@ -240,7 +248,10 @@ const Login = () => {
       dispatch(socketConnected());
       const decoded = jwtDecode(token);
       // const socket = getSocket();
-      connectSocket(decoded.id);
+      await connectSocket(decoded.id);
+      // const socket=getSocket();
+      // socket.emit("is-user-online",decoded.id);
+      // socket.emit("user-is-online",decoded.id);
       // socket.emit("join", decoded.id);
       dispatch(setRoleAsDoctor());
       navigate("/home");

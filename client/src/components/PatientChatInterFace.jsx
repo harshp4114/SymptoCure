@@ -20,6 +20,7 @@ import { getSocket } from "../socket";
 const PatientChatInterface = () => {
   const location = useLocation();
   const chatContainerRef = useRef(null);
+  const [onlineStatus,setOnlineStatus]=useState("Offline")
   const [selectedDoctor, setSelectedDoctor] = useState(
     location?.state?.userData || null
   );
@@ -53,8 +54,39 @@ const [changeCount,setChangeCount]=useState(true);
 
     return () => {
       socket.emit("chat-closed-by-patient", selectedChat);
+      socket.off("chat-opened-by-doctor-from-server");
+      socket.off("chat-closed-by-doctor-from-server");
     };
   }, [selectedDoctor, selectedChat]);
+
+  useEffect(()=>{
+    socket.on("user-online-status",(userId)=>{
+      console.log("inside socket in frontend",userId,selectedDoctor?._id,selectedDoctor,selectedChat)
+      if(selectedDoctor._id==userId){
+        console.log("inside if 1")
+        setOnlineStatus("Online")
+      }else{
+        console.log("inside if 2")
+
+        setOnlineStatus("Offline")
+      }
+    })
+
+    socket.on("user-offline-status",(userId)=>{
+      console.log("in frontend offline status",selectedDoctor)
+      if(selectedDoctor._id==userId){
+        console.log("inside if")
+        setOnlineStatus("Offline");
+      }else{
+        setOnlineStatus("Online");
+      }
+    })
+
+    return ()=>{
+      socket.off("user-online-status");
+      socket.off("user-offline-status");
+    }
+  },[selectedChat,selectedDoctor])
 
   useEffect(() => {
     if (selectedChat == null) {
@@ -280,7 +312,7 @@ const [changeCount,setChangeCount]=useState(true);
                 " " +
                 capitalizeFirstLetter(selectedDoctor.fullName.lastName)}
             </h2>
-            <p className="text-sm text-gray-500">Online</p>
+            <p className="text-sm text-gray-500">{onlineStatus}</p>
           </div>
         </div>
       
