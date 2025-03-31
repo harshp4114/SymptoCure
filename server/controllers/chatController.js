@@ -8,6 +8,19 @@ const createChat = async (req, res) => {
     const doctorId = req.tokenData.id;
     // console.log("doctorId", doctorId);
     // console.log("patientId", patientId);
+
+    const existingChat = await Chat.findOne({
+      patientId: patientId,
+      doctorId: doctorId,
+    });
+
+    if(existingChat){
+      return res.status(200).json({
+        success:false,
+        message:"Chat already exists",
+      })
+    }
+
     const chat = await Chat.create({ patientId, doctorId });
     if (chat) {
       return res.status(200).json({
