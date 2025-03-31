@@ -95,7 +95,7 @@ const DoctorInformation = () => {
       const result2 = await axios.get(
         `${BASE_URL}/api/address/${result?.data?.data?.address}`
       );
-      console.log("result2", result2);
+      // console.log("result2", result2);
       setAddressData(result2?.data?.data);
     } catch (error) {
       console.log("error", error);

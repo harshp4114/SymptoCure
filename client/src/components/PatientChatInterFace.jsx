@@ -20,7 +20,7 @@ import { getSocket } from "../socket";
 const PatientChatInterface = () => {
   const location = useLocation();
   const chatContainerRef = useRef(null);
-  const [onlineStatus,setOnlineStatus]=useState("Offline")
+  const [onlineStatus, setOnlineStatus] = useState("Offline");
   const [selectedDoctor, setSelectedDoctor] = useState(
     location?.state?.userData || null
   );
@@ -38,19 +38,19 @@ const PatientChatInterface = () => {
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
   //   const [filteredPatients,setFilteredPatients]=useState([]);
-const [changeCount,setChangeCount]=useState(true);
+  const [changeCount, setChangeCount] = useState(true);
   useEffect(() => {
     getChats();
 
-    socket.on("chat-opened-by-doctor-from-server",(chat)=>{
-      console.log("chat-opened-by-doctor-from-server socket",chat);
+    socket.on("chat-opened-by-doctor-from-server", (chat) => {
+      // console.log("chat-opened-by-doctor-from-server socket",chat);
       setChangeCount(false);
-    })
+    });
 
-    socket.on("chat-closed-by-doctor-from-server",(chat)=>{
-      console.log("chat-closed-by-doctor-from-server socket",chat);
+    socket.on("chat-closed-by-doctor-from-server", (chat) => {
+      // console.log("chat-closed-by-doctor-from-server socket",chat);
       setChangeCount(true);
-    })
+    });
 
     return () => {
       socket.emit("chat-closed-by-patient", selectedChat);
@@ -59,34 +59,28 @@ const [changeCount,setChangeCount]=useState(true);
     };
   }, [selectedDoctor, selectedChat]);
 
-  useEffect(()=>{
-    socket.on("user-online-status",(userId)=>{
-      console.log("inside socket in frontend",userId,selectedDoctor?._id,selectedDoctor,selectedChat)
-      if(selectedDoctor._id==userId){
-        console.log("inside if 1")
-        setOnlineStatus("Online")
-      }else{
-        console.log("inside if 2")
-
-        setOnlineStatus("Offline")
-      }
-    })
-
-    socket.on("user-offline-status",(userId)=>{
-      console.log("in frontend offline status",selectedDoctor)
-      if(selectedDoctor._id==userId){
-        console.log("inside if")
-        setOnlineStatus("Offline");
-      }else{
+  useEffect(() => {
+    socket.on("user-online-status", (userId) => {
+      // console.log("inside socket in frontend",userId,selectedDoctor?._id,selectedDoctor,selectedChat)
+      if (selectedDoctor?._id == userId) {
+        // console.log("inside if 1")
         setOnlineStatus("Online");
       }
-    })
+    });
 
-    return ()=>{
+    socket.on("user-offline-status", (userId) => {
+      // console.log("in frontend offline status",selectedDoctor)
+      if (selectedDoctor?._id == userId) {
+        // console.log("inside if")
+        setOnlineStatus("Offline");
+      }
+    });
+
+    return () => {
       socket.off("user-online-status");
       socket.off("user-offline-status");
-    }
-  },[selectedChat,selectedDoctor])
+    };
+  }, [selectedChat, selectedDoctor]);
 
   useEffect(() => {
     if (selectedChat == null) {
@@ -107,40 +101,50 @@ const [changeCount,setChangeCount]=useState(true);
     }
   }, [messages]);
 
-  const getChatToUpdate = async (chatId) => {
-    try {
-      const result = await axios.get(`${BASE_URL}/api/chat/${chatId}`);
-      // console.log("chat to update", result);
-      return result?.data?.data;
-    } catch (err) {
-      console.log("error in get chat to update", err);
-    }
-  };
   useEffect(() => {
     // const socket = getSocket();
     socket.on("new-message-updatefrom-doctor", async (message) => {
-      console.log("socket vada ni andar",messages)
-      console.log("spread messages",[...messages,message])
+      // console.log("socket vada ni andar",messages)
+      // console.log("spread messages",[...messages,message])
       // Update messages
-      console.log("socket in frontend");
+      // console.log("socket in frontend");
       setMessages((prevMessages) => [...prevMessages, message]);
 
       // Fetch the latest chat details
       const chatId = message.chatId;
-      const updatedChat = await getChatToUpdate(chatId); // Await the updated chat data
+      // const updatedChat = await getChatToUpdate(chatId); // Await the updated chat data
 
-      if (updatedChat) {
+      if (message) {
         // Remove the old chat entry and add the updated chat
-        console.log("update chat")
-        setChats((prevChats) => {
-          const filteredChats = prevChats.filter((chat) => chat._id !== chatId);
-          return [...filteredChats, updatedChat];
-        });
+        // console.log("update chat")
+        setChats((prevChats) =>
+          prevChats.map((chat) => {
+            if (chat._id === chatId) {
+              // console.log("inside if chat id matched", chat);
+              const updatedChat = chat;
+              updatedChat.lastMessage = message.text;
+              updatedChat.lastMessageTime = message.createdAt;
+              updatedChat.patientUnreadCount += 1; // Increment unread count
+              return updatedChat;
+            } else {
+              return chat;
+            }
+          })
+        );
 
-        setFilteredChats((prevChats) => {
-          const filteredChats = prevChats.filter((chat) => chat._id !== chatId);
-          return [...filteredChats, updatedChat];
-        });
+        setFilteredChats((prevChats) =>
+          prevChats.map((chat) => {
+            if (chat._id === chatId) {
+              // console.log("inside if chat id matched", chat);
+              const updatedChat = chat;
+              updatedChat.lastMessage = message.text;
+              updatedChat.lastMessageTime = message.createdAt;
+              return updatedChat;
+            } else {
+              return chat;
+            }
+          })
+        );
       }
     });
 
@@ -210,7 +214,7 @@ const [changeCount,setChangeCount]=useState(true);
         message: response?.data?.data,
         doctorId: selectedDoctor._id,
       });
-      console.log("response in send message", response);
+      // console.log("response in send message", response);
       if (response?.data?.success) {
         const response2 = await axios.put(
           `${BASE_URL}/api/chat/updateLastMessage`,
@@ -219,7 +223,7 @@ const [changeCount,setChangeCount]=useState(true);
             lastMessage: response?.data?.data?.text,
             lastMessageTime: response?.data?.data?.createdAt,
             receiverModel: "Doctor",
-            changeCount:changeCount,
+            changeCount: changeCount,
           },
           {
             headers: {
@@ -287,135 +291,146 @@ const [changeCount,setChangeCount]=useState(true);
       </div>
       {selectedDoctor && (
         <div className="w-full h-full flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-gray-200 flex items-center">
-          <button
-            onClick={async () => {
-              console.log("chat data in frontend from where we emit", selectedChat);
-              await socket.emit("chat-closed-by-patient", selectedChat);
-              setSelectedDoctor(null);
-              setSelectedChat(null);
-            }}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
+          {/* Header */}
+          <div className="p-4 border-b border-gray-200 flex items-center">
+            <button
+              onClick={async () => {
+                // console.log("chat data in frontend from where we emit", selectedChat);
+                await socket.emit("chat-closed-by-patient", selectedChat);
+                setSelectedDoctor(null);
+                setSelectedChat(null);
+              }}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
+            >
+              <ArrowLeft className="w-6 h-6 text-gray-600" />
+            </button>
+            <div className="w-12 h-12 bg-[#16165C] flex justify-center items-center rounded-full object-cover">
+              <h1 className="text-white font-TTHoves font-medium text-lg">
+                {capitalizeFirstLetter(
+                  selectedDoctor?.fullName?.firstName
+                ).slice(0, 1) +
+                  capitalizeFirstLetter(
+                    selectedDoctor?.fullName?.lastName
+                  ).slice(0, 1)}
+              </h1>
+            </div>
+            <div className="ml-4">
+              <h2 className="font-semibold text-gray-800">
+                {capitalizeFirstLetter(selectedDoctor.fullName.firstName) +
+                  " " +
+                  capitalizeFirstLetter(selectedDoctor.fullName.lastName)}
+              </h2>
+              <p className="text-sm text-gray-500">{onlineStatus}</p>
+            </div>
+          </div>
+
+          {/* Chat Messages */}
+          <div
+            ref={chatContainerRef}
+            className="flex-1 overflow-y-auto p-4 space-y-4"
           >
-            <ArrowLeft className="w-6 h-6 text-gray-600" />
-          </button>
-          <div className="w-12 h-12 bg-[#16165C] flex justify-center items-center rounded-full object-cover">
-            <h1 className="text-white font-TTHoves font-medium text-lg">
-              {capitalizeFirstLetter(selectedDoctor?.fullName?.firstName).slice(0, 1) +
-                capitalizeFirstLetter(selectedDoctor?.fullName?.lastName).slice(0, 1)}
-            </h1>
-          </div>
-          <div className="ml-4">
-            <h2 className="font-semibold text-gray-800">
-              {capitalizeFirstLetter(selectedDoctor.fullName.firstName) +
-                " " +
-                capitalizeFirstLetter(selectedDoctor.fullName.lastName)}
-            </h2>
-            <p className="text-sm text-gray-500">{onlineStatus}</p>
-          </div>
-        </div>
-      
-        {/* Chat Messages */}
-        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((message, index) => {
-            const messageDate = new Date(message.createdAt).toLocaleDateString(
-              "en-US",
-              {
+            {messages.map((message, index) => {
+              const messageDate = new Date(
+                message.createdAt
+              ).toLocaleDateString("en-US", {
                 weekday: "long",
                 year: "numeric",
                 month: "short",
                 day: "numeric",
-              }
-            );
-      
-            const prevMessageDate =
-              index > 0
-                ? new Date(messages[index - 1].createdAt).toLocaleDateString(
-                    "en-US",
-                    {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    }
-                  )
-                : null;
-      
-            const showDateSeparator = messageDate !== prevMessageDate;
-      
-            return (
-              <React.Fragment key={message._id}>
-                {showDateSeparator && (
-                  <div className="text-center my-4">
-                    <span className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-600">
-                      {messageDate}
-                    </span>
-                  </div>
-                )}
-      
-                <div
-                  className={`flex ${
-                    message.senderModel === "Patient"
-                      ? "justify-end"
-                      : "justify-start"
-                  }`}
-                >
+              });
+
+              const prevMessageDate =
+                index > 0
+                  ? new Date(messages[index - 1].createdAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      }
+                    )
+                  : null;
+
+              const showDateSeparator = messageDate !== prevMessageDate;
+
+              return (
+                <React.Fragment key={message._id}>
+                  {showDateSeparator && (
+                    <div className="text-center my-4">
+                      <span className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-600">
+                        {messageDate}
+                      </span>
+                    </div>
+                  )}
+
                   <div
-                    className={`max-w-[70%] rounded-lg p-3 ${
+                    className={`flex ${
                       message.senderModel === "Patient"
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 text-gray-800"
+                        ? "justify-end"
+                        : "justify-start"
                     }`}
                   >
-                    <p className="text-sm">{message.text}</p>
-                    <div className="flex items-center justify-end mt-1 space-x-1">
-                      <span className="text-xs opacity-75">
-                        {new Date(message.createdAt).toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
-                      </span>
-                      {message.senderModel === "Patient" && (
-                        <CheckCheck className="w-4 h-4 opacity-75" />
-                      )}
+                    <div
+                      className={`max-w-[70%] rounded-lg p-3 ${
+                        message.senderModel === "Patient"
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      <p className="text-sm">{message.text}</p>
+                      <div className="flex items-center justify-end mt-1 space-x-1">
+                        <span className="text-xs opacity-75">
+                          {new Date(message.createdAt).toLocaleTimeString(
+                            "en-US",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )}
+                        </span>
+                        {message.senderModel === "Patient" && (
+                          <CheckCheck className="w-4 h-4 opacity-75" />
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </React.Fragment>
-            );
-          })}
-      
-          {messages.length === 0 && (
-            <div className="h-full w-full flex justify-center items-center">
-              <h1 className="text-2xl text-gray-500 font-TTHoves font-medium">
-                No messages yet
-              </h1>
-            </div>
-          )}
-        </div>
-      
-        {/* Message Input Form */}
-        <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
-          <div className="flex items-center space-x-2 h-16 bg-gray-100 rounded-lg p-2 pr-4">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 bg-transparent border-none focus:outline-none p-2"
-            />
-            <button
-              type="submit"
-              className="p-2 bg-blue-500 h-10 w-10 text-white flex justify-center items-center rounded-full hover:bg-blue-600 transition-colors"
-            >
-              <Send className="w-5 h-5" />
-            </button>
+                </React.Fragment>
+              );
+            })}
+
+            {messages.length === 0 && (
+              <div className="h-full w-full flex justify-center items-center">
+                <h1 className="text-2xl text-gray-500 font-TTHoves font-medium">
+                  No messages yet
+                </h1>
+              </div>
+            )}
           </div>
-        </form>
-      </div>
-      
+
+          {/* Message Input Form */}
+          <form
+            onSubmit={handleSendMessage}
+            className="p-4 border-t border-gray-200"
+          >
+            <div className="flex items-center space-x-2 h-16 bg-gray-100 rounded-lg p-2 pr-4">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 bg-transparent border-none focus:outline-none p-2"
+              />
+              <button
+                type="submit"
+                className="p-2 bg-blue-500 h-10 w-10 text-white flex justify-center items-center rounded-full hover:bg-blue-600 transition-colors"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );

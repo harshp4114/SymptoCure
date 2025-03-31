@@ -118,7 +118,7 @@ const Login = () => {
         // //console.log(Cookies.get('jwt-token'));
         //console.log("User created successfully", result);
         dispatch(setRoleAsUser());
-        console.log("creating socket");
+        // console.log("creating socket");
         dispatch(socketConnected());
         const decoded = jwtDecode(token);
         // const socket = getSocket();
@@ -226,10 +226,10 @@ const Login = () => {
 
   const handleSubmitDoctor = async (values) => {
     try {
-      console.log("values", values);
+      // console.log("values", values);
       dispatch(showLoader());
       const result = await axios.post(`${BASE_URL}/api/doctor/`, values);
-      console.log("result", result);
+      // console.log("result", result);
       const token = result?.data?.token;
       // //console.log("token",token);
 

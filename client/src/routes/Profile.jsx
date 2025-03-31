@@ -80,7 +80,7 @@ const Profile = () => {
         `${BASE_URL}/api/doctor/${decoded.id}`,
         values
       );
-      console.log("result", result);
+      // console.log("result", result);
       getUser();
       setEditDoctorProfile(false);
       toast.success("Profile updated successfully!!");
@@ -754,11 +754,12 @@ const Profile = () => {
         {/* Sidebar/Profile Picture Section */}
         <div className="w-fit md:w-1/4 h-full bg-gradient-to-b from-blue-500 to-blue-800 text-white flex flex-col items-center py-10 px-5">
           {/* Profile Picture */}
-          <img
-            src="./logo.png"
-            alt="Profile"
-            className="w-36 h-36 rounded-full border-4 border-white shadow-lg"
-          />
+          <div className="w-36 h-36 rounded-full flex justify-center items-center border-4 bg-[#072965] border-white shadow-lg">
+            <h2 className="text-5xl font-bold">
+              {profileData?.fullName?.firstName.slice(0, 1).toUpperCase() +
+                profileData?.fullName?.lastName.slice(0, 1).toUpperCase()}
+            </h2>
+          </div>
           {/* Name */}
           <h1 className="mt-4 text-xl font-bold">
             {capitalizeFirstLetter(profileData?.fullName?.firstName) +

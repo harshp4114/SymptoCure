@@ -50,12 +50,12 @@ const DoctorChatInterface = () => {
   useEffect(() => {
     getChats();
     socket.on("chat-opened-by-patient-from-server", (chatId) => {
-      console.log("socket opened by pateitn screen on");
+      // console.log("socket opened by pateitn screen on");
       setChangeCount(false);
-      console.log("changecount in frontend", changeCount);
+      // console.log("changecount in frontend", changeCount);
     });
     socket.on("chat-closed-by-patient-from-server", (chatId) => {
-      console.log("socket closed by pateitn screen off");
+      // console.log("socket closed by pateitn screen off");
       setChangeCount(true);
     });
 
@@ -68,6 +68,8 @@ const DoctorChatInterface = () => {
   useEffect(() => {
     if (selectedChat) {
       getMessages();
+      socket.emit("chat-opened-by-doctor", selectedChat);
+      socket.emit("is-user-online", selectedPatient._id);
     }
   }, [selectedChat]);
 
@@ -99,7 +101,7 @@ const DoctorChatInterface = () => {
       const result = await axios.get(`${BASE_URL}/api/chat/chatsByDoctorId`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("all chats", result);
+      // console.log("all chats", result);
       setChats(result?.data?.data);
       setFilteredChats(result?.data?.data);
     } catch (error) {
@@ -109,37 +111,46 @@ const DoctorChatInterface = () => {
     }
   };
 
-  const getChatToUpdate = async (chatId) => {
-    try {
-      const result = await axios.get(`${BASE_URL}/api/chat/${chatId}`);
-      // console.log("chat to update", result);
-      return result?.data?.data;
-    } catch (err) {
-      console.log("error in get chat to update", err);
-    }
-  };
-
   useEffect(() => {
     socket.on("new-message-updatefrom-patient", async (message) => {
-      // console.log("socket vada ni andar", messages);
-      // console.log("spread messages", [...messages, message]);
+      // console.log("Received new message from patient:", message);
 
       setMessages((prevMessages) => [...prevMessages, message]);
 
       const chatId = message.chatId;
-      const updatedChat = await getChatToUpdate(chatId); // Await the updated chat data
-      if (updatedChat) {
-        // Remove the old chat entry and add the updated chat
-        setChats((prevChats) => {
-          const filteredChats = prevChats.filter((chat) => chat._id !== chatId);
-          return [...filteredChats, updatedChat];
-        });
+      // const updatedChat = await getChatToUpdate(chatId); // Fetch updated chat details
+      // console.log("Updated Chat Data:", updatedChat);
 
-        setFilteredChats((prevChats) => {
-          const filteredChats = prevChats.filter((chat) => chat._id !== chatId);
-          return [...filteredChats, updatedChat];
-        });
+      if (message) {
+        setChats((prevChats) =>
+          prevChats.map((chat) => {
+            if (chat._id === chatId) {
+              // console.log("inside if chat id matched",chat);
+              const updatedChat = chat;
+              updatedChat.lastMessage = message.text;
+              updatedChat.lastMessageTime = message.createdAt;
+              updatedChat.doctorUnreadCount += 1; // Increment unread count
+              return updatedChat;
+            } else {
+              return chat;
+            }
+          })
+        );
+
+        setFilteredChats((prevChats) =>
+          prevChats.map((chat) => {
+            if (chat._id === chatId) {
+              const updatedChat = chat;
+              updatedChat.lastMessage = message.text;
+              updatedChat.lastMessageTime = message.createdAt;
+              return updatedChat;
+            } else {
+              return chat;
+            }
+          })
+        );
       }
+      // console.log("Updated Chats:", chats);
     });
 
     return () => {
@@ -149,30 +160,24 @@ const DoctorChatInterface = () => {
 
   useEffect(() => {
     socket.on("user-online-status", (userId) => {
-      console.log(
-        "inside socket in frontend",
-        userId,
-        selectedPatient?._id,
-        selectedPatient,
-        selectedChat
-      );
-      if (selectedPatient._id == userId) {
-        console.log("inside if 1");
+      // console.log(
+      //   "inside socket in frontend",
+      //   userId,
+      //   selectedPatient?._id,
+      //   selectedPatient,
+      //   selectedChat
+      // );
+      if (selectedPatient?._id == userId) {
+        // console.log("inside if 1");
         setOnlineStatus("Online");
-      } else {
-        console.log("inside if 2");
-
-        setOnlineStatus("Offline");
       }
     });
 
     socket.on("user-offline-status", (userId) => {
-      console.log("in frontend offline status", selectedPatient);
-      if (selectedPatient._id == userId) {
-        console.log("inside if");
+      // console.log("in frontend offline status", selectedPatient);
+      if (selectedPatient?._id == userId) {
+        // console.log("inside if");
         setOnlineStatus("Offline");
-      } else {
-        setOnlineStatus("Online");
       }
     });
 
@@ -229,7 +234,7 @@ const DoctorChatInterface = () => {
           }
         );
 
-        console.log("chat lastmessage update", response2);
+        // console.log("chat lastmessage update", response2);
       }
       setNewMessage("");
       // getMessages();
@@ -283,11 +288,11 @@ const DoctorChatInterface = () => {
           <div className="p-4 border-b border-gray-200 flex items-center">
             <button
               onClick={async () => {
-                console.log(
-                  "chat data in frontend from where we emit",
-                  selectedChat
-                );
-                await socket.emit("chat-closed-by-patient", selectedChat);
+                // console.log(
+                //   "chat data in frontend from where we emit",
+                //   selectedChat
+                // );
+                await socket.emit("chat-closed-by-doctor", selectedChat);
                 setSelectedPatient(null);
                 setSelectedChat(null);
               }}

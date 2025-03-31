@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 const Chat = require("../models/chatModel");
 
 const createChat = async (req, res) => {
-  console.log("conrgyeg called");
+  // console.log("conrgyeg called");
   try {
     const { patientId } = req.body;
     const doctorId = req.tokenData.id;
-    console.log("doctorId", doctorId);
-    console.log("patientId", patientId);
+    // console.log("doctorId", doctorId);
+    // console.log("patientId", patientId);
     const chat = await Chat.create({ patientId, doctorId });
     if (chat) {
       return res.status(200).json({
@@ -106,7 +106,7 @@ const updateChatLastMessage = async (req, res) => {
   try {
     const { chatId, lastMessage, lastMessageTime, receiverModel, changeCount } =
       req.body;
-    console.log("chang count", changeCount);
+    // console.log("chang count", changeCount);
     const numChat = await Chat.findById(chatId);
     let updateFields = { lastMessage, lastMessageTime };
 

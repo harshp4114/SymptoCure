@@ -7,6 +7,7 @@ import { BASE_URL } from "../utils/constants";
 import { io } from "socket.io-client";
 import { getSocket } from "../socket";
 import { Link } from "react-router-dom";
+
 const AppointmentCard = (props) => {
   const appointment = props.appointmentData;
   const [chat, setChat] = useState(null);

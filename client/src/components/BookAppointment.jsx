@@ -23,7 +23,7 @@ const BookAppointment = ({
   toggleExist,
   togglePending,
 }) => {
-  console.log("patient", patient);
+  //console.log("patient", patient);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [patientData, setPatientData] = useState({});
   useAuth();
@@ -39,10 +39,10 @@ const BookAppointment = ({
   //   dispatch(showLoader());
   //   try {
   //     const result = await axios.get(`${BASE_URL}/api/patient/${patientId}`);
-  //     console.log("patient data fetched when we press book app", result);
+  //     //console.log("patient data fetched when we press book app", result);
   //     setPatientData(result?.data?.data);
   //   } catch (error) {
-  //     console.log("error", error);
+  //     //console.log("error", error);
   //   } finally {
   //     dispatch(hideLoader());
   //   }
@@ -54,7 +54,7 @@ const BookAppointment = ({
       navigate("/login");
     }
     // getPatient();
-    // console.log("patient", patient);
+    // //console.log("patient", patient);
   }, [isAuthenticated, loading]);
 
   useEffect(() => {});
@@ -75,32 +75,32 @@ const BookAppointment = ({
           },
         }
       );
-      //console.log(toggleSuccess);
+      ////console.log(toggleSuccess);
       toggleSuccess();
 
       const socket = getSocket();
-      // console.log("socket in book appointments", socket);
+      // //console.log("socket in book appointments", socket);
       if (socket) {
-        // console.log("inside socket if")
+        // //console.log("inside socket if")
         socket.emit("user-book-appointment");
       }
       onClose();
     } catch (error) {
-      console.log("error", error);
+      //console.log("error", error);
       if (
         error?.response?.data?.message ==
         "Appointment already exists with the doctor"
       ) {
-        //console.log(toggleExist)
+        ////console.log(toggleExist)
         toggleExist();
       } else if (
         error?.response?.data?.message ==
         "Appointment pending with the doctor. Please wait"
       ) {
-        console.log("indisbabdjas ending");
+        //console.log("indisbabdjas ending");
         togglePending();
       } else {
-        //console.log(toggleFailure)
+        ////console.log(toggleFailure)
         toggleFailure();
       }
       onClose();
@@ -111,7 +111,7 @@ const BookAppointment = ({
 
   useEffect(() => {
     setLoading(false);
-    console.log("patient data name", patient, patientData);
+    //console.log("patient data name", patient, patientData);
   }, []);
 
 

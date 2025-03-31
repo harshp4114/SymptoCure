@@ -38,7 +38,7 @@ const CheckAppointments = () => {
           Authorization: `Bearer ${Cookies.get("jwt-token")}`,
         },
       });
-      console.log("result", result);
+      // console.log("result", result);
       setAppointments(result?.data?.data);
       setParticularAppointment(result?.data?.data);
     } catch (err) {

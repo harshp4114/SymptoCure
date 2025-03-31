@@ -4,7 +4,7 @@ let socket = null;
 
 export const connectSocket = async (userId) => {
     if (!socket) {
-        socket = io("https://symptocure.onrender.com",{
+        socket = io("http://localhost:5000",{
             transports: ["websocket"],
         }); // Change to your backend URL
 
@@ -20,7 +20,7 @@ export const getSocket = () => socket; // Allows you to access socket anywhere
 export const disconnectSocket =async (userId) => {
     if (socket) {
         await socket.emit("remove-user-socket",userId);
-        socket.emit("is-user-online",userId);
+        // socket.emit("is-user-online",userId);
         socket.disconnect();
         socket = null;
     }

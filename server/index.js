@@ -93,14 +93,14 @@ io.on("connection", (socket) => {
 
   //count not updated when message seen directly by doctor
   socket.on("chat-opened-by-doctor", (chat) => {
-    console.log("chat-opened-by-doctor socket", chat);
-    console.log("user id", chat.patientId);
-    console.log("online users", onlineUsers);
+    // console.log("chat-opened-by-doctor socket", chat);
+    // console.log("user id", chat.patientId);
+    // console.log("online users", onlineUsers);
     if (onlineUsers[chat.patientId._id]) {
-      console.log(
-        "chat-opened-by-doctor socket if",
-        onlineUsers[chat?.patientId?._id]
-      );
+      // console.log(
+      //   "chat-opened-by-doctor socket if",
+      //   onlineUsers[chat?.patientId?._id]
+      // );
       io.to(onlineUsers[chat?.patientId?._id]).emit(
         "chat-opened-by-doctor-from-server",
         chat
@@ -109,11 +109,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat-closed-by-doctor", (chat) => {
-    console.log("chat-closed-by-doctor socket", chat);
-    console.log("user id", chat?.patientId);
-    console.log("online users", onlineUsers[chat?.patientId?._id]);
+    // console.log("chat-closed-by-doctor socket", chat);
+    // console.log("user id", chat?.patientId);
+    // console.log("online users", onlineUsers[chat?.patientId?._id]);
     if (onlineUsers[chat?.patientId?._id]) {
-      console.log("inside if cond");
+      // console.log("inside if cond");
       io.to(onlineUsers[chat.patientId._id]).emit(
         "chat-closed-by-doctor-from-server",
         chat
@@ -128,18 +128,18 @@ io.on("connection", (socket) => {
   });
 
   socket.on("is-user-online", (userId) => {
-    console.log("socket is user online", userId);
+    // console.log("socket is user online", userId);
     if (onlineUsers[userId]) {
-      console.log("inside if");
+      // console.log("inside if");
       io.emit("user-online-status", userId);
     } else {
-      console.log("inside else");
+      // console.log("inside else");
       io.emit("user-offline-status", userId);
     }
   });
 
   socket.on("user-book-appointment", () => {
-    console.log("user-book-appointment"); // this is to show appointment request in doctor when a patient makes an request
+    // console.log("user-book-appointment"); // this is to show appointment request in doctor when a patient makes an request
     io.emit("appointment-reload");
   });
 
@@ -148,7 +148,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("doctor-profile-updated", () => {
-    console.log("doctor-profile-updated");
+    // console.log("doctor-profile-updated");
     io.emit("change-doctor-data"); //this is to reload details in appointment when doctor updates his profile
   });
 
@@ -158,12 +158,20 @@ io.on("connection", (socket) => {
 
   socket.on("remove-user-socket", (userId) => {
     delete onlineUsers[userId];
+    io.emit("user-offline-status", userId);
     // console.log(`User ${userId} disconnected`);
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected", socket.id);
-  });
+    // console.log("User disconnected", socket.id);
+    let disconnectedUserId = Object.keys(onlineUsers).find(
+        (key) => onlineUsers[key] === socket.id
+    );
+    if (disconnectedUserId) {
+        delete onlineUsers[disconnectedUserId];
+        io.emit("user-offline-status", disconnectedUserId);
+    }
+});
   // console.log("online users ",onlineUsers);
 });
 
@@ -196,7 +204,7 @@ app.use("/api/message", messageRoutes);
 
 app.use((req, res) => {
   // connectMongo();
-  console.log("no one matched");
+  // console.log("no one matched");
   res.end("hello from server");
 });
 

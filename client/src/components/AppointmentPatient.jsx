@@ -51,7 +51,7 @@ const AppointmentCard = (props) => {
           },
         }
       );
-      console.log("chat response", response);
+      // console.log("chat response", response);
     } catch (err) {
       console.log("error in create chat", err);
     } finally {
@@ -80,7 +80,7 @@ const AppointmentCard = (props) => {
         if (socket) {
           socket.emit("appointment-status-updated");
         }
-        console.log("create chat");
+        //console.log("create chat");
         createChat();
       }
     } catch (err) {
