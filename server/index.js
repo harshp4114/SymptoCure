@@ -20,7 +20,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: "https://symptocure.netlify.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },

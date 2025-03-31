@@ -23,7 +23,7 @@ const CheckPatients = () => {
       const result = await axios.get(`${BASE_URL}/api/appointment/doctor`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(result);
+      // console.log(result);
       setAppointments(result?.data?.data);
     } catch (error) {
       console.log("error", error);

@@ -90,6 +90,9 @@ const createAppointment = async (req, res) => {
       userId,
       doctorId,
       status: { $ne: "rejected" },
+      date: {
+        $gte: new Date(selectedDate).setHours(0, 0, 0, 0),
+      },
     });
 
     // console.log("existing appointment", existingAppointment);
@@ -164,6 +167,39 @@ const getAllAcceptedPateints = async (req, res) => {
   }
 };
 
+const getApprovedAppointment = async (req, res) => {
+  try {
+    const { doctorId, patientId } = req.body;
+    // console.log("doctorId", doctorId);
+    // console.log("patientId", patientId);
+    const appointment = await Appointment.findOne({
+      doctorId:doctorId,
+      userId:patientId,
+      status: "approved",
+      date: { $gte: new Date() },
+    });
+    // console.log("ustsy sincsakn", appointment);
+    if (appointment) {
+      return res.status(200).json({
+        success: true,
+        message: "Appointment fetched successfully",
+        data: appointment,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "No appointments found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch appointments",
+      error: error.message,
+    });
+  }
+};
+
 const updateAppointment = async (req, res) => {
   try {
     const { status } = req.body;
@@ -201,4 +237,5 @@ module.exports = {
   getAppointmentsByDoctorId,
   getAppointmentsByUserId,
   getAllAcceptedPateints,
+  getApprovedAppointment,
 };

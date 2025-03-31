@@ -22,7 +22,7 @@ const PatientChatInterface = () => {
   const chatContainerRef = useRef(null);
   const [onlineStatus, setOnlineStatus] = useState("Offline");
   const [selectedDoctor, setSelectedDoctor] = useState(
-    location?.state?.userData || null
+    location?.state?.doctor || null
   );
   const socket = getSocket();
   const [selectedChat, setSelectedChat] = useState(
@@ -91,6 +91,8 @@ const PatientChatInterface = () => {
   useEffect(() => {
     if (selectedChat) {
       getMessages();
+      socket.emit("chat-opened-by-patient", selectedChat);
+      socket.emit("is-user-online", selectedDoctor._id);
     }
   }, [selectedChat]);
 

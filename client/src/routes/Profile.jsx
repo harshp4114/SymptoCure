@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedin, userLoggedout } from "../redux/slices/signInSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import "ldrs/helix"; // Ensure this path is valid
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
@@ -30,7 +30,9 @@ const Profile = () => {
   const [editDoctorProfile, setEditDoctorProfile] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [selectedAppointmentInfo, setSelectedAppointmentInfo] = useState(true);
+  const location =useLocation();
+  // console.log("location",location?.state?.showChat);
+  const [selectedAppointmentInfo, setSelectedAppointmentInfo] = useState(location?.state?.showChat);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = Cookies.get("jwt-token");
@@ -447,7 +449,7 @@ const Profile = () => {
             </h2>
           </div>
 
-          {selectedAppointmentInfo ? (
+          {(selectedAppointmentInfo || selectedAppointmentInfo==undefined) ? (
             <div className="space-y-4 mt-5">
               {/* Status Filter */}
               <div className="flex items-center mb-4 space-x-4">

@@ -43,10 +43,12 @@ const DoctorInformation = () => {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showFailureToast, setShowFailureToast] = useState(false);
   const [showPendingToast, setShowPendingToast] = useState(false);
+  const [approvedAppointment, setApprovedAppointment] = useState(false);
   const [showExistToast, setShowExistToast] = useState(false);
   const [patientData, setPatientData] = useState({});
   const [addressData, setAddressData] = useState({});
   const [isVisible, setIsVisible] = useState(false);
+  const [chat, setChat] = useState(null);
 
   useEffect(() => {
     getPatientData();
@@ -76,6 +78,8 @@ const DoctorInformation = () => {
       navigate("/login");
     }
     getDoctor();
+    getChat();
+    getApprovedAppointemnt();
     const socket = getSocket();
     if (socket) {
       socket.on("change-doctor-data", () => {
@@ -83,6 +87,43 @@ const DoctorInformation = () => {
       });
     }
   }, [isAuthenticated, loader]);
+
+
+  const changeLocation=()=>{
+    navigate("/profile",{state:{doctor:doctorInfo,chat:chat,showChat:false}})
+  }
+
+  const getChat=async()=>{
+    dispatch(showLoader());
+    try{
+      const result=await axios.post(`${BASE_URL}/api/chat/chatId`,{
+        patientId:patientId,
+        doctorId:doctorId,
+      })
+      setChat(result?.data?.data);
+    }catch(err){
+      console.log("error in create chat",err);
+    }finally{
+      dispatch(hideLoader());
+    }
+  }
+  
+
+  const getApprovedAppointemnt = async () => {
+    dispatch(showLoader());
+    try {
+      const result = await axios.post(`${BASE_URL}/api/appointment/approved/`, {
+        doctorId: doctorId,
+        patientId: patientId,
+      });
+      // console.log("result in approved appointment", result);
+      setApprovedAppointment(result?.data?.data);
+    } catch (err) {
+      console.log("error in getting appointment", err);
+    } finally {
+      dispatch(hideLoader());
+    }
+  };
 
   const getDoctor = async () => {
     dispatch(showLoader());
@@ -123,8 +164,6 @@ const DoctorInformation = () => {
       setShowPendingToast(false);
     }
   }, [showExistToast, showFailureToast, showSuccessToast, showPendingToast]);
-
-  
 
   return loader ? (
     <Loader />
@@ -198,24 +237,44 @@ const DoctorInformation = () => {
                   </span>
                 </button>
               </div>
-              <div className=" button-trigger button-move  w-56 h-12">
-                <button
-                  onClick={() => setShowBooking(true)}
-                  type="submit"
-                  className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[7px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
-                >
-                  {/* Default Text */}
-                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
-                  <Calendar className="w-5 h-5 mr-2" /> Book Appointment
-                  </span>
 
-                  {/* Hover Text */}
-                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                  <Calendar className="w-5 h-5 mr-2" /> Book Appointment
-                  </span>
-                </button>
-              </div>
-              
+              {approvedAppointment ? (
+                <div className=" button-trigger button-move  w-56 h-12">
+                  <button
+                    to={'/profile'}
+                    onClick={()=>changeLocation()}
+                    className="bg-blue-50 w-56 h-12 hover:bg-white p-2 text-[#232269] text-md border-[7px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500  font-bold pb-4 px-4 rounded-xl  relative overflow-hidden group"
+                  >
+                    {/* Default Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                      <Calendar className="w-5 h-5 mr-2" /> Chat with doctor
+                    </span>
+
+                    {/* Hover Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                      <Calendar className="w-5 h-5 mr-2" /> Chat with doctor
+                    </span>
+                  </button>
+                </div>
+              ) : (
+                <div className=" button-trigger button-move  w-56 h-12">
+                  <button
+                    onClick={() => setShowBooking(true)}
+                    type="submit"
+                    className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[7px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                  >
+                    {/* Default Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                      <Calendar className="w-5 h-5 mr-2" /> Book Appointment
+                    </span>
+
+                    {/* Hover Text */}
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                      <Calendar className="w-5 h-5 mr-2" /> Book Appointment
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -237,7 +296,11 @@ const DoctorInformation = () => {
             />
             <InfoCard icon={Mail} title="Email" value={doctorInfo?.email} />
             <InfoCard icon={Phone} title="Phone" value={doctorInfo?.phone} />
-            <InfoCard icon={User} title="Gender" value={capitalizeFirstLetter(doctorInfo?.gender)} />
+            <InfoCard
+              icon={User}
+              title="Gender"
+              value={capitalizeFirstLetter(doctorInfo?.gender)}
+            />
             <InfoCard
               icon={MapPin}
               title="Location"

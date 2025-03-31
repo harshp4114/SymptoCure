@@ -24,7 +24,7 @@ const BookAppointment = ({
   togglePending,
 }) => {
   //console.log("patient", patient);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
   const [patientData, setPatientData] = useState({});
   useAuth();
   const [loading, setLoading] = useState(true);
@@ -114,7 +114,6 @@ const BookAppointment = ({
     //console.log("patient data name", patient, patientData);
   }, []);
 
-
   const bookAppointmentValidationSchema = Yup.object({
     fullName: Yup.string()
       .required("Full name is required")
@@ -134,7 +133,6 @@ const BookAppointment = ({
     reason: Yup.string().required("Reason for visit is required"),
     date: Yup.date().required("Date is required"),
   });
-
 
   // const modifiersStyles = {
   //   fullyBooked: {
@@ -192,157 +190,165 @@ const BookAppointment = ({
           onSubmit={(values) => handleBookAppointment(values)}
         >
           {({ setFieldValue, values }) => (
-          <Form className="p-6 pt-5 grid grid-cols-1 md:grid-cols-2 gap-6 gap-y-0">
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name*
-                </label>
-                <Field
-                  type="text"
-                  name="fullName"
-                  disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={
-                    patient?.fullName?.firstName +
-                    " " +
-                    patient?.fullName?.lastName
-                  }
-                />
-                <ErrorMessage
-                  name="fullName"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
+            <Form className="p-6 pt-5 grid grid-cols-1 md:grid-cols-2 gap-6 gap-y-0">
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name*
+                  </label>
+                  <Field
+                    type="text"
+                    name="fullName"
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder={
+                      patient?.fullName?.firstName +
+                      " " +
+                      patient?.fullName?.lastName
+                    }
+                  />
+                  <ErrorMessage
+                    name="fullName"
+                    component="div"
+                    className="text-red-600 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email*
+                  </label>
+                  <Field
+                    type="email"
+                    disabled
+                    name="email"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder={patient?.email}
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-red-600 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone Number*
+                  </label>
+                  <Field
+                    type="tel"
+                    disabled
+                    name="phone"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder={patient?.phone}
+                  />
+                  <ErrorMessage
+                    name="phone"
+                    component="div"
+                    className="text-red-600 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Disease*
+                  </label>
+                  <Field
+                    type="text"
+                    disabled={!!patient?.detectedDisease}
+                    name="disease"
+                    className={`w-full px-3 py-2 border  ${
+                      !!patient?.detectedDisease
+                        ? ""
+                        : " hover:ring-[1px] transition-all duration-500 hover:ring-black"
+                    } border-gray-300 rounded-md focus:outline-none focus:ring-[1px] focus:ring-black`}
+                    placeholder={
+                      patient?.detectedDisease || "Enter your disease"
+                    }
+                  />
+                  <ErrorMessage
+                    name="disease"
+                    component="div"
+                    className="text-red-600 ml-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Reason for Visit*
+                  </label>
+                  <Field
+                    as="textarea"
+                    name="reason"
+                    className="w-full px-3 py-2 border hover:ring-[1px] transition-all duration-500 hover:ring-black border-gray-300 rounded-md focus:outline-none focus:ring-[1px] focus:ring-black h-28 max-h-28"
+                    placeholder="Please describe your symptoms or reason for visit"
+                  />
+                  <ErrorMessage
+                    name="reason"
+                    component="div"
+                    className="text-red-600 ml-2 text-sm"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email*
-                </label>
-                <Field
-                  type="email"
-                  disabled
-                  name="email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={patient?.email}
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
+              <div className="space-y-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Date
+                  </label>
+
+                  <DayPicker
+                    mode="single"
+                    selected={values.date} // Bind selected date to Formik
+                    onSelect={(date) => {
+                      setFieldValue("date", date);
+                      setSelectedDate(date); // Update selected date state
+                    }} // Update Formik's state
+                    disabled={(date) => date <= new Date()} // Disable past dates
+                    className="border rounded-md font-semibold bg-white p-3"
+                  />
+                  <ErrorMessage
+                    name="date"
+                    component="div"
+                    className="text-red-600 ml-2 mt-2 text-sm"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number*
-                </label>
-                <Field
-                  type="tel"
-                  disabled
-                  name="phone"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={patient?.phone}
-                />
-                <ErrorMessage
-                  name="phone"
-                  component="div"
-                  className="text-red-600 text-sm"
-                />
+              {/* Footer */}
+              <div className="col-span-full flex justify-end gap-4">
+                <div className=" button-trigger button-move  w-36 h-11">
+                  <button
+                    onClick={onClose}
+                    className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                  >
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                      Cancel
+                    </span>
+
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                      Cancel
+                    </span>
+                  </button>
+                </div>
+
+                <div className=" button-trigger button-move  w-44 h-11">
+                  <button
+                    type="submit"
+                    className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                  >
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                      Confirm Booking
+                    </span>
+
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                      Confirm Booking
+                    </span>
+                  </button>
+                </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Disease*
-                </label>
-                <Field
-                  type="text"
-                  disabled={!!patient?.detectedDisease}
-                  name="disease"
-                  className={`w-full px-3 py-2 border  ${!!patient?.detectedDisease?"":" hover:ring-[1px] transition-all duration-500 hover:ring-black"} border-gray-300 rounded-md focus:outline-none focus:ring-[1px] focus:ring-black`}
-                  placeholder={patient?.detectedDisease || "Enter your disease"}
-                />
-                <ErrorMessage
-                  name="disease"
-                  component="div"
-                  className="text-red-600 ml-2 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Reason for Visit*
-                </label>
-                <Field
-                  as="textarea"
-                  name="reason"
-                  className="w-full px-3 py-2 border hover:ring-[1px] transition-all duration-500 hover:ring-black border-gray-300 rounded-md focus:outline-none focus:ring-[1px] focus:ring-black h-28 max-h-28"
-                  placeholder="Please describe your symptoms or reason for visit"
-                />
-                <ErrorMessage
-                  name="reason"
-                  component="div"
-                  className="text-red-600 ml-2 text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Date
-                </label>
-
-                <DayPicker
-                  mode="single"
-                  selected={values.date} // Bind selected date to Formik
-                  onSelect={(date) => setFieldValue("date", date)} // Update Formik's state
-                  disabled={(date) => date <= new Date()} // Disable past dates
-                  className="border rounded-md font-semibold bg-white p-3"
-                />
-              <ErrorMessage
-                name="date"
-                component="div"
-                className="text-red-600 ml-2 mt-2 text-sm"
-              />
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="col-span-full flex justify-end gap-4">
-              
-              <div className=" button-trigger button-move  w-36 h-11">
-                <button
-                  onClick={onClose}
-                  className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
-                >
-                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
-                    Cancel
-                  </span>
-
-                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                    Cancel
-                  </span>
-                </button>
-              </div>
-              
-              <div className=" button-trigger button-move  w-44 h-11">
-                <button
-                  type="submit"
-                  className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
-                >
-                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
-                    Confirm Booking
-                  </span>
-
-                  <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                    Confirm Booking
-                  </span>
-                </button>
-              </div>
-            </div>
-          </Form>
+            </Form>
           )}
         </Formik>
       </div>
