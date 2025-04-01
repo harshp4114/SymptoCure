@@ -4,7 +4,7 @@ let socket = null;
 
 export const connectSocket = async (userId) => {
     if (!socket) {
-        socket = io("http://localhost:5000",{
+        socket = io("https://symptocure.onrender.com",{
             transports: ["websocket"],
         }); // Change to your backend URL
 

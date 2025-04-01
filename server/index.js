@@ -20,8 +20,8 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    // origin: "https://symptocure.netlify.app",
-    origin:"http://localhost:5173",
+    origin: "*",
+    // origin:"http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
@@ -180,12 +180,12 @@ app.post("/predict", async (req, res) => {
   // console.log("inside predict",req.body.symptoms);
   // res.end("hello from predict");
   try {
-    const response = await axios.post(`http://127.0.0.1:8000/predict`, {
-      symptoms: req.body.symptoms,
-    });
-    // const response = await axios.post(`https://symptocure-ml.onrender.com`, {
+    // const response = await axios.post(`http://127.0.0.1:8000/predict`, {
     //   symptoms: req.body.symptoms,
     // });
+    const response = await axios.post(`https://symptocure-ml.onrender.com`, {
+      symptoms: req.body.symptoms,
+    });
 
     res.json(response.data);
   } catch (error) {
