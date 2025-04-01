@@ -30,9 +30,14 @@ const Profile = () => {
   const [editDoctorProfile, setEditDoctorProfile] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [filter, setFilter] = useState("all");
-  const location =useLocation();
+  const location = useLocation();
   // console.log("location",location?.state?.showChat);
-  const [selectedAppointmentInfo, setSelectedAppointmentInfo] = useState(location?.state?.showChat);
+  const [selectedAppointmentInfo, setSelectedAppointmentInfo] = useState(
+    location?.state?.showChat
+  );
+  if (selectedAppointmentInfo == undefined) {
+    setSelectedAppointmentInfo(true);
+  }
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = Cookies.get("jwt-token");
@@ -156,13 +161,13 @@ const Profile = () => {
     getAppointments();
 
     const socket = getSocket();
-      socket.on("appointment-reload-info", () => {
-        getAppointments();
-      });
+    socket.on("appointment-reload-info", () => {
+      getAppointments();
+    });
 
-      return ()=>{
-        socket.off("appointment-reload-info");
-      }
+    return () => {
+      socket.off("appointment-reload-info");
+    };
   }, [isAuthenticated, loading]); // Add dependencies to avoid unnecessary re-renders
   // //console.log(profileData);
 
@@ -300,19 +305,35 @@ const Profile = () => {
                 </div>
 
                 <div className="col-span-2 flex justify-between">
-                  <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditUserProfile(false)}
-                    className="bg-gray-500 text-white px-4 py-2 rounded"
-                  >
-                    Cancel
-                  </button>
+                  <div className=" button-trigger button-move  w-44 h-11">
+                    <button
+                      type="submit"
+                      className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                    >
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                        Save changes
+                      </span>
+
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                        Save changes
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className=" button-trigger button-move  w-32 h-11">
+                    <button
+                      onClick={() => setEditUserProfile(false)}
+                      className="bg-blue-50 hover:bg-white p-2 text-[#363639] text-md border-[6px] border-[#6b7594] font-Gilroy hover:border-[#48464f] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                    >
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                        Cancel
+                      </span>
+
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                        Cancel
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </Form>
             </Formik>
@@ -437,7 +458,9 @@ const Profile = () => {
         <div className="w-full md:w-3/4 h-full border-l-2 border-gray-300 bg-white p-8 flex flex-col">
           <div className="border-b h-fit w-full flex justify-between items-center pb-3 mb-0 ">
             <h2 className="text-2xl float-right font-semibold text-gray-800 ">
-              {selectedAppointmentInfo ? "Appointment Information" : "Chats"}
+              {selectedAppointmentInfo || selectedAppointmentInfo == undefined
+                ? "Appointment Information"
+                : "Chats"}
             </h2>
             <h2
               onClick={() =>
@@ -445,11 +468,13 @@ const Profile = () => {
               }
               className="hover:text-xl transition-all duration-700 text-lg cursor-pointer font-semibold text-gray-500 mr-2"
             >
-              {selectedAppointmentInfo ? "Chats" : "Appointment Information"}
+              {selectedAppointmentInfo || selectedAppointmentInfo == undefined
+                ? "Chats"
+                : "Appointment Information"}
             </h2>
           </div>
 
-          {(selectedAppointmentInfo || selectedAppointmentInfo==undefined) ? (
+          {selectedAppointmentInfo || selectedAppointmentInfo == undefined ? (
             <div className="space-y-4 mt-5">
               {/* Status Filter */}
               <div className="flex items-center mb-4 space-x-4">
@@ -599,7 +624,7 @@ const Profile = () => {
               </div>
             </div>
           ) : (
-               <PatientChatInterface /> 
+            <PatientChatInterface />
           )}
         </div>
       </div>
@@ -618,8 +643,8 @@ const Profile = () => {
         pauseOnHover
       />
       {editDoctorProfile ? (
-        <div className="flex items-center justify-center absolute w-full h-full bg-gray-800 bg-opacity-70">
-          <div className="bg-white w-1/2 h-full p-8 shadow-lg">
+        <div className="flex items-center justify-center absolute z-50 w-full h-full bg-gray-800 bg-opacity-70">
+          <div className="bg-white w-1/2 h-9/12 p-8 rounded-lg shadow-lg">
             <h1 className="font-bold text-3xl mb-5">Edit Profile</h1>
             <Formik
               initialValues={{
@@ -730,19 +755,35 @@ const Profile = () => {
                 </div>
 
                 <div className="col-span-2 flex justify-between">
-                  <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditDoctorProfile(false)}
-                    className="bg-gray-500 text-white px-4 py-2 rounded"
-                  >
-                    Cancel
-                  </button>
+                  <div className=" button-trigger button-move  w-44 h-11">
+                    <button
+                      type="submit"
+                      className="bg-blue-50 hover:bg-white p-2 text-[#232269] text-md border-[6px] border-[#1E42B3] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                    >
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                        Save changes
+                      </span>
+
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                        Save changes
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className=" button-trigger button-move  w-32 h-11">
+                    <button
+                      onClick={() => setEditDoctorProfile(false)}
+                      className="bg-blue-50 hover:bg-white p-2 text-[#363639] text-md border-[6px] border-[#6b7594] font-Gilroy hover:border-[#48464f] transition-all duration-500 h-full font-bold pb-4 px-4 rounded-xl w-full relative overflow-hidden group"
+                    >
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
+                        Cancel
+                      </span>
+
+                      <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
+                        Cancel
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </Form>
             </Formik>

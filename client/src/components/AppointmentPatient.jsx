@@ -158,8 +158,7 @@ const AppointmentCard = (props) => {
                 {data?.fullName?.firstName + " " + data?.fullName?.lastName}
               </h3>
               <p className="text-sm text-gray-500">
-                {new Date(props?.data?.createdAt).toLocaleDateString()} at{" "}
-                {new Date(props?.data?.createdAt).toLocaleTimeString()}
+                {new Date(props?.data?.date).toLocaleDateString()} 
               </p>
             </div>
             <span

@@ -52,9 +52,13 @@ const CheckAppointments = () => {
     const socket=getSocket();
     // console.log("socket in check apppieowi",socket);
     if(socket){
-      socket.on("appointment-reload",()=>{
-        // console.log("appointment-reload socket called on doctor");
+      socket.on("appointment-reload",(data)=>{
+        // console.log("appointment-reload socket called on doctor",data);
         getAllAppointments();
+        // console.log("inside appointments socket update",data);
+        // const updatedAppointments=[...appointments,data]
+        // setAppointments(updatedAppointments);
+        // setParticularAppointment(updatedAppointments);
       })
     }
   },[])

@@ -20,7 +20,8 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://symptocure.netlify.app",
+    // origin: "https://symptocure.netlify.app",
+    origin:"http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
@@ -138,9 +139,9 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("user-book-appointment", () => {
-    // console.log("user-book-appointment"); // this is to show appointment request in doctor when a patient makes an request
-    io.emit("appointment-reload");
+  socket.on("user-book-appointment", (data) => {
+    // console.log("user-book-appointment",data); // this is to show appointment request in doctor when a patient makes an request
+    io.emit("appointment-reload",data.appointment);
   });
 
   socket.on("patient-profile-updated", () => {
@@ -179,12 +180,12 @@ app.post("/predict", async (req, res) => {
   // console.log("inside predict",req.body.symptoms);
   // res.end("hello from predict");
   try {
-    // const response = await axios.post(`http://127.0.0.1:8000/predict`, {
-    //   symptoms: req.body.symptoms,
-    // });
-    const response = await axios.post(`https://symptocure-ml.onrender.com`, {
+    const response = await axios.post(`http://127.0.0.1:8000/predict`, {
       symptoms: req.body.symptoms,
     });
+    // const response = await axios.post(`https://symptocure-ml.onrender.com`, {
+    //   symptoms: req.body.symptoms,
+    // });
 
     res.json(response.data);
   } catch (error) {

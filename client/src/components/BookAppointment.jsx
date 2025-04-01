@@ -63,7 +63,7 @@ const BookAppointment = ({
     dispatch(showLoader());
 
     try {
-      await axios.post(
+      const result=await axios.post(
         `${BASE_URL}/api/appointment/${doctor._id}`,
         {
           ...values,
@@ -81,8 +81,8 @@ const BookAppointment = ({
       const socket = getSocket();
       // //console.log("socket in book appointments", socket);
       if (socket) {
-        // //console.log("inside socket if")
-        socket.emit("user-book-appointment");
+        // console.log("inside socket if",result?.data?.data);
+        socket.emit("user-book-appointment",{appointment:result?.data?.data});
       }
       onClose();
     } catch (error) {
