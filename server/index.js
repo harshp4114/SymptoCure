@@ -183,7 +183,7 @@ app.post("/predict", async (req, res) => {
     // const response = await axios.post(`http://127.0.0.1:8000/predict`, {
     //   symptoms: req.body.symptoms,
     // });
-    const response = await axios.post(`https://symptocure-ml.onrender.com`, {
+    const response = await axios.post(`https://symptocure-ml.onrender.com/predict`, {
       symptoms: req.body.symptoms,
     });
 
