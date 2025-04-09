@@ -171,7 +171,7 @@ const Body = () => {
       color: "#1E1B4B",
     });
 
-    // generateDoctors();
+    generateDoctors();
     console.log("DONEEEEEEEEEE!!!!!");
   }, []);
 
