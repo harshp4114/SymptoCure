@@ -55,26 +55,13 @@ const doctorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Ratings and reviews
-    rating: {
-      type: Number, // Average rating (1-5)
-      default: 0,
-      min: 0,
-      max: 5,
-    },
+    
     address: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Address",
       required: true,
     },
-    reviews: [
-      {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Reference to User
-        comment: { type: String },
-        rating: { type: Number, min: 0, max: 5 },
-        reviewedAt: { type: Date, default: Date.now },
-      },
-    ],
+    
 
     // Account details
     isActive: {

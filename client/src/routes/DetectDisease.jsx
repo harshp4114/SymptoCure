@@ -84,7 +84,7 @@ const DetectDisease = () => {
         // setPrediction(response.data.predictions);
 
       // const diseaseDetected="xyz";
-      console.log("disease",response?.data?.predictions[0]?.disease);
+      // console.log("disease",response?.data?.predictions[0]?.disease);
       const d=response?.data?.predictions[0]?.disease;
       setDisease(d);
 
@@ -95,12 +95,12 @@ const DetectDisease = () => {
 
       const decoded=jwtDecode(token);
       const patientId=decoded.id;
-      console.log("disease",disease)
+      // console.log("disease",disease)
       // while(!disease){
       //   console.log("waiting for disease");
       // }
       const result=await axios.put(`${BASE_URL}/api/patient/symptoms/${patientId}`,{detectedDisease:d,symptoms:values.symptoms});
-      console.log("result",result);
+      // console.log("result",result);
       // console.log("symptoms", symptoms);
 
       // console.log("Symptoms to submit:", symptoms);

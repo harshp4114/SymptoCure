@@ -8,6 +8,10 @@ export const connectSocket = async (userId) => {
             transports: ["websocket"],
         }); // Change to your backend URL
 
+        // socket = io("http://localhost:5000",{
+        //     transports: ["websocket"],
+        // }); // Change to your backend URL
+
         socket.on("connect", () => {
             // console.log("Socket connected");
             socket.emit("join", userId);

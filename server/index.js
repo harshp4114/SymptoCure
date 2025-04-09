@@ -181,7 +181,7 @@ app.post("/predict", async (req, res) => {
   // res.end("hello from predict");
   try {
     // const response = await axios.post(`http://127.0.0.1:8000/predict`, {
-    //   symptoms: req.body.symptoms,
+      // symptoms: req.body.symptoms,
     // });
     const response = await axios.post(`https://symptocure-ml.onrender.com/predict`, {
       symptoms: req.body.symptoms,
@@ -203,11 +203,7 @@ app.use("/api/address", addressRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
-app.use((req, res) => {
-  // connectMongo();
-  // console.log("no one matched");
-  res.end("hello from server");
-});
+
 
 // Start the server
 httpServer.listen(PORT, "0.0.0.0", () => {

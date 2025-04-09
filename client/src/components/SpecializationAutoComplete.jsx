@@ -67,7 +67,7 @@ const SpecializationAutoComplete = () => {
               key={speciality}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("Clicked on:", speciality); // Debug log
+                // console.log("Clicked on:", speciality); // Debug log
                 handleSelect(speciality);
               }}
               className="p-2 cursor-pointer hover:bg-gray-200"
