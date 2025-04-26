@@ -256,7 +256,7 @@ const BookAppointment = ({
                   </label>
                   <Field
                     type="text"
-                    disabled={!!patient?.detectedDisease}
+                    // disabled={!!patient?.detectedDisease}
                     name="disease"
                     className={`w-full px-3 py-2 border  ${
                       !!patient?.detectedDisease

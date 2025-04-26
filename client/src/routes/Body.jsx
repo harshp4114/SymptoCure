@@ -171,8 +171,8 @@ const Body = () => {
       color: "#1E1B4B",
     });
 
-    generateDoctors();
-    console.log("DONEEEEEEEEEE!!!!!");
+    // generateDoctors();
+    // console.log("DONEEEEEEEEEE!!!!!");
   }, []);
 
   return (
