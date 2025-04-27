@@ -4,7 +4,8 @@ import { doctorSpecializations } from "../utils/constants";
 
 const SpecializationAutoComplete = () => {
   const [suggestions, setSuggestions] = useState([]);
-  const [query, setQuery] = useState("");
+  const {values}=useFormikContext();
+  const [query, setQuery] = useState(values?.specialization || "");
   const [validSpecialization, setValidSpecialization] = useState(false);
   const { setFieldValue } = useFormikContext();
 
@@ -41,7 +42,7 @@ const SpecializationAutoComplete = () => {
   const handleBlur = () => {
     setTimeout(() => {
       if (!validSpecialization && suggestions.length==0) {
-        console.log("handleBlur triggered", validSpecialization); // Debug log
+        // console.log("handleBlur triggered", validSpecialization); // Debug log
         setQuery("");
         setFieldValue("specialization", "");
       }

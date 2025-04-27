@@ -1,7 +1,8 @@
 import * as Yup from "yup";
 
 // Validation Schema
-const signUpUserValidateSchema = Yup.object({
+
+export const signUpUserStep1ValidateSchema = Yup.object({
   firstName: Yup.string()
     .max(20, "Must be 20 characters or less")
     .required("First Name is required"),
@@ -31,6 +32,9 @@ const signUpUserValidateSchema = Yup.object({
       "Invalid gender selection"
     )
     .required("Gender is required"),
+});
+
+export const signUpUserStep2ValidateSchema = Yup.object({
   city: Yup.string()
     .max(50, "City must be 50 characters or less")
     .required("City is required"),
@@ -42,4 +46,3 @@ const signUpUserValidateSchema = Yup.object({
     .required("Zip Code is required"),
 });
 
-export default signUpUserValidateSchema;

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Field, ErrorMessage, useFormikContext } from "formik";
 
-const CityAutocomplete = () => {
+const CityAutocomplete = (props) => {
   const [suggestions, setSuggestions] = useState([]);
-  const [query, setQuery] = useState("");
   const [validCity, setValidCity] = useState(false);
-  const {setFieldValue}=useFormikContext();
-
+  const {setFieldValue,values}=useFormikContext();
+  const [query, setQuery] = useState(values?.city || "");
+  // console.log("CityAutocomplete values:", values); // Debug log
   const handleInputChange = async (e) => {
     const value = e.target.value;
     setQuery(value);
@@ -41,6 +41,17 @@ const CityAutocomplete = () => {
     setFieldValue("state", city.address?.state || city.address?.town || "");
     setFieldValue("country", city.address?.country || "");
     setFieldValue("zipCode", city.address?.postcode || city.address?.["ISO3166-2-lvl4"] || "342645");
+    const values={
+      city: city?.name,
+      state: city.address?.state || city.address?.town || "",
+      country: city.address?.country || "",
+      zipCode: city.address?.postcode || city.address?.["ISO3166-2-lvl4"] || "342645",
+    }
+    if(props.from=="patient"){
+      props.setPatientStep2Data(values);
+    }else if(props.from=="doctor"){
+      props.setDoctorStep2Data(values);
+    }
     setQuery(city?.name);
     setValidCity(true);
     setSuggestions([]);
@@ -49,7 +60,7 @@ const CityAutocomplete = () => {
   const handleBlur = () => {
     setTimeout(() => {
       if (!validCity && suggestions.length == 0) {
-        console.log("handleBlur triggered", validCity); // Debug log
+        // console.log("handleBlur triggered", validCity); // Debug log
         setQuery("");
         setFieldValue("city", "");
       }
@@ -75,7 +86,7 @@ const CityAutocomplete = () => {
               key={city.place_id}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("Clicked on:", city.display_name); // Debug log
+                // console.log("Clicked on:", city.display_name); // Debug log
                 handleSelect(city);
               }}
               className="p-2 cursor-pointer hover:bg-gray-200"

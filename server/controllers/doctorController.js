@@ -233,6 +233,7 @@ const createDoctor = async (req, res) => {
         });
       }
     }
+    // console.log("no error in the required fields");
 
     // Check if Doctor already exists
     const existingDoctor = await Doctor.findOne({ email: req.body.email });
@@ -254,7 +255,7 @@ const createDoctor = async (req, res) => {
     });
 
     const savedAddress = await newAddress.save();
-
+    const qualificationsFinal = req.body.qualifications.split(", ");
     // Create a new doctor
     const newDoctor = await Doctor.create({
       fullName: {
@@ -266,17 +267,15 @@ const createDoctor = async (req, res) => {
       phone: req.body.phone,
       password: hashedPassword,
       specialization: req.body.specialization,
-      qualifications: req.body.qualifications,
+      qualifications: qualificationsFinal,
       experience: req.body.experience,
       hospital: req.body.hospital,
       address: savedAddress._id,
-      // availableDays: req.body.availableDays,
-      // availableTime: req.body.availableTime,
-      // patientsPerDay: req.body.patientsPerDay, // This field is required in the schema
       rating: 0, // Default rating
       reviews: [], // Default reviews
       isActive: true, // Default value
     });
+
 
     //console.log("hello");
     // console.log("new doctor that is created ", newDoctor);

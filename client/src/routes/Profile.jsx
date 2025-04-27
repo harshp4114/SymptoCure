@@ -31,6 +31,7 @@ const Profile = () => {
   const [appointments, setAppointments] = useState([]);
   const [filter, setFilter] = useState("all");
   const location = useLocation();
+  console.log("profileData", profileData);
   // console.log("location",location?.state?.showChat);
   const [selectedAppointmentInfo, setSelectedAppointmentInfo] = useState(
     location?.state?.showChat
@@ -113,6 +114,7 @@ const Profile = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(result);
         setProfileData(result.data.userData);
       } else if (role == "doctor") {
         // console.log("hiihiihihi");

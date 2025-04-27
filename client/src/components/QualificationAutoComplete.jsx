@@ -7,8 +7,8 @@ const QualificationAutoComplete = () => {
   const [query, setQuery] = useState("");
   const { setFieldValue, values } = useFormikContext();
 
-  const selectedQualifications = values.qualifications
-    ? values.qualifications.split(", ").filter((q) => q.trim() !== "")
+  const selectedQualifications = values?.qualifications
+    ? values?.qualifications.split(", ").filter((q) => q.trim() !== "")
     : [];
 
   const handleInputChange = (e) => {
@@ -51,6 +51,7 @@ const QualificationAutoComplete = () => {
 
   return (
     <div className="relative">
+
       <div className="flex flex-wrap gap-2 border-[1px] border-opacity-45 px-4 text-2xl text-[#9dc1fc] placeholder-[#9dc1fc] font-semibold outline-none font-Gilroy border-[#9DC1FC] py-4 rounded-xl my-2 w-full bg-[#232269]">
         {selectedQualifications.map((qualification) => (
           <div

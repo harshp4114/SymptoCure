@@ -113,11 +113,12 @@ const getUserProfile = async (req, res) => {
     const { email, id } = req.tokenData;
 
     const patient = await User.findOne({ email });
-    // console.log("patient data backend", patient);
+    console.log("patient data backend", patient);
 
     const address = await Address.findById(patient.address);
+    console.log("address data backend", address);
     patient.address = address;
-
+    console.log("patient data after address", patient);
     return res.status(201).json({
       success: true,
       message: "profile found successfully",

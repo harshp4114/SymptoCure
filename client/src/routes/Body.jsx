@@ -31,6 +31,11 @@ const Body = () => {
       for (const sp of doctorSpecializations) {
         const numberOfDoctors = faker.number.int({ min: 10, max: 15 });
         for (let i = 0; i < numberOfDoctors; i++) {
+          const quali=faker.helpers.arrayElements(
+            doctorQualifications,
+            faker.number.int({ min: 1, max: 4 })
+          );
+          const qualifications=quali.join(", ");
           const gender=faker.person.sexType();
           const firstName=faker.person.firstName(gender);
           const lastName=faker.person.lastName(gender);
@@ -43,10 +48,7 @@ const Body = () => {
             phone: '9'+faker.string.numeric(9),
             specialization: sp,
             password: "12345678",
-            qualifications: faker.helpers.arrayElements(
-              doctorQualifications,
-              faker.number.int({ min: 1, max: 4 })
-            ),
+            qualifications: qualifications,
             experience: faker.number.int({ min: 1, max: 40 }),
             hospital: faker.company.name()+" Hospital",
             city: faker.location.city(),

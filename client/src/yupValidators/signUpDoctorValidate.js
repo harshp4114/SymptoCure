@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-const SignUpDoctorValidate = Yup.object().shape({
+export const SignUpDoctorStep1Validate = Yup.object().shape({
   firstName: Yup.string()
     .min(2, "First name must be at least 2 characters")
     .max(50, "First name can't be longer than 50 characters")
@@ -25,7 +25,24 @@ const SignUpDoctorValidate = Yup.object().shape({
   phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
     .required("Phone number is required"),
+  gender: Yup.string()
+    .oneOf(
+      ["Male", "Female", "Other", "male", "female", "other"],
+      "Invalid gender selection"
+    )
+    .required("Gender is required"),
+});
 
+export const SignUpDoctorStep2Validate = Yup.object().shape({
+  city: Yup.string()
+    .max(50, "City must be 50 characters or less")
+    .required("City is required"),
+  state: Yup.string().required("State is required"),
+  country: Yup.string().required("Country is required"),
+  zipCode: Yup.string().required("Zip Code is required"),
+});
+
+export const SignUpDoctorStep3Validate = Yup.object().shape({
   specialization: Yup.string()
     .min(2, "Specialization must be at least 2 characters")
     .max(100, "Specialization can't be longer than 100 characters")
@@ -45,15 +62,4 @@ const SignUpDoctorValidate = Yup.object().shape({
     .min(2, "Hospital name must be at least 2 characters")
     .max(100, "Hospital name can't be longer than 100 characters")
     .required("Hospital is required"),
-  city: Yup.string()
-    .max(50, "City must be 50 characters or less")
-    .required("City is required"),
-  state: Yup.string()
-    .required("State is required"),
-  country: Yup.string()
-    .required("Country is required"),
-  zipCode: Yup.string()
-    .required("Zip Code is required"),
 });
-
-export default SignUpDoctorValidate;
