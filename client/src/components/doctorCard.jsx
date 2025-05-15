@@ -8,7 +8,7 @@ const DoctorCard = (props) => {
       {/* {console.log("hiiii",props.data)} */}
       <div className="w-64 h-[25rem] justify-center content-start items-start m-4 ring-[5px] ring-blue-300 hover:ring-[10px] bg-white p-0 transition-all duration-500 ease-in-out rounded-lg flex flex-wrap">
         <div className="w-full h-52">
-          <div className="w-full h-full flex justify-center items-center bg-[#072965]">
+          <div className="w-full h-full rounded-t-lg flex justify-center items-center bg-[#072965]">
             <h2 className="text-6xl text-white font-bold">
               {props?.data?.fullName?.firstName.slice(0, 1).toUpperCase() +
                 props?.data?.fullName?.lastName.slice(0, 1).toUpperCase()}
