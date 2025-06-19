@@ -18,6 +18,13 @@ connectMongo();
 
 const app = express();
 const httpServer = createServer(app);
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
@@ -28,22 +35,13 @@ const io = new Server(httpServer, {
 });
 const PORT = 5000;
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 let onlineUsers = {};
 
 io.on("connection", (socket) => {
-  // console.log("a user connected",socket.id);
 
-  // const
 
   socket.on("new-message-from-patient", (data) => {
     if (onlineUsers[data.doctorId]) {

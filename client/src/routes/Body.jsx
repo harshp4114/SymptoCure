@@ -232,35 +232,6 @@ const Body = () => {
         </div>
       </div>
 
-      {/* Third section */}
-      {/* <div className="third h-[100vh] px-10 bg-white flex items-center rounded-t-3xl">
-        <div className="flex items-center w-full h-40">
-          <h2 className="font-Gilroy font-bold text-[#232269] text-8xl mr-6">
-            Let's show you{" "}
-          </h2>
-          <div className="relative button-trigger button-move top-2 w-48 h-16 mt-2">
-            <button
-              onClick={() => navigate("/consultancy")}
-              type="submit"
-              className="bg-[#ffffff] p-2 text-[#232269] text-md border-8 border-[#403CD5] font-Gilroy hover:border-[#8366E5] transition-all duration-500 h-full font-bold py-2 px-4 rounded-full w-full relative overflow-hidden group" */}
-      {/* > */}
-      {/* Default Text */}
-      {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-full">
-                Consult a Doctor
-              </span> */}
-
-      {/* Hover Text */}
-      {/* <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-                Consult a Doctor
-              </span>
-            </button>
-          </div>
-          <h2 className="font-Gilroy font-bold text-[#232269] ml-6 text-8xl">
-            how we do it
-          </h2>
-        </div>
-      </div> */}
-
       {/* Fourth section */}
       <div className="f-trigger bg-indigo-950 h-[100vh] flex">
         {/* Left side content */}

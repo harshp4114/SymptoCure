@@ -45,4 +45,3 @@ export const signUpUserStep2ValidateSchema = Yup.object({
   zipCode: Yup.string()
     .required("Zip Code is required"),
 });
-
