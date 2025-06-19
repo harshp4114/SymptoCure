@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
 import Cookies from "js-cookie";
 import { getSocket } from "../socket";
 
@@ -155,7 +155,7 @@ const AppointmentCard = (props) => {
           <div className="flex justify-between items-start mb-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-800">
-                {data?.fullName?.firstName + " " + data?.fullName?.lastName}
+                {capitalizeFirstLetter(data?.fullName?.firstName) + " " + capitalizeFirstLetter(data?.fullName?.lastName)}
               </h3>
               <p className="text-sm text-gray-500">
                 {new Date(props?.data?.date).toLocaleDateString()} 
@@ -206,7 +206,7 @@ const AppointmentCard = (props) => {
                     d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
                   />
                 </svg>
-                {data?.email}
+                {capitalizeFirstLetter(data?.email)}
               </p>
             </div>
 
@@ -219,7 +219,7 @@ const AppointmentCard = (props) => {
                 Disease : {props?.data?.disease || "Not specified"}
               </p>
               <p className="text-sm">
-                {props?.data?.reason || "Not specified"}
+                Reason : {props?.data?.reason || "Not specified"}
               </p>
             </div>
           </div>

@@ -3,7 +3,7 @@ import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
 import { io } from "socket.io-client";
 import { getSocket } from "../socket";
 import { Link } from "react-router-dom";
@@ -88,11 +88,11 @@ const AppointmentCard = (props) => {
       className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-200 transition-transform transform "
     >
       <h3 className="text-xl font-semibold text-gray-800 mb-2">
-        {userData.fullName?.firstName} {userData.fullName?.lastName}
+        {capitalizeFirstLetter(userData.fullName?.firstName)} {capitalizeFirstLetter(userData.fullName?.lastName)}
       </h3>
       <p className="text-gray-600">Age: {userData.age}</p>
-      <p className="text-gray-600">Gender: {userData.gender}</p>
-      <p className="text-gray-600">Email: {userData.email}</p>
+      <p className="text-gray-600">Gender: {capitalizeFirstLetter(userData.gender)}</p>
+      <p className="text-gray-600">Email: {capitalizeFirstLetter(userData.email)}</p>
       <p className="text-gray-600">Phone: {userData.phone}</p>
       <div className="w-full mt-4 p-4 bg-blue-100 rounded-lg">
         <p className="text-gray-800 font-medium">

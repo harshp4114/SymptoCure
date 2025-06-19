@@ -396,16 +396,16 @@ const Profile = () => {
                 Full Name:
               </label>
               <p className="text-gray-600">
-                {profileData?.fullName?.firstName +
+                {capitalizeFirstLetter(profileData?.fullName?.firstName) +
                   " " +
-                  profileData?.fullName?.lastName}
+                  capitalizeFirstLetter(profileData?.fullName?.lastName)}
               </p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 self-start font-medium w-40">
                 Gender:
               </label>
-              <p className="text-gray-600">{profileData?.gender}</p>
+              <p className="text-gray-600">{capitalizeFirstLetter(profileData?.gender)}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 self-start font-medium w-40">
@@ -415,7 +415,7 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Email:</label>
-              <p className="text-gray-600 ">{profileData?.email}</p>
+              <p className="text-gray-600 ">{capitalizeFirstLetter(profileData?.email)}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Phone:</label>
@@ -442,7 +442,7 @@ const Profile = () => {
                 Current Disease :
               </label>
               <p className="text-gray-600">
-                {profileData?.detectedDisease || "No Disease Detected Yet"}
+                {capitalizeFirstLetter(profileData?.detectedDisease) || "No Disease Detected Yet"}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -451,7 +451,7 @@ const Profile = () => {
               </label>
               <p className="text-gray-600">
                 {profileData?.symptoms?.length
-                  ? profileData?.symptoms?.join(", ")
+                  ? capitalizeFirstLetter(profileData?.symptoms?.join(", "))
                   : "No Symptoms Declared Yet"}
               </p>
             </div>
@@ -847,14 +847,14 @@ const Profile = () => {
                 Full Name:
               </label>
               <p className="text-gray-600">
-                {profileData?.fullName?.firstName +
+                {capitalizeFirstLetter(profileData?.fullName?.firstName) +
                   " " +
-                  profileData?.fullName?.lastName}
+                  capitalizeFirstLetter(profileData?.fullName?.lastName)}
               </p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Email:</label>
-              <p className="text-gray-600 ">{profileData?.email}</p>
+              <p className="text-gray-600 ">{capitalizeFirstLetter(profileData?.email)}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Phone:</label>
@@ -862,13 +862,13 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">Gender:</label>
-              <p className="text-gray-600">{profileData?.gender}</p>
+              <p className="text-gray-600">{capitalizeFirstLetter(profileData?.gender)}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 font-medium w-40">
                 Hospital:
               </label>
-              <p className="text-gray-600">{profileData?.hospital}</p>
+              <p className="text-gray-600">{capitalizeFirstLetter(profileData?.hospital)}</p>
             </div>
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 self-start font-medium w-40">

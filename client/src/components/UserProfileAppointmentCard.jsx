@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { hideLoader, showLoader } from "../redux/slices/loadingSlice";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL, capitalizeFirstLetter } from "../utils/constants";
 import Cookies from "js-cookie";
 import { getSocket } from "../socket";
 
@@ -56,24 +56,7 @@ const UserProfileAppointmentCard = ({ doctor, status, date, reason }) => {
     );
   }
 
-  function InformationCircleIcon(props) {
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        {...props}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-    );
-  }
+
 
   // Define border and badge colors based on status
   const getStatusColors = (status) => {
@@ -115,18 +98,18 @@ const UserProfileAppointmentCard = ({ doctor, status, date, reason }) => {
         <div className="flex justify-between items-start">
           <div>
             <h3 className="font-medium text-gray-800">
-              {doctorData?.fullName?.firstName +
+              {capitalizeFirstLetter(doctorData?.fullName?.firstName) +
                 " " +
-                doctorData?.fullName?.lastName}
+                capitalizeFirstLetter(doctorData?.fullName?.lastName)}
             </h3>
             <p className="text-sm text-gray-600">{doctorData.specialization}</p>
           </div>
           <span
             className={`px-2 py-1 ${
-              status == "approved" ? "" : "mt-1 mr-1"
+              status == "approved" ? "" : "mt-1 mr-5"
             } ${bg} ${text} text-xs rounded-full`}
           >
-            {status}
+            {capitalizeFirstLetter(status)}
           </span>
         </div>
         <div className="mt-2 flex items-center text-sm text-gray-600">
@@ -140,7 +123,7 @@ const UserProfileAppointmentCard = ({ doctor, status, date, reason }) => {
             })}
           </span>
         </div>
-        <p className="text-xs text-gray-500 mt-1">Reason: {reason}</p>
+        <p className="text-xs text-gray-500 mt-1">Reason: {capitalizeFirstLetter(reason)}</p>
       </div>
       {status === "approved" && (
         <div className="ml-4 flex space-x-2">
